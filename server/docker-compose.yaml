@@ -1,0 +1,11 @@
+services:
+  postgres:
+    container_name: scrumbags_postgres_container
+    image: postgres:16.8-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: scrumbags_db
+      POSTGRES_USER: scrumbags_user
+      POSTGRES_PASSWORD: scrumbags_password
+    ports:
+      - '5432:5432'

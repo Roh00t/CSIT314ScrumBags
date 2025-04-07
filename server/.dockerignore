@@ -1,0 +1,6 @@
+node_modules
+dist
+.git
+.DS_Store
+npm-debug.log
+.env  #  Important: If you have secrets in .env, don't include it in the image!
