@@ -8,4 +8,4 @@ services:
       POSTGRES_USER: scrumbags_user
       POSTGRES_PASSWORD: scrumbags_password
     ports:
-      - '5432:5432'
+      - '5433:5432'

@@ -10,7 +10,6 @@ const envPath = path.resolve(
 dotenv.config({ path: envPath })
 
 const app = express()
-
 app.use(express.json())
 
 app.post("/", async (req: Request, res: Response) => {
