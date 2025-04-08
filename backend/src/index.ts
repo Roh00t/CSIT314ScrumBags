@@ -1,16 +1,24 @@
 import express, { Request, Response } from "express"
-import dotenv from 'dotenv'
-import path from 'path'
-
-process.env.NODE_ENV = "dev"
-const envPath = path.resolve(
-    __dirname,
-    `../.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}`
-);
-dotenv.config({ path: envPath })
+import session from "express-session";
+import 'dotenv/config'
 
 const app = express()
 app.use(express.json())
+app.use(session({
+    secret: 'lsijefljfosjjljij',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        sameSite: 'lax',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 5,
+        secure: process.env.NODE_ENV === 'prod'
+    }
+}))
+
+app.get("/", async (_, res: Response) => {
+   res.send("Hello from the server") 
+})
 
 app.post("/", async (req: Request, res: Response) => {
     const data = req.body

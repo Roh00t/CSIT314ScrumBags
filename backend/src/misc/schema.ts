@@ -4,7 +4,6 @@ import {
     pgEnum,
     pgTable,
     serial,
-    text,
     uuid,
     varchar,
     integer,
@@ -13,7 +12,7 @@ import {
 
 export const bookingStatusEnum = pgEnum(
     'booking_status',
-    ['requested', 'accepted', 'completed', 'rejected']
+    ['requested', 'accepted', 'rejected', 'completed']
 )
 
 export const userProfilesTable = pgTable('user_profiles', {
@@ -23,8 +22,9 @@ export const userProfilesTable = pgTable('user_profiles', {
 
 export const userAccountsTable = pgTable('user_accounts', {
     id: uuid().primaryKey().default(sql`gen_random_uuid()`),
-    username: text().notNull(),
-    userProfileId: integer().notNull().references(() => 
+    username: varchar({ length: 32 }).notNull(),
+    password: varchar({ length: 64 }).notNull(),
+    userProfileId: integer().notNull().references(() =>
         userProfilesTable.id, { onDelete: 'cascade' }
     ),
     isSuspended: boolean().notNull().default(false)
@@ -37,22 +37,34 @@ export const categoryTypesTable = pgTable('category_types', {
 })
 
 export const shortlistedCleanersTable = pgTable('shortlisted_cleaners', {
-    homeownerId: uuid().notNull().references(() => userAccountsTable.id, { onDelete: 'cascade' }),
-    cleanerId: uuid().notNull().references(() => userAccountsTable.id, { onDelete: 'cascade' }),
+    homeownerID: uuid().notNull().references(() =>
+        userAccountsTable.id, { onDelete: 'cascade' }
+    ),
+    cleanerID: uuid().notNull().references(() =>
+        userAccountsTable.id, { onDelete: 'cascade' }
+    ),
 })
 
 export const servicesOfferedTable = pgTable('services_offered', {
-    cleanerId: uuid().notNull().references(() => userAccountsTable.id, { onDelete: 'cascade' }),
-    serviceTypeId: integer().notNull().references(() => 
+    cleanerID: uuid().notNull().references(() =>
+        userAccountsTable.id, { onDelete: 'cascade' }
+    ),
+    serviceTypeID: integer().notNull().references(() =>
         categoryTypesTable.id, { onDelete: 'cascade' }
     ),
 })
 
 export const serviceBookingsTable = pgTable('service_bookings', {
     id: serial().primaryKey(),
-    homeownerId: uuid().notNull().references(() => userAccountsTable.id, { onDelete: 'restrict' }),
-    cleanerId: uuid().notNull().references(() => userAccountsTable.id, { onDelete: 'restrict' }),
-    categoryId: integer().notNull().references(() => categoryTypesTable.id, { onDelete: 'restrict' }),
+    homeownerID: uuid().notNull().references(() =>
+        userAccountsTable.id, { onDelete: 'restrict' }
+    ),
+    cleanerID: uuid().notNull().references(() =>
+        userAccountsTable.id, { onDelete: 'restrict' }
+    ),
+    categoryID: integer().notNull().references(() =>
+        categoryTypesTable.id, { onDelete: 'restrict' }
+    ),
     startTimestamp: timestamp({ mode: 'date', withTimezone: true }).notNull(),
     endTimestamp: timestamp({ mode: 'date', withTimezone: true }).notNull(),
     status: bookingStatusEnum().notNull(),
