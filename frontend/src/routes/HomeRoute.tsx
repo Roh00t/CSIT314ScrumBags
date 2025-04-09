@@ -1,13 +1,26 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const HomeRoute: React.FC = () => {
+  const navigate = useNavigate()
+
+  const goToLogin = () => {
+    navigate('/login')
+  }
+
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }}> 
-      The beginning of a multi-million dollar cleaning service venture
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        gap: '1rem',
+      }}
+    >
+      <h2>The beginning of a multi-million dollar cleaning service venture</h2>
+      <button onClick={goToLogin}>Go to Login</button>
     </div>
   )
 }
