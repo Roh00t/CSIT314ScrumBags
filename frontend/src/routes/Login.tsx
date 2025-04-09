@@ -1,48 +1,52 @@
 import React, { useState } from 'react'
 
 const Login: React.FC = () => {
-    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
-      console.log('Logging in with:', { email, password })
-      // TODO: Replace with actual login logic (API call etc.)
+      console.log('Logging in with:', { username, password })
+      // Replace with actual login logic (API call etc.)
     }
   
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh'
-      }}>
-        <form onSubmit={handleSubmit} style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1rem',
-          padding: '2rem',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-        }}>
-          <h2>Login</h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
+      <div className="login_container">
+        <div className="login_left">
+          <img
+            src="src/assets/login_image.jpg"
+            alt="Cleaning"
+            className="login_image"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
+        </div>
+        <div className="login_right">
+        <div className="login_form_h2"><b>Welcome</b></div>
+        <div className="login_form_p">Please enter your details</div>
+          <form className="login_form" onSubmit={handleSubmit}>
+            <label><b>Enter Username:</b></label>
+            <div className="input_group">
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                required
+              />
+            </div>
+  
+            <label><b>Enter Password:</b></label>
+            <div className="input_group">
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+            </div> 
+            <button type="submit" className="login_button">Login</button>
+          </form>
+        </div>
       </div>
     )
   }

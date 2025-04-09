@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(0, 0, 0, 0.87);
   background-color: #242424;
 
   font-synthesis: none;
@@ -12,6 +12,88 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* =============================================================== */
+/* Login */
+
+.login_container {
+  display: flex;
+  height: 95vh;
+  background-color: #a7c7e7;
+  padding-right:5rem;
+  padding-left:5rem;
+}
+
+.login_left {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login_image {
+  max-width: 85%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.login_right {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  margin: auto;
+  padding: 3rem;
+  max-width: 400px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login_form {
+  padding-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.login_form_h2 {
+  margin-bottom: 0;
+  font-size:1.5rem;
+  text-align: center;
+}
+
+.login_form_p {
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.input_group {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem;
+  background: #f0f0f0;
+}
+
+.input_group input {
+  border: none;
+  outline: none;
+  flex: 1;
+  color: black;
+  background: transparent;
+}
+
+
+.login_button {
+  padding: 0.75rem;
+  background-color: #7db4e6;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
 
 /* a {
   font-weight: 500;
