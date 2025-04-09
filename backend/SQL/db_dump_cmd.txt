@@ -1,0 +1,1 @@
+pg_dump -h localhost -p 5433 -d scrumbags_db -U scrumbags_user -s -F p -E UTF-8 -f ~/Downloads/scrumbags_db_dump

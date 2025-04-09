@@ -1,16 +1,22 @@
-import { 
-    InvalidCredentialsError, UserAccountNotFound, UserAccountSuspendedError 
+import {
+    InvalidCredentialsError, UserAccountNotFound, UserAccountSuspendedError
 } from "./exceptions/userExceptions";
 import { CreateNewUserAccountController } from "./controllers/userControllers";
 import { LoginController } from "./controllers/userControllers";
 import { StatusCodes } from "http-status-codes";
 import connectPgSimple from "connect-pg-simple";
 import session from "express-session";
-import express from "express";
-import 'dotenv/config';
+import express, { urlencoded } from "express";
+import dotenv from 'dotenv';
 
-const app = express()
+dotenv.config({
+    path: process.env.NODE_ENV ?
+        `.env.${process.env.NODE_ENV}` : '.env'
+})
+
+export const app = express()
 app.use(express.json())
+app.use(urlencoded({ extended: false }))
 app.use(session({
     store: new (connectPgSimple(session))({
         createTableIfMissing: true,
@@ -22,14 +28,10 @@ app.use(session({
     cookie: {
         sameSite: 'lax',
         httpOnly: true,
-        maxAge: 1000 * 60 * 5,
-        secure: process.env.NODE_ENV === 'prod'
+        maxAge: 1000 * 60 * 5, // 5 minutes
+        // secure: process.env.NODE_ENV === 'prod'
     }
 }))
-
-app.get("/", async (_, res) => {
-    res.send("Hello from the server")
-})
 
 app.post("/api/user_account/create", async (req, res): Promise<void> => {
     const { createAs, username, password } = req.body
@@ -39,10 +41,9 @@ app.post("/api/user_account/create", async (req, res): Promise<void> => {
 
     if (createSuccess) {
         res.status(StatusCodes.CREATED).send("Account created successfully")
-        return
-    } else {
+    }
+    else {
         res.status(StatusCodes.CONFLICT).send("Account creation FAILLEDDD")
-        return
     }
 })
 
@@ -64,11 +65,14 @@ app.post("/api/user_account/login", async (req, res): Promise<void> => {
     catch (err) {
         if (err instanceof UserAccountNotFound) {
             res.status(StatusCodes.NOT_FOUND)
-        } else if (err instanceof InvalidCredentialsError) {
+        }
+        else if (err instanceof InvalidCredentialsError) {
             res.status(StatusCodes.UNAUTHORIZED).json({ message: "Invalid credentials" })
-        } else if (err instanceof UserAccountSuspendedError) {
+        }
+        else if (err instanceof UserAccountSuspendedError) {
             res.status(StatusCodes.LOCKED).json({ message: "Account is suspended" })
-        } else {
+        }
+        else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR)
                 .json({ message: (err as Error).message })
         }

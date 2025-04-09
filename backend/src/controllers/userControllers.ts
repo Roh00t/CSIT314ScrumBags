@@ -1,6 +1,6 @@
 import { UserAccountResponse } from "../dto/userDTOs"
 import UserAccount from "../entities/userAccount"
-import { GLOBALS } from "../misc/constants"
+import { GLOBALS } from "../shared/constants"
 import bcrypt from 'bcrypt'
 
 export class LoginController {

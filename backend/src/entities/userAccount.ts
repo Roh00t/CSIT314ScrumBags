@@ -1,16 +1,16 @@
 import {
     InvalidCredentialsError, UserAccountNotFound, UserAccountSuspendedError
 } from '../exceptions/userExceptions'
-import { userProfilesTable } from '../schema/userProfiles'
-import { userAccountsTable } from '../schema/userAccounts'
 import { UserAccountResponse } from '../dto/userDTOs'
 import { drizzle } from "drizzle-orm/node-postgres"
-import { DrizzleClient } from "../misc/constants"
 import { eq } from "drizzle-orm"
 import bcrypt from 'bcrypt'
+import { DrizzleClient } from '../shared/constants'
+import { userProfilesTable } from '../db/schema/userProfiles'
+import { userAccountsTable } from '../db/schema/userAccounts'
 
 export default class UserAccount {
-    private db: DrizzleClient
+    private db: DrizzleClient 
 
     constructor() {
         this.db = drizzle(process.env.DATABASE_URL!) // Establish database connection

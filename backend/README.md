@@ -17,6 +17,10 @@ Make sure to run ```npm i``` to install the necessary dependencies
 Start the dockerized PostgreSQL database (do this first): ```docker compose up -d```
 Start the dev server: ```npm run dev```
 
+### Running the unit tests
+Start the test database (do this first): ```docker compose -f docker-compose.test.yaml up -d```
+Run the tests: ```npm run tests```
+
 ### Building the application
 ```npm run build```
 
