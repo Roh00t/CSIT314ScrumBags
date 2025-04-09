@@ -10,8 +10,8 @@ import express, { urlencoded } from "express";
 import dotenv from 'dotenv';
 
 dotenv.config({
-    path: process.env.NODE_ENV ?
-        `.env.${process.env.NODE_ENV}` : '.env'
+    path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
+    override: true
 })
 
 export const app = express()

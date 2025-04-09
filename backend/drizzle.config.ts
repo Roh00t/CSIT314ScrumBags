@@ -8,11 +8,7 @@ export default defineConfig({
     dbCredentials: {
         url: ((): string => {
             const envPath = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env'
-            dotenv.config({
-                path: envPath
-            })
-            console.log("Env Path: ", envPath)
-            console.log("The database url: ", process.env.DATABASE_URL!)
+            dotenv.config({ path: envPath, override: true })
             return process.env.DATABASE_URL!
         })()
     },

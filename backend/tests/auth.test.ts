@@ -3,9 +3,10 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { userProfilesTable } from '../src/db/schema/userProfiles';
 
-describe('Login path test', () => {
+describe('Testing the Login Endpoint', () => {
     beforeAll(async () => {
         const db = drizzle(process.env.DATABASE_URL!)
+        console.log(process.env.DATABASE_URL!)
         try {
             db.insert(userProfilesTable).values([
                 { label: "cleaner" },

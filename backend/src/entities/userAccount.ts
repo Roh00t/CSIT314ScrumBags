@@ -58,7 +58,7 @@ export default class UserAccount {
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
             )
             .where(eq(userAccountsTable.username, username))
-            .limit(1);
+            .limit(1)
 
         if (!retrievedUser) {
             throw new UserAccountNotFound("Couldn't find user of username: " + username)
