@@ -8,6 +8,10 @@ const HomeRoute: React.FC = () => {
     navigate('/login')
   }
 
+  const goToCreate = () => {
+    navigate('/create')
+  }
+
   return (
     <div
       style={{
@@ -21,6 +25,7 @@ const HomeRoute: React.FC = () => {
     >
       <h2>The beginning of a multi-million dollar cleaning service venture</h2>
       <button onClick={goToLogin}>Go to Login</button>
+      <button onClick={goToCreate}>Go to Create</button>
     </div>
   )
 }

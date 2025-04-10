@@ -94,6 +94,118 @@
   font-size: 1rem;
 }
 
+/* ================================================
+create */
+
+.create_container {
+  display: flex;
+  height: 100vh;
+  background-color: #a7c7e7;
+  font-family: 'Arial', sans-serif;
+}
+
+.left_side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem;
+  color: #000;
+}
+
+.left_side h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.left_side p {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.right_side {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create_form {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.create_form h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.2rem;
+}
+
+.create_form p {
+  margin-bottom: 1.5rem;
+}
+
+.create_form label {
+  font-weight: 600;
+  margin-top: 1rem;
+  display: block;
+}
+
+.create_form select,
+.create_form input {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: none;
+  margin-top: 0.5rem;
+  background-color: #e0e0e0;
+}
+
+.input_group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #e0e0e0;
+  padding: 0.6rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.input_group input {
+  background: transparent;
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.create_btn,
+.cancel_btn {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.create_btn {
+  background-color: #7db4e6;
+  color: white;
+}
+
+.cancel_btn {
+  background-color: #bdd7ee;
+  color: black;
+}
+
+/* ====================================================== */
+
 
 /* a {
   font-weight: 500;
