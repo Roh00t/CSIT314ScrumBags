@@ -1,15 +1,45 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 
 const CreateAccountPage: React.FC = () => {
   const [role, setRole] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
-  const handleCreateAccount = (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log({ role, username, password, confirmPassword })
-    
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      setSuccess('')
+      return
+    }
+
+    try {
+      const response = await axios.post('/api/create-account', {
+        createAs: role,
+        username:username,
+        password:password,
+      })
+
+      if (response.data === true) {
+        setSuccess('Account created successfully!')
+        setError('')
+        setRole('')
+        setUsername('')
+        setPassword('')
+        setConfirmPassword('')
+      } else {
+        setError('Failed to create account. Please try again.')
+        setSuccess('')
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Something went wrong.')
+      setSuccess('')
+    }
   }
 
   return (
@@ -26,15 +56,17 @@ const CreateAccountPage: React.FC = () => {
           <h2>Create Account</h2>
           <p>Please enter your details</p>
 
+          {error && <p className="error_msg">{error}</p>}
+          {success && <p className="success_msg">{success}</p>}
+
           <label>Create As:</label>
           <select
             value={role}
             onChange={e => setRole(e.target.value)}
             required
           >
-            {/* change this part wif an api call */}
             <option value="">Select Role</option>
-            <option value="customer">Admin</option>
+            <option value="admin">Admin</option>
             <option value="cleaner">Cleaner</option>
           </select>
 
@@ -64,7 +96,7 @@ const CreateAccountPage: React.FC = () => {
           <div className="input_group">
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Confirm Password"
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
               required
@@ -74,7 +106,18 @@ const CreateAccountPage: React.FC = () => {
           <button type="submit" className="create_btn">
             Create Account
           </button>
-          <button type="button" className="cancel_btn">
+          <button
+            type="button"
+            className="cancel_btn"
+            onClick={() => {
+              setRole('')
+              setUsername('')
+              setPassword('')
+              setConfirmPassword('')
+              setError('')
+              setSuccess('')
+            }}
+          >
             Cancel
           </button>
         </form>
