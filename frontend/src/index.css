@@ -99,17 +99,23 @@ create */
 
 .create_container {
   display: flex;
-  height: 100vh;
+  flex-direction: row;
   background-color: #a7c7e7;
   font-family: 'Arial', sans-serif;
+  min-height: 100vh;
+  flex-wrap: wrap;
+}
+
+.left_side,
+.right_side {
+  flex: 1 1 100%;
+  padding: 2rem;
 }
 
 .left_side {
-  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 3rem;
   color: #000;
 }
 
@@ -125,10 +131,10 @@ create */
 }
 
 .right_side {
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 80vh;
 }
 
 .create_form {
@@ -146,12 +152,12 @@ create */
 }
 
 .create_form p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .create_form label {
   font-weight: 600;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   display: block;
 }
 
@@ -161,18 +167,18 @@ create */
   padding: 0.6rem;
   border-radius: 8px;
   border: none;
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
   background-color: #e0e0e0;
 }
 
 .input_group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.2rem;
   background-color: #e0e0e0;
-  padding: 0.6rem;
+  padding: 0.3rem;
   border-radius: 8px;
-  margin-top: 0.5rem;
+  margin-top: 0.3rem;
 }
 
 .input_group input {
@@ -202,6 +208,23 @@ create */
 .cancel_btn {
   background-color: #bdd7ee;
   color: black;
+}
+
+/* Responsive Layout */
+@media (min-width: 768px) {
+  .create_container {
+    flex-wrap: nowrap;
+  }
+
+  .left_side,
+  .right_side {
+    flex: 1;
+    padding: 3rem;
+  }
+
+  .right_side {
+    height: auto;
+  }
 }
 
 /* ====================================================== */
