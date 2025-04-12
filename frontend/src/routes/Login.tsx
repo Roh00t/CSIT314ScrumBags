@@ -10,7 +10,7 @@ const Login: React.FC = () => {
     
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/user_account/login',
+          'http://localhost:3000/api/user-accounts/login',
           { username, password },
           { withCredentials: true } // 👈 important for session cookies
         )

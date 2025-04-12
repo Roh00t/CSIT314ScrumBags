@@ -19,7 +19,7 @@
       }
 
       try {
-        const response = await axios.post('http://localhost:3000/api/user_account/create', {
+        const response = await axios.post('http://localhost:3000/api/user-accounts/create', {
           createAs:"cleaner",
           username:username,
           password:password,
