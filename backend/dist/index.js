@@ -13,13 +13,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const path_1 = __importDefault(require("path"));
-process.env.NODE_ENV = "dev";
-const envPath = path_1.default.resolve(__dirname, `../.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ''}`);
-dotenv_1.default.config({ path: envPath });
+const express_session_1 = __importDefault(require("express-session"));
+require("dotenv/config");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, express_session_1.default)({
+    secret: 'lsijefljfosjjljij',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        sameSite: 'lax',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 5,
+        secure: process.env.NODE_ENV === 'prod'
+    }
+}));
+app.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.send("Hello from the server");
+}));
 app.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = req.body;
     res.status(200).json({ "Here's the data we received: ": data });
