@@ -1,13 +1,14 @@
 import {
     InvalidCredentialsError, UserAccountNotFound, UserAccountSuspendedError
 } from "./exceptions/userExceptions";
-import { CreateNewUserAccountController } from "./controllers/userControllers";
+import { CreateNewUserAccountController, CreateNewUserProfileController, GetUserProfilesController } from "./controllers/userControllers";
 import { LoginController } from "./controllers/userControllers";
 import { StatusCodes } from "http-status-codes";
 import connectPgSimple from "connect-pg-simple";
 import session from "express-session";
 import express, { urlencoded } from "express";
 import dotenv from 'dotenv';
+import { UserAccountResponse } from "./dto/userDTOs";
 
 dotenv.config({
     path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
@@ -58,13 +59,13 @@ app.post("/api/user_account/login", async (req, res): Promise<void> => {
                     .json({ message: "Express error: " + err })
                 return
             }
-            (req.session as any).user = userAccRes
+            (req.session as any).user = userAccRes as UserAccountResponse
             res.status(StatusCodes.OK).json(userAccRes)
         })
     }
     catch (err) {
         if (err instanceof UserAccountNotFound) {
-            res.status(StatusCodes.NOT_FOUND)
+            res.status(StatusCodes.NOT_FOUND).send()
         }
         else if (err instanceof InvalidCredentialsError) {
             res.status(StatusCodes.UNAUTHORIZED).json({ message: "Invalid credentials" })
@@ -76,6 +77,46 @@ app.post("/api/user_account/login", async (req, res): Promise<void> => {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR)
                 .json({ message: (err as Error).message })
         }
+    }
+})
+
+app.post("/api/user_account/logout", async (req, res): Promise<void> => {
+    try {
+        await req.session.destroy(_ => {})
+        res.status(StatusCodes.OK).json({ message: "Logout successful" })
+    }
+    catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({ message: (err as Error).message })
+    }
+})
+
+app.post('/api/user_profile', async (req, res): Promise<void> => {
+    try {
+        const { profileName } = req.body
+        const controller = new CreateNewUserProfileController()
+        await controller.createNewUserProfile(profileName)
+        res.status(StatusCodes.CREATED).json({ message: "Success" })
+    }
+    catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+app.get('/api/user_profile', async (_, res): Promise<void> => {
+    try {
+        const profiles = await new GetUserProfilesController().getUserProfiles()
+        res.status(StatusCodes.OK).json({
+            message: "Successs",
+            data: profiles
+        })
+    }
+    catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
     }
 })
 

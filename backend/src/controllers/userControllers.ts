@@ -10,8 +10,13 @@ export class LoginController {
         this.userAccount = new UserAccount()
     }
 
-    public async login(username: string, password: string): Promise<UserAccountResponse> {
-        return await this.userAccount.login(username, password)
+    public async login(username: string, password: string): Promise<UserAccountResponse | null> {
+        try {
+            return await this.userAccount.login(username, password)
+        }
+        catch (err) {
+            throw err
+        }
     }
 }
 
@@ -38,5 +43,39 @@ export class CreateNewUserAccountController {
             username,
             hashedPassword
         )
+    }
+}
+
+export class CreateNewUserProfileController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async createNewUserProfile(profileName: string): Promise<boolean> {
+        try {
+            return await this.userAccount.createNewUserProfile(profileName)
+        }
+        catch (err) {
+            throw err
+        }
+    }
+}
+
+export class GetUserProfilesController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async getUserProfiles(): Promise<string[]> {
+        try {
+            return await this.userAccount.getUserProfiles()
+        }
+        catch (err) {
+            throw err
+        }
     }
 }

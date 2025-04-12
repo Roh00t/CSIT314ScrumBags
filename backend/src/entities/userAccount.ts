@@ -10,7 +10,7 @@ import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
 
 export default class UserAccount {
-    private db: DrizzleClient 
+    private db: DrizzleClient
 
     constructor() {
         this.db = drizzle(process.env.DATABASE_URL!) // Establish database connection
@@ -80,5 +80,30 @@ export default class UserAccount {
             username: retrievedUser.username,
             userProfile: retrievedUser.userProfileLabel
         } as UserAccountResponse
+    }
+
+    public async createNewUserProfile(profileName: string): Promise<boolean> {
+        try {
+            await this.db.insert(userProfilesTable).values({ label: profileName })
+            return true
+        }
+        catch (err) {
+            throw err
+        }
+    }
+
+    public async getUserProfiles(): Promise<string[]> {
+        try {
+            type ProfileType = { label: string | null }
+            const profiles: ProfileType[]
+                = await this.db
+                    .select({ label: userProfilesTable.label })
+                    .from(userProfilesTable)
+            const profileLabels = profiles.map(p => p.label || "")
+            return profileLabels
+        }
+        catch (err) {
+            throw err
+        }
     }
 }
