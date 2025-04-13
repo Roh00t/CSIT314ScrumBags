@@ -12,6 +12,10 @@ const HomeRoute: React.FC = () => {
     navigate('/create')
   }
 
+  const goToCreateProfile = () => {
+    navigate('create-profile')
+  }
+
   return (
     <div
       style={{
@@ -26,6 +30,7 @@ const HomeRoute: React.FC = () => {
       <h2>The beginning of a multi-million dollar cleaning service venture</h2>
       <button onClick={goToLogin}>Go to Login</button>
       <button onClick={goToCreate}>Go to Create</button>
+      <button onClick={goToCreateProfile}>Go to Create Profile</button>
     </div>
   )
 }

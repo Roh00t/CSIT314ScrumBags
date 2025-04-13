@@ -1,5 +1,6 @@
   import React, { useState } from 'react'
   import axios from 'axios'
+  import { Link } from 'react-router-dom'
 
   const CreateAccountPage: React.FC = () => {
     const [role, setRole] = useState('')
@@ -46,84 +47,98 @@
     }
 
     return (
-      <div className="create_container">
-        <div className="left_side">
-          <h1>Experience a New Level of Clean</h1>
-          <p>
-            Create an account to book reliable, professional cleaning services
-            for your home or office.
-          </p>
+      <div className="page_container">
+        <div className="header_container">
+          {/* Add the image in */}
+          <h2><Link to="/">About Us</Link></h2>
+          <h2><Link to="/">Our Services</Link></h2>
+          <h2><Link to="/">Contact Us</Link></h2>
+          <h2 id="logout_button">Logout</h2>  {/* This is temporary requires functions to work */}
         </div>
-        <div className="right_side">
-          <form className="create_form" onSubmit={handleCreateAccount}>
-            <h2>Create Account</h2>
-            <p>Please enter your details</p>
 
-            {error && <p className="error_msg">{error}</p>}
-            {success && <p className="success_msg">{success}</p>}
+        <div className="create_container">
+          <div className="left_side">
+            <h1>Experience a New Level of Clean</h1>
+            <p>
+              Create an account to book reliable, professional cleaning services
+              for your home or office.
+            </p>
+          </div>
+          <div className="right_side">
+            <form className="create_form" onSubmit={handleCreateAccount}>
+              <h2>Create Account</h2>
+              <p>Please enter your details</p>
 
-            <label>Create As:</label>
-            <select
-              value={role}
-              onChange={e => setRole(e.target.value)}
-              required
-            >
-              <option value="">Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="cleaner">Cleaner</option>
-            </select>
+              {error && <p className="error_msg">{error}</p>}
+              {success && <p className="success_msg">{success}</p>}
 
-            <label>Enter Username:</label>
-            <div className="input_group">
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+              <label>Create As:</label>
+              <select
+                value={role}
+                onChange={e => setRole(e.target.value)}
                 required
-              />
-            </div>
+              >
+                <option value="">Select Role</option>
+                <option value="admin">Admin</option>
+                <option value="cleaner">Cleaner</option>
+              </select>
 
-            <label>Enter Password:</label>
-            <div className="input_group">
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
-            </div>
+              <label>Enter Username:</label>
+              <div className="input_group">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                  required
+                />
+              </div>
 
-            <label>Enter Confirm Password:</label>
-            <div className="input_group">
-              <input
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+              <label>Enter Password:</label>
+              <div className="input_group">
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-            <button type="submit" className="create_btn">
-              Create Account
-            </button>
-            <button
-              type="button"
-              className="cancel_btn"
-              onClick={() => {
-                setRole('')
-                setUsername('')
-                setPassword('')
-                setConfirmPassword('')
-                setError('')
-                setSuccess('')
-              }}
-            >
-              Cancel
-            </button>
-          </form>
+              <label>Enter Confirm Password:</label>
+              <div className="input_group">
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="create_btn">
+                Create Account
+              </button>
+              <button
+                type="button"
+                className="cancel_btn"
+                onClick={() => {
+                  setRole('')
+                  setUsername('')
+                  setPassword('')
+                  setConfirmPassword('')
+                  setError('')
+                  setSuccess('')
+                }}
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="footer_container">
+            <p>© Copyright 2025 Easy & Breezy - All Rights Reserved</p>
         </div>
       </div>
     )
