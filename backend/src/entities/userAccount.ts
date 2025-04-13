@@ -3,13 +3,13 @@ import {
     UserAccountNotFound,
     UserAccountSuspendedError
 } from '../exceptions/userExceptions'
+import { userProfilesTable } from '../db/schema/userProfiles'
+import { userAccountsTable } from '../db/schema/userAccounts'
 import { UserAccountResponse } from '../dto/userDTOs'
+import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
-import { DrizzleClient } from '../shared/constants'
-import { userProfilesTable } from '../db/schema/userProfiles'
-import { userAccountsTable } from '../db/schema/userAccounts'
 
 export default class UserAccount {
     private db: DrizzleClient

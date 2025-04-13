@@ -8,9 +8,10 @@
         "build": "rimraf ./dist && tsc",
         "dev": "nodemon --watch \"src/**/*.ts\" --ext \"ts,json\" --ignore \"src/**/*.test.ts\" --exec \"npx ts-node ./src/index.ts\"",
         "dev:setup": "ts-node ./misc/setup.ts",
-        "tests": "cross-env NODE_ENV=test jest",
+        "tests": "cross-env NODE_ENV=test jest --detectOpenHandles",
         "db:push": "drizzle-kit push",
-        "db:push:test": "cross-env NODE_ENV=test drizzle-kit push"
+        "db:push:test": "cross-env NODE_ENV=test drizzle-kit push",
+        "set_test_env": "cross-env NODE_ENV=test"
     },
     "author": "",
     "license": "ISC",

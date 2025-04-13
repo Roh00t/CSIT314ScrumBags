@@ -1,17 +1,12 @@
 import userAccountsRouter from './routers/userAccountsRouter'
-import connectPgSimple from 'connect-pg-simple'
-import session from 'express-session'
-import express, { urlencoded } from 'express'
-import dotenv from 'dotenv'
-import cors from 'cors'
 import userProfilesRouter from './routers/userProfilesRouter'
+import connectPgSimple from 'connect-pg-simple'
+import express, { urlencoded } from 'express'
+import session from 'express-session'
+import cors from 'cors'
+import 'dotenv/config'
 
-dotenv.config({
-    path: process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env',
-    override: true
-})
-
-export const app = express()
+const app = express()
 app.use(express.json())
 app.use(urlencoded({ extended: false }))
 app.use(
@@ -41,7 +36,9 @@ app.use(
 app.use('/api/user-accounts/', userAccountsRouter)
 app.use('/api/user-profiles/', userProfilesRouter)
 
-const APP_PORT = process.env.PORT || 3000
-app.listen(APP_PORT, async () => {
+const APP_PORT = process.env.PORT || 3001
+const server = app.listen(APP_PORT, () => {
     console.log('Server listening on port', APP_PORT)
 })
+
+export { server, app }

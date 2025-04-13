@@ -13,15 +13,21 @@ import {
 
 const userAccountsRouter = Router()
 
-userAccountsRouter.post('/create', async (req, res): Promise<void> => {
-    const { createAs, username, password } = req.body
+userAccountsRouter.get('/', async (req, res): Promise<void> => {
+    res.status(200).json({
+        never: "Never",
+        gonna: "GOnna",
+        give: "GIVE",
+        you: "yOU"
+    })
+})
 
+userAccountsRouter.post('/create', async (req, res): Promise<void> => {
     try {
+        const { createAs, username, password } = req.body
         const controller = new CreateNewUserAccountController()
         const createSuccess = await controller.createNewUserAccount(
-            createAs,
-            username,
-            password
+            createAs, username, password
         )
 
         if (createSuccess) {
@@ -50,31 +56,28 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
                 })
                 return
             }
-            ;(req.session as any).user = userAccRes as UserAccountResponse
+            (req.session as any).user = userAccRes as UserAccountResponse
             res.status(StatusCodes.OK).json(userAccRes)
         })
     } catch (err) {
         if (err instanceof UserAccountNotFound) {
             res.status(StatusCodes.NOT_FOUND).send()
         } else if (err instanceof InvalidCredentialsError) {
-            res.status(StatusCodes.UNAUTHORIZED).json({
-                message: 'Invalid credentials'
-            })
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid credentials' })
         } else if (err instanceof UserAccountSuspendedError) {
-            res.status(StatusCodes.LOCKED).json({
-                message: 'Account is suspended'
-            })
+            res.status(StatusCodes.LOCKED).json({ message: 'Account is suspended' })
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
             })
         }
+        console.error("userAccountRouter, login error: ", (err as Error).message)
     }
 })
 
 userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     try {
-        await req.session.destroy((_) => {})
+        await req.session.destroy((_) => { })
         res.status(StatusCodes.OK).json({ message: 'Logout successful' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
