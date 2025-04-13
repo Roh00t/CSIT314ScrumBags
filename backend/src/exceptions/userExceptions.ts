@@ -13,5 +13,5 @@ export class InvalidCredentialsError extends Error {
 export class UserAccountSuspendedError extends Error {
     constructor(message: string) {
         super(message)
-    } 
+    }
 }

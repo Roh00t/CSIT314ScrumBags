@@ -1,9 +1,11 @@
 import {
-    InvalidCredentialsError, UserAccountNotFound, UserAccountSuspendedError
+    InvalidCredentialsError,
+    UserAccountNotFound,
+    UserAccountSuspendedError
 } from '../exceptions/userExceptions'
 import { UserAccountResponse } from '../dto/userDTOs'
-import { drizzle } from "drizzle-orm/node-postgres"
-import { eq } from "drizzle-orm"
+import { drizzle } from 'drizzle-orm/node-postgres'
+import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import { DrizzleClient } from '../shared/constants'
 import { userProfilesTable } from '../db/schema/userProfiles'
@@ -24,18 +26,18 @@ export default class UserAccount {
         username: string,
         password: string
     ): Promise<boolean> {
-        const [userProfile] = await this.db.select()
+        const [userProfile] = await this.db
+            .select()
             .from(userProfilesTable)
             .where(eq(userProfilesTable.label, createAs))
 
         if (!userProfile) return false
 
-        await this.db.insert(userAccountsTable)
-            .values({
-                username: username,
-                password: password,
-                userProfileId: userProfile.id,
-            })
+        await this.db.insert(userAccountsTable).values({
+            username: username,
+            password: password,
+            userProfileId: userProfile.id
+        })
         return true
     }
 
@@ -43,7 +45,10 @@ export default class UserAccount {
      * @param password The PLAINTEXT password (not encoded)
      * @returns string uuid of the logged-in user, empty string if unsuccessful
      */
-    public async login(username: string, password: string): Promise<UserAccountResponse> {
+    public async login(
+        username: string,
+        password: string
+    ): Promise<UserAccountResponse> {
         const [retrievedUser] = await this.db
             .select({
                 id: userAccountsTable.id,
@@ -61,17 +66,24 @@ export default class UserAccount {
             .limit(1)
 
         if (!retrievedUser) {
-            throw new UserAccountNotFound("Couldn't find user of username: " + username)
+            throw new UserAccountNotFound(
+                "Couldn't find user of username: " + username
+            )
         }
 
-        const areCredentialsVerified = await bcrypt.compare(password, retrievedUser.password)
+        const areCredentialsVerified = await bcrypt.compare(
+            password,
+            retrievedUser.password
+        )
         if (!areCredentialsVerified) {
-            throw new InvalidCredentialsError("Invalid credentials entered for user of username: " + username)
+            throw new InvalidCredentialsError(
+                'Invalid credentials entered for user of username: ' + username
+            )
         }
 
         if (retrievedUser.isSuspended) {
             throw new UserAccountSuspendedError(
-                "User account " + retrievedUser.username + " is suspended"
+                'User account ' + retrievedUser.username + ' is suspended'
             )
         }
 
@@ -84,10 +96,11 @@ export default class UserAccount {
 
     public async createNewUserProfile(profileName: string): Promise<boolean> {
         try {
-            await this.db.insert(userProfilesTable).values({ label: profileName })
+            await this.db
+                .insert(userProfilesTable)
+                .values({ label: profileName })
             return true
-        }
-        catch (err) {
+        } catch (err) {
             throw err
         }
     }
@@ -95,14 +108,12 @@ export default class UserAccount {
     public async getUserProfiles(): Promise<string[]> {
         try {
             type ProfileType = { label: string | null }
-            const profiles: ProfileType[]
-                = await this.db
-                    .select({ label: userProfilesTable.label })
-                    .from(userProfilesTable)
-            const profileLabels = profiles.map(p => p.label || "")
+            const profiles: ProfileType[] = await this.db
+                .select({ label: userProfilesTable.label })
+                .from(userProfilesTable)
+            const profileLabels = profiles.map((p) => p.label || '')
             return profileLabels
-        }
-        catch (err) {
+        } catch (err) {
             throw err
         }
     }

@@ -1,6 +1,6 @@
-import { UserAccountResponse } from "../dto/userDTOs"
-import UserAccount from "../entities/userAccount"
-import { GLOBALS } from "../shared/constants"
+import { UserAccountResponse } from '../dto/userDTOs'
+import UserAccount from '../entities/userAccount'
+import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
 
 export class LoginController {
@@ -10,11 +10,13 @@ export class LoginController {
         this.userAccount = new UserAccount()
     }
 
-    public async login(username: string, password: string): Promise<UserAccountResponse | null> {
+    public async login(
+        username: string,
+        password: string
+    ): Promise<UserAccountResponse | null> {
         try {
             return await this.userAccount.login(username, password)
-        }
-        catch (err) {
+        } catch (err) {
             throw err
         }
     }
@@ -56,8 +58,7 @@ export class CreateNewUserProfileController {
     public async createNewUserProfile(profileName: string): Promise<boolean> {
         try {
             return await this.userAccount.createNewUserProfile(profileName)
-        }
-        catch (err) {
+        } catch (err) {
             throw err
         }
     }
@@ -73,8 +74,7 @@ export class GetUserProfilesController {
     public async getUserProfiles(): Promise<string[]> {
         try {
             return await this.userAccount.getUserProfiles()
-        }
-        catch (err) {
+        } catch (err) {
             throw err
         }
     }
