@@ -1,7 +1,7 @@
+
 import {
-    CreateNewUserProfileController,
-    GetUserProfilesController
-} from '../controllers/userControllers'
+    CreateNewUserProfileController, ViewUserProfilesController
+} from '../controllers/userProfileControllers'
 import { StatusCodes } from 'http-status-codes'
 import { Router } from 'express'
 
@@ -22,7 +22,7 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
 
 userProfilesRouter.get('/', async (_, res): Promise<void> => {
     try {
-        const profiles = await new GetUserProfilesController().getUserProfiles()
+        const profiles = await new ViewUserProfilesController().viewUserProfiles()
         res.status(StatusCodes.OK).json({
             message: 'Successs',
             data: profiles

@@ -2,7 +2,7 @@ import {
     InvalidCredentialsError,
     UserAccountNotFound,
     UserAccountSuspendedError
-} from '../exceptions/userExceptions'
+} from '../exceptions/exceptions'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { UserAccountResponse } from '../dto/userDTOs'
@@ -43,7 +43,6 @@ export default class UserAccount {
 
     /**
      * @param password The PLAINTEXT password (not encoded)
-     * @returns string uuid of the logged-in user, empty string if unsuccessful
      */
     public async login(
         username: string,
@@ -94,27 +93,28 @@ export default class UserAccount {
         } as UserAccountResponse
     }
 
-    public async createNewUserProfile(profileName: string): Promise<boolean> {
-        try {
-            await this.db
-                .insert(userProfilesTable)
-                .values({ label: profileName })
-            return true
-        } catch (err) {
-            throw err
-        }
-    }
+    public async viewUserAccounts(): Promise<UserAccountResponse[]> {
+        const allUsers = await this.db
+            .select({
+                id: userAccountsTable.id,
+                username: userAccountsTable.username,
+                profileLabel: userProfilesTable.label
+            })
+            .from(userAccountsTable)
+            .leftJoin(
+                userProfilesTable,
+                eq(
+                    userAccountsTable.userProfileId,
+                    userProfilesTable.id
+                )
+            )
 
-    public async getUserProfiles(): Promise<string[]> {
-        try {
-            type ProfileType = { label: string | null }
-            const profiles: ProfileType[] = await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-            const profileLabels = profiles.map((p) => p.label || '')
-            return profileLabels
-        } catch (err) {
-            throw err
-        }
+        return allUsers.map(u => {
+            return {
+                id: u.id,
+                username: u.username,
+                userProfile: u.profileLabel
+            } as UserAccountResponse
+        })
     }
 }

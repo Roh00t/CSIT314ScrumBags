@@ -1,21 +1,21 @@
-import { integer, pgTable, uuid, timestamp, index } from 'drizzle-orm/pg-core'
+import { integer, pgTable, timestamp, index, serial } from 'drizzle-orm/pg-core'
 import { userAccountsTable } from './userAccounts'
 import { bookingStatusEnum } from './bookingStatusEnum'
-import { serviceCategoriesTable } from './serviceCategories'
+import { servicesTable } from './services'
 
 export const serviceBookingsTable = pgTable(
     'service_bookings',
     {
-        id: uuid().defaultRandom().primaryKey(),
-        homeownerID: uuid()
+        id: serial().primaryKey(),
+        homeownerID: integer()
             .notNull()
             .references(() => userAccountsTable.id, { onDelete: 'restrict' }),
-        cleanerID: uuid()
+        cleanerID: integer()
             .notNull()
             .references(() => userAccountsTable.id, { onDelete: 'restrict' }),
         categoryID: integer()
             .notNull()
-            .references(() => serviceCategoriesTable.id, {
+            .references(() => servicesTable.id, {
                 onDelete: 'restrict'
             }),
         startTimestamp: timestamp({

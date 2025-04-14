@@ -3,6 +3,22 @@ import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
 
+export class ViewUserAccountController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async viewUserAccounts(): Promise<UserAccountResponse[]> {
+        try {
+            return await this.userAccount.viewUserAccounts()
+        } catch (err) {
+            throw err
+        }
+    }
+}
+
 export class LoginController {
     private userAccount: UserAccount
 
@@ -37,9 +53,7 @@ export class CreateNewUserAccountController {
         username: string,
         password: string
     ): Promise<boolean> {
-        const salt = await bcrypt.genSalt(GLOBALS.SALT_ROUNDS)
-        const hashedPassword = await bcrypt.hash(password, salt)
-
+        const hashedPassword = await bcrypt.hash(password, GLOBALS.SALT_ROUNDS)
         return await this.userAccount.createNewUserAccount(
             createAs,
             username,
@@ -48,34 +62,3 @@ export class CreateNewUserAccountController {
     }
 }
 
-export class CreateNewUserProfileController {
-    private userAccount: UserAccount
-
-    constructor() {
-        this.userAccount = new UserAccount()
-    }
-
-    public async createNewUserProfile(profileName: string): Promise<boolean> {
-        try {
-            return await this.userAccount.createNewUserProfile(profileName)
-        } catch (err) {
-            throw err
-        }
-    }
-}
-
-export class GetUserProfilesController {
-    private userAccount: UserAccount
-
-    constructor() {
-        this.userAccount = new UserAccount()
-    }
-
-    public async getUserProfiles(): Promise<string[]> {
-        try {
-            return await this.userAccount.getUserProfiles()
-        } catch (err) {
-            throw err
-        }
-    }
-}

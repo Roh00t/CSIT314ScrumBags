@@ -5,6 +5,14 @@ import express, { urlencoded } from 'express'
 import session from 'express-session'
 import cors from 'cors'
 import 'dotenv/config'
+import servicesRouter from './routers/servicesRouter'
+import { UserAccountResponse } from './dto/userDTOs'
+
+declare module 'express-session' {
+    interface SessionData {
+        user: UserAccountResponse
+    }
+}
 
 const app = express()
 app.use(express.json())
@@ -35,6 +43,7 @@ app.use(
 
 app.use('/api/user-accounts/', userAccountsRouter)
 app.use('/api/user-profiles/', userProfilesRouter)
+app.use('/api/services/', servicesRouter)
 
 const APP_PORT = process.env.PORT || 3001
 const server = app.listen(APP_PORT, () => {

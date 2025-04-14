@@ -1,4 +1,5 @@
 import { serviceCategoriesOfferedTable } from '../src/db/schema/serviceCategoriesOffered'
+import { CreateNewUserAccountController } from '../src/controllers/userControllers'
 import { shortlistedCleanersTable } from '../src/db/schema/shortlistedCleaners'
 import { serviceCategoriesTable } from '../src/db/schema/serviceCategories'
 import { serviceBookingsTable } from '../src/db/schema/serviceBookings'
@@ -6,14 +7,13 @@ import { userAccountsTable } from '../src/db/schema/userAccounts'
 import { userProfilesTable } from '../src/db/schema/userProfiles'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { GLOBALS } from '../src/shared/constants'
+import { StatusCodes } from 'http-status-codes'
 import { app, server } from '../src/index'
 import { eq, sql } from 'drizzle-orm'
 import supertest from 'supertest'
 import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import { Pool } from 'pg'
-import { StatusCodes } from 'http-status-codes'
-import { CreateNewUserAccountController } from '../src/controllers/userControllers'
 
 describe('Testing the Login Endpoint', (): void => {
     let db: ReturnType<typeof drizzle>

@@ -1,26 +1,38 @@
 import { Router } from 'express'
 import {
     CreateNewUserAccountController,
-    LoginController
-} from '../controllers/userControllers'
+    LoginController,
+    ViewUserAccountController
+} from '../controllers/userAccountControllers'
 import { StatusCodes } from 'http-status-codes'
 import { UserAccountResponse } from '../dto/userDTOs'
 import {
     InvalidCredentialsError,
     UserAccountNotFound,
     UserAccountSuspendedError
-} from '../exceptions/userExceptions'
+} from '../exceptions/exceptions'
+import { allowedProfilesMiddleware, requireAuthMiddleware } from '../shared/middleware'
 
 const userAccountsRouter = Router()
 
-userAccountsRouter.get('/', async (req, res): Promise<void> => {
-    res.status(200).json({
-        never: "Never",
-        gonna: "GOnna",
-        give: "GIVE",
-        you: "yOU"
-    })
-})
+userAccountsRouter.get(
+    '/',
+    requireAuthMiddleware,
+    allowedProfilesMiddleware(["user admin"]),
+    async (_, res): Promise<void> => {
+        try {
+            const allUserAccountData = await new ViewUserAccountController().viewUserAccounts()
+            res.status(StatusCodes.OK).json(allUserAccountData)
+        }
+        catch (err) {
+            if (err instanceof UserAccountNotFound) {
+                res.status(StatusCodes.NOT_FOUND)
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+            }
+        }
+    }
+)
 
 userAccountsRouter.post('/create', async (req, res): Promise<void> => {
     try {

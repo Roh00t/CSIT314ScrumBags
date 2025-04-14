@@ -1,5 +1,5 @@
 export type UserAccountResponse = {
-    id: string
+    id: number
     username: string
     userProfile: string
 }

@@ -4,5 +4,7 @@ export const bookingStatusEnum = pgEnum('booking_status', [
     'requested',
     'accepted',
     'rejected',
+    'pending',
+    'cancelled',
     'done'
 ])

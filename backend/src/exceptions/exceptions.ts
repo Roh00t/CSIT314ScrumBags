@@ -15,3 +15,15 @@ export class UserAccountSuspendedError extends Error {
         super(message)
     }
 }
+
+export class ServiceNotFoundError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
+
+// export class InvalidRoleError extends Error {
+//     constructor(message: string) {
+//         super(message)
+//     }
+// }
