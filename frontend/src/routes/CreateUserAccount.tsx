@@ -1,14 +1,33 @@
-  import React, { useState } from 'react'
+  import React, { useState, useEffect } from 'react'
   import axios from 'axios'
   import { Link } from 'react-router-dom'
 
   const CreateAccountPage: React.FC = () => {
     const [role, setRole] = useState('')
+    const [roles, setRoles] = useState<string[]>([]) // state to store roles
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
+
+    // ✅ Fetch roles from the backend
+    useEffect(() => {
+      const fetchRoles = async () => {
+        try {
+          const response = await axios.get('http://localhost:3000/api/user-profiles/', {
+            withCredentials: true,
+          })
+          setRoles(response.data.data) // should return ['admin', 'cleaner', 'homeowner']
+        } catch (err) {
+          console.error('Failed to fetch roles:', err)
+          setError('Could not load roles. Please try again later.')
+        }
+      }
+
+      fetchRoles()
+    }, [])
+
 
     const handleCreateAccount = async (e: React.FormEvent) => {
       e.preventDefault()
@@ -79,8 +98,9 @@
                 required
               >
                 <option value="">Select Role</option>
-                <option value="admin">Admin</option>
-                <option value="cleaner">Cleaner</option>
+                {roles.map(r => (
+                  <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
+                ))}
               </select>
 
               <label>Enter Username:</label>
