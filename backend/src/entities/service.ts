@@ -1,17 +1,15 @@
 import { servicesProvidedTable } from "../db/schema/servicesProvided"
+import { ServiceNotFoundError } from "../exceptions/exceptions"
 import { userAccountsTable } from "../db/schema/userAccounts"
 import { servicesTable } from "../db/schema/services"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { eq } from "drizzle-orm"
-import { ServiceNotFoundError } from "../exceptions/exceptions"
 
 export class Service {
     private db: DrizzleClient
 
-    constructor() {
-        this.db = drizzle(process.env.DATABASE_URL!)
-    }
+    constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
 
     public async createService(service: string): Promise<void> {
         await this.db.insert(servicesTable).values({ label: service })

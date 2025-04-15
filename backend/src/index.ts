@@ -1,18 +1,11 @@
 import userAccountsRouter from './routers/userAccountsRouter'
 import userProfilesRouter from './routers/userProfilesRouter'
+import servicesRouter from './routers/servicesRouter'
 import connectPgSimple from 'connect-pg-simple'
 import express, { urlencoded } from 'express'
 import session from 'express-session'
 import cors from 'cors'
 import 'dotenv/config'
-import servicesRouter from './routers/servicesRouter'
-import { UserAccountResponse } from './dto/userDTOs'
-
-declare module 'express-session' {
-    interface SessionData {
-        user: UserAccountResponse
-    }
-}
 
 const app = express()
 app.use(express.json())
@@ -35,7 +28,7 @@ app.use(
         cookie: {
             sameSite: 'lax',
             httpOnly: true,
-            maxAge: 1000 * 60 * 5 // 5 minutes
+            maxAge: 1000 * 60 * 10 // 10 minutes
             // secure: process.env.NODE_ENV === 'prod'
         }
     })

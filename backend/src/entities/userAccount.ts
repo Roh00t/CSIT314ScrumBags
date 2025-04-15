@@ -14,9 +14,7 @@ import bcrypt from 'bcrypt'
 export default class UserAccount {
     private db: DrizzleClient
 
-    constructor() {
-        this.db = drizzle(process.env.DATABASE_URL!) // Establish database connection
-    }
+    constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
 
     /**
      * @param password The ENCODED password
@@ -31,7 +29,9 @@ export default class UserAccount {
             .from(userProfilesTable)
             .where(eq(userProfilesTable.label, createAs))
 
-        if (!userProfile) return false
+        if (!userProfile) {
+            return false
+        }
 
         await this.db.insert(userAccountsTable).values({
             username: username,
@@ -71,8 +71,7 @@ export default class UserAccount {
         }
 
         const areCredentialsVerified = await bcrypt.compare(
-            password,
-            retrievedUser.password
+            password, retrievedUser.password
         )
         if (!areCredentialsVerified) {
             throw new InvalidCredentialsError(

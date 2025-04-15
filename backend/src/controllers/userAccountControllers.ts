@@ -6,44 +6,30 @@ import bcrypt from 'bcrypt'
 export class ViewUserAccountController {
     private userAccount: UserAccount
 
-    constructor() {
-        this.userAccount = new UserAccount()
-    }
+    constructor() { this.userAccount = new UserAccount() }
 
     public async viewUserAccounts(): Promise<UserAccountResponse[]> {
-        try {
-            return await this.userAccount.viewUserAccounts()
-        } catch (err) {
-            throw err
-        }
+        return await this.userAccount.viewUserAccounts()
     }
 }
 
 export class LoginController {
     private userAccount: UserAccount
 
-    constructor() {
-        this.userAccount = new UserAccount()
-    }
+    constructor() { this.userAccount = new UserAccount() }
 
     public async login(
         username: string,
         password: string
-    ): Promise<UserAccountResponse | null> {
-        try {
-            return await this.userAccount.login(username, password)
-        } catch (err) {
-            throw err
-        }
+    ): Promise<UserAccountResponse> {
+        return await this.userAccount.login(username, password)
     }
 }
 
 export class CreateNewUserAccountController {
     private userAccount: UserAccount
 
-    constructor() {
-        this.userAccount = new UserAccount()
-    }
+    constructor() { this.userAccount = new UserAccount() }
 
     /**
      * @param password The PLAINTEXT password (not encoded)

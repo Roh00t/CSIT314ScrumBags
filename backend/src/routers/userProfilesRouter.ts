@@ -7,6 +7,9 @@ import { Router } from 'express'
 
 const userProfilesRouter = Router()
 
+/**
+ * Create user profile
+ */
 userProfilesRouter.post('/', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body
@@ -20,6 +23,9 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * Get all user profiles
+ */
 userProfilesRouter.get('/', async (_, res): Promise<void> => {
     try {
         const profiles = await new ViewUserProfilesController().viewUserProfiles()

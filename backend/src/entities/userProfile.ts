@@ -5,31 +5,21 @@ import { DrizzleClient } from "../shared/constants"
 export class UserProfile {
     private db: DrizzleClient
 
-    constructor() {
-        this.db = drizzle(process.env.DATABASE_URL!) // Establish database connection
-    }
+    constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
 
     public async createNewUserProfile(profileName: string): Promise<boolean> {
-        try {
-            await this.db
-                .insert(userProfilesTable)
-                .values({ label: profileName })
-            return true
-        } catch (err) {
-            throw err
-        }
+        await this.db
+            .insert(userProfilesTable)
+            .values({ label: profileName })
+        return true
     }
 
     public async viewUserProfiles(): Promise<string[]> {
-        try {
-            type ProfileType = { label: string | null }
-            const profiles: ProfileType[] = await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-            const profileLabels = profiles.map((p) => p.label || '')
-            return profileLabels
-        } catch (err) {
-            throw err
-        }
+        type ProfileType = { label: string | null }
+        const profiles: ProfileType[] = await this.db
+            .select({ label: userProfilesTable.label })
+            .from(userProfilesTable)
+        const profileLabels = profiles.map(p => p.label || '')
+        return profileLabels
     }
 }

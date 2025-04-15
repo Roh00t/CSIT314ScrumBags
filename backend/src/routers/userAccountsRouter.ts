@@ -1,58 +1,54 @@
-import { Router } from 'express'
-import {
-    CreateNewUserAccountController,
-    LoginController,
-    ViewUserAccountController
-} from '../controllers/userAccountControllers'
-import { StatusCodes } from 'http-status-codes'
+import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { UserAccountResponse } from '../dto/userDTOs'
 import {
+    CreateNewUserAccountController,
+    ViewUserAccountController,
+    LoginController
+} from '../controllers/userAccountControllers'
+import {
+    UserAccountSuspendedError,
     InvalidCredentialsError,
-    UserAccountNotFound,
-    UserAccountSuspendedError
+    UserAccountNotFound
 } from '../exceptions/exceptions'
-import { allowedProfilesMiddleware, requireAuthMiddleware } from '../shared/middleware'
+import { Router } from 'express'
 
 const userAccountsRouter = Router()
 
-userAccountsRouter.get(
-    '/',
-    requireAuthMiddleware,
-    allowedProfilesMiddleware(["user admin"]),
-    async (_, res): Promise<void> => {
-        try {
-            const allUserAccountData = await new ViewUserAccountController().viewUserAccounts()
-            res.status(StatusCodes.OK).json(allUserAccountData)
-        }
-        catch (err) {
-            if (err instanceof UserAccountNotFound) {
-                res.status(StatusCodes.NOT_FOUND)
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-            }
+userAccountsRouter.get('/', async (_, res): Promise<void> => {
+    try {
+        const allUserAccountData = await new ViewUserAccountController().viewUserAccounts()
+        res.status(StatusCodes.OK).json(allUserAccountData)
+    }
+    catch (err) {
+        if (err instanceof UserAccountNotFound) {
+            res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: ReasonPhrases.INTERNAL_SERVER_ERROR
+            })
         }
     }
-)
+})
 
 userAccountsRouter.post('/create', async (req, res): Promise<void> => {
     try {
         const { createAs, username, password } = req.body
         const controller = new CreateNewUserAccountController()
-        const createSuccess = await controller.createNewUserAccount(
+        const isCreatedSuccessfully = await controller.createNewUserAccount(
             createAs, username, password
         )
 
-        if (createSuccess) {
-            res.status(StatusCodes.CREATED).send('Account created successfully')
+        if (isCreatedSuccessfully) {
+            res.status(StatusCodes.CREATED).json({
+                message: 'Account created successfully'
+            })
         } else {
-            console.log('Account creation failed due to conflict.') // Log the reason for failure
-            res.status(StatusCodes.CONFLICT).send('Account creation failed')
+            res.status(StatusCodes.CONFLICT).json({ message: 'Account creation failed' })
         }
     } catch (error) {
-        console.error('Error during account creation:', error) // Log the error for further insights
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(
-            'Internal Server Error'
-        )
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: ReasonPhrases.INTERNAL_SERVER_ERROR
+        })
     }
 })
 
@@ -73,17 +69,16 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
         })
     } catch (err) {
         if (err instanceof UserAccountNotFound) {
-            res.status(StatusCodes.NOT_FOUND).send()
+            res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
         } else if (err instanceof InvalidCredentialsError) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid credentials' })
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message })
         } else if (err instanceof UserAccountSuspendedError) {
-            res.status(StatusCodes.LOCKED).json({ message: 'Account is suspended' })
+            res.status(StatusCodes.LOCKED).json({ message: err.message })
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
             })
         }
-        console.error("userAccountRouter, login error: ", (err as Error).message)
     }
 })
 
