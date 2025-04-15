@@ -6,8 +6,7 @@ export const servicesTable = pgTable(
     'services',
     {
         id: serial().primaryKey(),
-        label: varchar({ length: 32 }).notNull().unique(),
-        description: varchar({ length: 128 })
+        label: varchar({ length: 32 }).notNull().unique()
     },
     (table) => [uniqueIndex().on(table.label)]
 )

@@ -1,12 +1,13 @@
+import { requireAuthMiddleware } from "../shared/middleware"
+import { UserAccountResponse } from "../dto/dataClasses"
+import { StatusCodes } from "http-status-codes"
 import {
     CreateServiceController,
     CreateServiceProvidedController,
+    ViewServicesController,
     ViewServicesProvidedController
 } from "../controllers/serviceControllers"
-import { UserAccountResponse } from "../dto/userDTOs"
-import { StatusCodes } from "http-status-codes"
 import { Router } from "express"
-import { requireAuthMiddleware } from "../shared/middleware"
 
 const servicesRouter = Router()
 
@@ -31,13 +32,12 @@ servicesRouter.post('/', async (req, res): Promise<void> => {
 })
 
 /**
- * Get all the services 'categories' or 'types' that exist
+ * View all the services 'categories' or 'types' that exist
  */
-servicesRouter.get('/', async (req, res): Promise<void> => {
+servicesRouter.get('/', async (_, res): Promise<void> => {
     try {
-        res.status(StatusCodes.IM_A_TEAPOT).json({
-            message: "API Endpoint to be implemented"
-        })
+        const allServices = await new ViewServicesController().viewServices()
+        res.status(StatusCodes.OK).json(allServices)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
@@ -51,11 +51,10 @@ servicesRouter.get('/', async (req, res): Promise<void> => {
 servicesRouter.get('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
-        const serviceCategoriesOffered =
-            await new ViewServicesProvidedController()
-                .viewServicesProvided(Number(id))
+        const servicesProvided =
+            await new ViewServicesProvidedController().viewServicesProvided(Number(id))
 
-        res.status(StatusCodes.OK).json(serviceCategoriesOffered)
+        res.status(StatusCodes.OK).json(servicesProvided)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
@@ -81,8 +80,14 @@ servicesRouter.post(
                 throw new Error("This isn't (theoretically) possible")
             }
 
-            const { service } = req.body
-            await new CreateServiceProvidedController().createServiceProvided(req.session.user?.id, service)
+            const { service, description, price } = req.body
+            await new CreateServiceProvidedController()
+                .createServiceProvided(
+                    req.session.user?.id,
+                    service,
+                    description,
+                    Number(price)
+                )
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -91,22 +96,5 @@ servicesRouter.post(
         }
     }
 )
-
-/**
- * Cleaners can remove the types of services they provide
- */
-servicesRouter.delete('/me', async (req, res): Promise<void> => {
-    try {
-        // TODO
-        const { service } = req.body
-        res.status(StatusCodes.IM_A_TEAPOT).json({
-            message: 'API Endpoint to be implemented'
-        })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
-})
 
 export default servicesRouter

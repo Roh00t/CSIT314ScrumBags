@@ -2,6 +2,7 @@ import { servicesProvidedTable } from "../db/schema/servicesProvided"
 import { ServiceNotFoundError } from "../exceptions/exceptions"
 import { userAccountsTable } from "../db/schema/userAccounts"
 import { servicesTable } from "../db/schema/services"
+import { ServiceProvided } from "../dto/dataClasses"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { eq } from "drizzle-orm"
@@ -11,18 +12,20 @@ export class Service {
 
     constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
 
-    public async createService(service: string): Promise<void> {
-        await this.db.insert(servicesTable).values({ label: service })
+    public async createService(serviceName: string): Promise<void> {
+        await this.db.insert(servicesTable).values({ label: serviceName })
     }
 
     public async viewServices(): Promise<string[]> {
         return (await this.db.select().from(servicesTable)).map(s => s.label)
     }
 
-    public async viewServicesProvided(userID: number): Promise<string[]> {
-        const servicesOffered = await this.db
+    public async viewServicesProvided(userID: number): Promise<ServiceProvided[]> {
+        const servicesProvided = await this.db
             .select({
-                serviceLabel: servicesTable.label
+                serviceName: servicesTable.label,
+                description: servicesProvidedTable.description,
+                price: servicesProvidedTable.price
             })
             .from(userAccountsTable)
             .leftJoin(
@@ -41,28 +44,37 @@ export class Service {
             )
             .where(eq(userAccountsTable.id, userID))
 
-        return servicesOffered
-            .filter(s => {
-                return s.serviceLabel && s.serviceLabel.length > 0
-            })
-            .map(s => s.serviceLabel as string)
+        return servicesProvided.map(so => {
+            return {
+                serviceName: so.serviceName,
+                description: so.description,
+                price: Number(so.price)
+            } as ServiceProvided
+        })
     }
 
-    public async createServiceProvided(userID: number, service: string): Promise<void> {
+    public async createServiceProvided(
+        userID: number,
+        serviceName: string,
+        description: string,
+        price: number
+    ): Promise<void> {
         const [serviceEntry] = await this.db
             .select({ id: servicesTable.id })
             .from(servicesTable)
-            .where(eq(servicesTable.label, service))
+            .where(eq(servicesTable.label, serviceName))
 
         if (!serviceEntry) {
-            throw new ServiceNotFoundError("Service '" + service + "' not found")
+            throw new ServiceNotFoundError("Service '" + serviceName + "' not found")
         }
 
         await this.db
             .insert(servicesProvidedTable)
             .values({
                 cleanerID: userID,
-                serviceID: serviceEntry.id
+                serviceID: serviceEntry.id,
+                description: description,
+                price: price.toString()
             })
     }
 }

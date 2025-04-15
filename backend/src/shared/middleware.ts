@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express"
-import { UserAccountResponse } from "../dto/userDTOs"
+import { UserAccountResponse } from "../dto/dataClasses"
 import { StatusCodes } from "http-status-codes"
 
 declare module 'express-session' {

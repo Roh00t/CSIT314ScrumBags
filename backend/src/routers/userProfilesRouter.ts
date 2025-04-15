@@ -29,10 +29,7 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
 userProfilesRouter.get('/', async (_, res): Promise<void> => {
     try {
         const profiles = await new ViewUserProfilesController().viewUserProfiles()
-        res.status(StatusCodes.OK).json({
-            message: 'Successs',
-            data: profiles
-        })
+        res.status(StatusCodes.OK).json(profiles)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message

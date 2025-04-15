@@ -1,9 +1,9 @@
-import { UserAccountResponse } from '../dto/userDTOs'
+import { UserAccountResponse } from '../dto/dataClasses'
 import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
 
-export class ViewUserAccountController {
+export class ViewUserAccountsController {
     private userAccount: UserAccount
 
     constructor() { this.userAccount = new UserAccount() }

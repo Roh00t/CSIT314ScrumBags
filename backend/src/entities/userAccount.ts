@@ -5,7 +5,7 @@ import {
 } from '../exceptions/exceptions'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { UserAccountResponse } from '../dto/userDTOs'
+import { UserAccountResponse } from '../dto/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'

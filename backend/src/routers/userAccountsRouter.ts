@@ -1,8 +1,8 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
-import { UserAccountResponse } from '../dto/userDTOs'
+import { UserAccountResponse } from '../dto/dataClasses'
 import {
     CreateNewUserAccountController,
-    ViewUserAccountController,
+    ViewUserAccountsController,
     LoginController
 } from '../controllers/userAccountControllers'
 import {
@@ -16,7 +16,7 @@ const userAccountsRouter = Router()
 
 userAccountsRouter.get('/', async (_, res): Promise<void> => {
     try {
-        const allUserAccountData = await new ViewUserAccountController().viewUserAccounts()
+        const allUserAccountData = await new ViewUserAccountsController().viewUserAccounts()
         res.status(StatusCodes.OK).json(allUserAccountData)
     }
     catch (err) {

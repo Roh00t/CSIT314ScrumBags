@@ -1,6 +1,6 @@
-import { pgTable, integer } from 'drizzle-orm/pg-core'
-import { servicesTable } from './services'
+import { pgTable, integer, text, numeric } from 'drizzle-orm/pg-core'
 import { userAccountsTable } from './userAccounts'
+import { servicesTable } from './services'
 
 export const servicesProvidedTable = pgTable(
     'services_provided',
@@ -10,6 +10,8 @@ export const servicesProvidedTable = pgTable(
             .references(() => userAccountsTable.id, { onDelete: 'cascade' }),
         serviceID: integer()
             .notNull()
-            .references(() => servicesTable.id, { onDelete: 'cascade' })
+            .references(() => servicesTable.id, { onDelete: 'cascade' }),
+        description: text(),
+        price: numeric().notNull()
     }
 )

@@ -8,10 +8,14 @@ export class UserProfile {
     constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
 
     public async createNewUserProfile(profileName: string): Promise<boolean> {
-        await this.db
-            .insert(userProfilesTable)
-            .values({ label: profileName })
-        return true
+        try {
+            await this.db
+                .insert(userProfilesTable)
+                .values({ label: profileName })
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     public async viewUserProfiles(): Promise<string[]> {
