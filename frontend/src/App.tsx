@@ -4,14 +4,17 @@ import HomeRoute from "./routes/HomeRoute"
 import Login from "./routes/Login"
 import CreateAccountPage from "./routes/CreateUserAccount"
 import CreateProfilePage from "./routes/CreateUserProfile"
+import CleanerDashboardRoute from "./routes/CleanerDashboard"
 
 // Configure all your routes here
 const browserRouter = createBrowserRouter([
   { path: "/", element: <HomeRoute /> },
   { path: "/login", element: <Login /> },
+  { path: "/admin", element: <AdminDashboardRoute/> },
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage />},
-  { path: "/admin-dashboard", element: <AdminDashboardRoute /> }
+  { path: "/admin-dashboard", element: <AdminDashboardRoute /> },
+  { path: "/clean-dashboard", element: <CleanerDashboardRoute /> }
   
 ])
 
