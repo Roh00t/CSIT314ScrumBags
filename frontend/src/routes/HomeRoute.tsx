@@ -12,6 +12,10 @@ const HomeRoute: React.FC = () => {
     navigate('/create')
   }
 
+  const goToCleanerDashboard = () => {
+    navigate('clean-dashboard')
+  }
+
   const goToCreateProfile = () => {
     navigate('create-profile')
   }
@@ -31,6 +35,7 @@ const HomeRoute: React.FC = () => {
       <button onClick={goToLogin}>Go to Login</button>
       <button onClick={goToCreate}>Go to Create</button>
       <button onClick={goToCreateProfile}>Go to Create Profile</button>
+      <button onClick={goToCleanerDashboard}>Go to Cleaner</button>
     </div>
   )
 }

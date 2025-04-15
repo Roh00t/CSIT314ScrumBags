@@ -255,6 +255,35 @@ create */
 }
 
 /* ====================================================== */
+.calendar-container {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+}
+
+.react-calendar__tile {
+  max-width: initial !important;
+  padding: 0.75em 0 !important;
+}
+
+.react-calendar__navigation {
+  margin-bottom: 1rem;
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+}
+
+
+
+/* ====================================================== */
 
 
 /* a {
