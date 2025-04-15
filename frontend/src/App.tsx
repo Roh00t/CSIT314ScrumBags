@@ -3,12 +3,14 @@ import AdminDashboardRoute from "./routes/AdminDashboardRoute"
 import HomeRoute from "./routes/HomeRoute"
 import Login from "./routes/Login"
 import CreateAccountPage from "./routes/CreateUserAccount"
+import CreateProfilePage from "./routes/CreateUserProfile"
 
 // Configure all your routes here
 const browserRouter = createBrowserRouter([
   { path: "/", element: <HomeRoute /> },
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
+  { path: "/create-profile", element: <CreateProfilePage />},
   { path: "/admin-dashboard", element: <AdminDashboardRoute /> }
   
 ])
