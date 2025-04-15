@@ -10,6 +10,7 @@ import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
+import { string } from 'zod'
 
 export default class UserAccount {
     private db: DrizzleClient
@@ -115,5 +116,20 @@ export default class UserAccount {
                 userProfile: u.profileLabel
             } as UserAccountResponse
         })
+    }
+    // This async Function only retrieves Cleaner names under the assumption that
+    // There will be another page to show the Services provided by the Cleaner.
+    // 15042025 2257 Hours
+    public async viewCleaners(): Promise<string[]> {
+        const queryForCleaners = await this.db.select({cleanerName: userAccountsTable.username})
+                                .from(userAccountsTable)
+                                .leftJoin(userProfilesTable, 
+                                eq(userAccountsTable.userProfileId, 
+                                userProfilesTable.id))
+                                .where(
+                                    eq(userProfilesTable.label, 
+                                        "cleaner"))
+        return queryForCleaners.map(q => q.cleanerName)
+
     }
 }

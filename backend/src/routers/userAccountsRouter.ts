@@ -11,6 +11,7 @@ import {
     UserAccountNotFound
 } from '../exceptions/exceptions'
 import { Router } from 'express'
+import { ViewCleanersController } from '../controllers/cleanerControllers'
 
 const userAccountsRouter = Router()
 
@@ -93,4 +94,16 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     }
 })
 
+userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
+    try{
+        const allAvailableCleaners = await new ViewCleanersController().viewCleaners()
+        res.status(StatusCodes.OK).json(allAvailableCleaners)
+    }
+    catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+
+        })
+    }
+})
 export default userAccountsRouter
