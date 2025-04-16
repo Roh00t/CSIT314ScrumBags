@@ -13,7 +13,7 @@ export const serviceBookingsTable = pgTable(
         cleanerID: integer()
             .notNull()
             .references(() => userAccountsTable.id, { onDelete: 'restrict' }),
-        categoryID: integer()
+        serviceID: integer()
             .notNull()
             .references(() => servicesTable.id, {
                 onDelete: 'restrict'
@@ -22,7 +22,6 @@ export const serviceBookingsTable = pgTable(
             mode: 'date',
             withTimezone: true
         }).notNull(),
-        endTimestamp: timestamp({ mode: 'date', withTimezone: true }).notNull(),
         status: bookingStatusEnum().notNull()
     },
     (table) => [

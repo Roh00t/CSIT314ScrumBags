@@ -1,11 +1,13 @@
 import userAccountsRouter from './routers/userAccountsRouter'
 import userProfilesRouter from './routers/userProfilesRouter'
 import servicesRouter from './routers/servicesRouter'
+import platformManagerRouter from './routers/platformManagerRouter'
 import connectPgSimple from 'connect-pg-simple'
 import express, { urlencoded } from 'express'
 import session from 'express-session'
 import cors from 'cors'
 import 'dotenv/config'
+
 
 const app = express()
 app.use(express.json())
@@ -37,6 +39,8 @@ app.use(
 app.use('/api/user-accounts/', userAccountsRouter)
 app.use('/api/user-profiles/', userProfilesRouter)
 app.use('/api/services/', servicesRouter)
+app.use('/api/platform-manager/', platformManagerRouter)
+
 
 const APP_PORT = process.env.PORT || 3001
 const server = app.listen(APP_PORT, () => {
