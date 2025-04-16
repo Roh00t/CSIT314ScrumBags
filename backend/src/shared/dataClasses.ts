@@ -5,16 +5,16 @@ export type UserAccountResponse = {
 }
 
 export type ServiceProvided = {
-    serviceName: string,
-    description: string,
+    serviceName: string
+    description: string
     price: number
 }
 
 export type ServiceBookingReportDatum = {
     // ID , Services, Cleaner Name, Price, Date
-    bookingid : number,
-    serviceName : string,
-    cleanerName: string,
-    price: number,
+    bookingid: number
+    serviceName: string
+    cleanerName: string
+    price: number
     date: Date
 }

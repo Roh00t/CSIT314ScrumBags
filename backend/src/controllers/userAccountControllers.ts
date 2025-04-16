@@ -1,4 +1,4 @@
-import { UserAccountResponse } from '../dto/dataClasses'
+import { UserAccountResponse } from '../shared/dataClasses'
 import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
@@ -6,7 +6,9 @@ import bcrypt from 'bcrypt'
 export class ViewUserAccountsController {
     private userAccount: UserAccount
 
-    constructor() { this.userAccount = new UserAccount() }
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
 
     public async viewUserAccounts(): Promise<UserAccountResponse[]> {
         return await this.userAccount.viewUserAccounts()
@@ -16,7 +18,9 @@ export class ViewUserAccountsController {
 export class LoginController {
     private userAccount: UserAccount
 
-    constructor() { this.userAccount = new UserAccount() }
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
 
     public async login(
         username: string,
@@ -29,7 +33,9 @@ export class LoginController {
 export class CreateNewUserAccountController {
     private userAccount: UserAccount
 
-    constructor() { this.userAccount = new UserAccount() }
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
 
     /**
      * @param password The PLAINTEXT password (not encoded)
@@ -47,4 +53,3 @@ export class CreateNewUserAccountController {
         )
     }
 }
-

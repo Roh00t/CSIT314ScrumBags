@@ -1,13 +1,13 @@
-import { requireAuthMiddleware } from "../shared/middleware"
-import { UserAccountResponse } from "../dto/dataClasses"
-import { StatusCodes } from "http-status-codes"
+import { requireAuthMiddleware } from '../shared/middleware'
+import { UserAccountResponse } from '../shared/dataClasses'
+import { StatusCodes } from 'http-status-codes'
 import {
     CreateServiceController,
     CreateServiceProvidedController,
     ViewServicesController,
     ViewServicesProvidedController
-} from "../controllers/serviceControllers"
-import { Router } from "express"
+} from '../controllers/serviceControllers'
+import { Router } from 'express'
 
 const servicesRouter = Router()
 
@@ -52,7 +52,9 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
         const servicesProvided =
-            await new ViewServicesProvidedController().viewServicesProvided(Number(id))
+            await new ViewServicesProvidedController().viewServicesProvided(
+                Number(id)
+            )
 
         res.status(StatusCodes.OK).json(servicesProvided)
     } catch (err) {
@@ -66,28 +68,28 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
  * Cleaners can add the types of services they provide
  */
 servicesRouter.post(
-    '/me', requireAuthMiddleware,
+    '/me',
+    requireAuthMiddleware,
     async (req, res): Promise<void> => {
         try {
             if (!req.session.user) {
                 /**
-                 * Shouldn't reach here, as the 'requireAuthMiddleware' 
+                 * Shouldn't reach here, as the 'requireAuthMiddleware'
                  * should ensure the user object is valid
-                 * 
-                 * Just asserting that it isn't null to stop the 
+                 *
+                 * Just asserting that it isn't null to stop the
                  * Typescript compiler from complaining (zzzzz)
                  */
                 throw new Error("This isn't (theoretically) possible")
             }
 
             const { service, description, price } = req.body
-            await new CreateServiceProvidedController()
-                .createServiceProvided(
-                    req.session.user?.id,
-                    service,
-                    description,
-                    Number(price)
-                )
+            await new CreateServiceProvidedController().createServiceProvided(
+                req.session.user?.id,
+                service,
+                description,
+                Number(price)
+            )
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

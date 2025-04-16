@@ -1,26 +1,30 @@
-import { servicesProvidedTable } from "../db/schema/servicesProvided"
-import { ServiceNotFoundError } from "../exceptions/exceptions"
-import { userAccountsTable } from "../db/schema/userAccounts"
-import { servicesTable } from "../db/schema/services"
-import { ServiceProvided } from "../dto/dataClasses"
-import { drizzle } from "drizzle-orm/node-postgres"
-import { DrizzleClient } from "../shared/constants"
-import { eq } from "drizzle-orm"
+import { servicesProvidedTable } from '../db/schema/servicesProvided'
+import { ServiceNotFoundError } from '../exceptions/exceptions'
+import { userAccountsTable } from '../db/schema/userAccounts'
+import { servicesTable } from '../db/schema/services'
+import { ServiceProvided } from '../shared/dataClasses'
+import { drizzle } from 'drizzle-orm/node-postgres'
+import { DrizzleClient } from '../shared/constants'
+import { eq } from 'drizzle-orm'
 
 export class Service {
     private db: DrizzleClient
 
-    constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
+    constructor() {
+        this.db = drizzle(process.env.DATABASE_URL!)
+    }
 
     public async createService(serviceName: string): Promise<void> {
         await this.db.insert(servicesTable).values({ label: serviceName })
     }
 
     public async viewServices(): Promise<string[]> {
-        return (await this.db.select().from(servicesTable)).map(s => s.label)
+        return (await this.db.select().from(servicesTable)).map((s) => s.label)
     }
 
-    public async viewServicesProvided(userID: number): Promise<ServiceProvided[]> {
+    public async viewServicesProvided(
+        userID: number
+    ): Promise<ServiceProvided[]> {
         const servicesProvided = await this.db
             .select({
                 serviceName: servicesTable.label,
@@ -30,21 +34,15 @@ export class Service {
             .from(userAccountsTable)
             .leftJoin(
                 servicesProvidedTable,
-                eq(
-                    userAccountsTable.id,
-                    servicesProvidedTable.cleanerID
-                )
+                eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
             )
             .leftJoin(
                 servicesTable,
-                eq(
-                    servicesProvidedTable.serviceID,
-                    servicesTable.id
-                )
+                eq(servicesProvidedTable.serviceID, servicesTable.id)
             )
             .where(eq(userAccountsTable.id, userID))
 
-        return servicesProvided.map(so => {
+        return servicesProvided.map((so) => {
             return {
                 serviceName: so.serviceName,
                 description: so.description,
@@ -65,16 +63,16 @@ export class Service {
             .where(eq(servicesTable.label, serviceName))
 
         if (!serviceEntry) {
-            throw new ServiceNotFoundError("Service '" + serviceName + "' not found")
+            throw new ServiceNotFoundError(
+                "Service '" + serviceName + "' not found"
+            )
         }
 
-        await this.db
-            .insert(servicesProvidedTable)
-            .values({
-                cleanerID: userID,
-                serviceID: serviceEntry.id,
-                description: description,
-                price: price.toString()
-            })
+        await this.db.insert(servicesProvidedTable).values({
+            cleanerID: userID,
+            serviceID: serviceEntry.id,
+            description: description,
+            price: price.toString()
+        })
     }
 }

@@ -1,5 +1,5 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
-import { UserAccountResponse } from '../dto/dataClasses'
+import { UserAccountResponse } from '../shared/dataClasses'
 import {
     CreateNewUserAccountController,
     ViewUserAccountsController,
@@ -17,10 +17,10 @@ const userAccountsRouter = Router()
 
 userAccountsRouter.get('/', async (_, res): Promise<void> => {
     try {
-        const allUserAccountData = await new ViewUserAccountsController().viewUserAccounts()
+        const allUserAccountData =
+            await new ViewUserAccountsController().viewUserAccounts()
         res.status(StatusCodes.OK).json(allUserAccountData)
-    }
-    catch (err) {
+    } catch (err) {
         if (err instanceof UserAccountNotFound) {
             res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
         } else {
@@ -36,7 +36,9 @@ userAccountsRouter.post('/create', async (req, res): Promise<void> => {
         const { createAs, username, password } = req.body
         const controller = new CreateNewUserAccountController()
         const isCreatedSuccessfully = await controller.createNewUserAccount(
-            createAs, username, password
+            createAs,
+            username,
+            password
         )
 
         if (isCreatedSuccessfully) {
@@ -44,7 +46,9 @@ userAccountsRouter.post('/create', async (req, res): Promise<void> => {
                 message: 'Account created successfully'
             })
         } else {
-            res.status(StatusCodes.CONFLICT).json({ message: 'Account creation failed' })
+            res.status(StatusCodes.CONFLICT).json({
+                message: 'Account creation failed'
+            })
         }
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -65,7 +69,7 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
                 })
                 return
             }
-            (req.session as any).user = userAccRes as UserAccountResponse
+            ;(req.session as any).user = userAccRes as UserAccountResponse
             res.status(StatusCodes.OK).json(userAccRes)
         })
     } catch (err) {
@@ -85,7 +89,7 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
 
 userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     try {
-        await req.session.destroy((_) => { })
+        await req.session.destroy((_) => {})
         res.status(StatusCodes.OK).json({ message: 'Logout successful' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -95,14 +99,13 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
 })
 
 userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
-    try{
-        const allAvailableCleaners = await new ViewCleanersController().viewCleaners()
+    try {
+        const allAvailableCleaners =
+            await new ViewCleanersController().viewCleaners()
         res.status(StatusCodes.OK).json(allAvailableCleaners)
-    }
-    catch (err) {
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
-
         })
     }
 })

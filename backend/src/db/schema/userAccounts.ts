@@ -5,7 +5,7 @@ import {
     varchar,
     integer,
     uniqueIndex,
-    serial,
+    serial
 } from 'drizzle-orm/pg-core'
 import { userProfilesTable } from './userProfiles'
 

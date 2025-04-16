@@ -1,5 +1,5 @@
-import { ServiceProvided } from "../dto/dataClasses"
-import { Service } from "../entities/service"
+import { ServiceProvided } from '../shared/dataClasses'
+import { Service } from '../entities/service'
 
 /**
  * Create new service 'category' or 'type'
@@ -7,7 +7,9 @@ import { Service } from "../entities/service"
 export class CreateServiceController {
     private service: Service
 
-    constructor() { this.service = new Service() }
+    constructor() {
+        this.service = new Service()
+    }
 
     public async createService(serviceName: string): Promise<void> {
         await this.service.createService(serviceName)
@@ -20,7 +22,9 @@ export class CreateServiceController {
 export class ViewServicesController {
     private service: Service
 
-    constructor() { this.service = new Service }
+    constructor() {
+        this.service = new Service()
+    }
 
     public async viewServices(): Promise<string[]> {
         return await this.service.viewServices()
@@ -33,9 +37,13 @@ export class ViewServicesController {
 export class ViewServicesProvidedController {
     private service: Service
 
-    constructor() { this.service = new Service() }
+    constructor() {
+        this.service = new Service()
+    }
 
-    public async viewServicesProvided(userID: number): Promise<ServiceProvided[]> {
+    public async viewServicesProvided(
+        userID: number
+    ): Promise<ServiceProvided[]> {
         return await this.service.viewServicesProvided(userID)
     }
 }
@@ -46,7 +54,9 @@ export class ViewServicesProvidedController {
 export class CreateServiceProvidedController {
     private service: Service
 
-    constructor() { this.service = new Service() }
+    constructor() {
+        this.service = new Service()
+    }
 
     public async createServiceProvided(
         userID: number,
@@ -62,5 +72,3 @@ export class CreateServiceProvidedController {
         )
     }
 }
-
-

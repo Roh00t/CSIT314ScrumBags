@@ -1,4 +1,4 @@
-import { integer, pgTable, } from 'drizzle-orm/pg-core'
+import { integer, pgTable } from 'drizzle-orm/pg-core'
 import { userAccountsTable } from './userAccounts'
 
 export const shortlistedCleanersTable = pgTable('shortlisted_cleaners', {

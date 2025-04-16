@@ -5,7 +5,7 @@ import {
 } from '../exceptions/exceptions'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { UserAccountResponse } from '../dto/dataClasses'
+import { UserAccountResponse } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
@@ -15,7 +15,9 @@ import { string } from 'zod'
 export default class UserAccount {
     private db: DrizzleClient
 
-    constructor() { this.db = drizzle(process.env.DATABASE_URL!) }
+    constructor() {
+        this.db = drizzle(process.env.DATABASE_URL!)
+    }
 
     /**
      * @param password The ENCODED password
@@ -72,7 +74,8 @@ export default class UserAccount {
         }
 
         const areCredentialsVerified = await bcrypt.compare(
-            password, retrievedUser.password
+            password,
+            retrievedUser.password
         )
         if (!areCredentialsVerified) {
             throw new InvalidCredentialsError(
@@ -103,13 +106,10 @@ export default class UserAccount {
             .from(userAccountsTable)
             .leftJoin(
                 userProfilesTable,
-                eq(
-                    userAccountsTable.userProfileId,
-                    userProfilesTable.id
-                )
+                eq(userAccountsTable.userProfileId, userProfilesTable.id)
             )
 
-        return allUsers.map(u => {
+        return allUsers.map((u) => {
             return {
                 id: u.id,
                 username: u.username,
@@ -121,15 +121,14 @@ export default class UserAccount {
     // There will be another page to show the Services provided by the Cleaner.
     // 15042025 2257 Hours
     public async viewCleaners(): Promise<string[]> {
-        const queryForCleaners = await this.db.select({cleanerName: userAccountsTable.username})
-                                .from(userAccountsTable)
-                                .leftJoin(userProfilesTable, 
-                                eq(userAccountsTable.userProfileId, 
-                                userProfilesTable.id))
-                                .where(
-                                    eq(userProfilesTable.label, 
-                                        "cleaner"))
-        return queryForCleaners.map(q => q.cleanerName)
-
+        const queryForCleaners = await this.db
+            .select({ cleanerName: userAccountsTable.username })
+            .from(userAccountsTable)
+            .leftJoin(
+                userProfilesTable,
+                eq(userAccountsTable.userProfileId, userProfilesTable.id)
+            )
+            .where(eq(userProfilesTable.label, 'cleaner'))
+        return queryForCleaners.map((q) => q.cleanerName)
     }
 }

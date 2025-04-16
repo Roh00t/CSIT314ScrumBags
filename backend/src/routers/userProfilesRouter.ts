@@ -1,6 +1,7 @@
-
 import {
-    CreateNewUserProfileController, UpdateUserProfileController, ViewUserProfilesController
+    CreateNewUserProfileController,
+    UpdateUserProfileController,
+    ViewUserProfilesController
 } from '../controllers/userProfileControllers'
 import { StatusCodes } from 'http-status-codes'
 import { Router } from 'express'
@@ -28,7 +29,8 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
  */
 userProfilesRouter.get('/', async (_, res): Promise<void> => {
     try {
-        const profiles = await new ViewUserProfilesController().viewUserProfiles()
+        const profiles =
+            await new ViewUserProfilesController().viewUserProfiles()
         res.status(StatusCodes.OK).json(profiles)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -37,16 +39,19 @@ userProfilesRouter.get('/', async (_, res): Promise<void> => {
     }
 })
 
-userProfilesRouter.put('/update', async (req,res): Promise<void>=> {
-    try{
-        const {oldProfileName, newProfileName} = req.body       
-        const update = await new  UpdateUserProfileController().updateUserProfile(oldProfileName, newProfileName)
-        res.status(StatusCodes.OK).json({message: 'Update Success'})
-    }
-    catch (err){
+userProfilesRouter.put('/update', async (req, res): Promise<void> => {
+    try {
+        const { oldProfileName, newProfileName } = req.body
+        const update =
+            await new UpdateUserProfileController().updateUserProfile(
+                oldProfileName,
+                newProfileName
+            )
+        res.status(StatusCodes.OK).json({ message: 'Update Success' })
+    } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        message: (err as Error).message
-    })
+            message: (err as Error).message
+        })
     }
 })
 export default userProfilesRouter

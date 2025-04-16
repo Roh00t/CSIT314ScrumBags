@@ -11,9 +11,6 @@ export const servicesTable = pgTable(
     (table) => [uniqueIndex().on(table.label)]
 )
 
-export const serviceRelations = relations(
-    servicesTable,
-    ({ many }) => ({
-        serviceBookings: many(serviceBookingsTable)
-    })
-)
+export const serviceRelations = relations(servicesTable, ({ many }) => ({
+    serviceBookings: many(serviceBookingsTable)
+}))
