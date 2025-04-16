@@ -1,11 +1,11 @@
-import { pgTable, uuid } from 'drizzle-orm/pg-core'
+import { integer, pgTable } from 'drizzle-orm/pg-core'
 import { userAccountsTable } from './userAccounts'
 
 export const shortlistedCleanersTable = pgTable('shortlisted_cleaners', {
-    homeownerID: uuid()
+    homeownerID: integer()
         .notNull()
         .references(() => userAccountsTable.id, { onDelete: 'cascade' }),
-    cleanerID: uuid()
+    cleanerID: integer()
         .notNull()
         .references(() => userAccountsTable.id, { onDelete: 'cascade' })
 })

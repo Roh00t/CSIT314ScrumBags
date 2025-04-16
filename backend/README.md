@@ -1,30 +1,18 @@
 # CSIT314 Scrumbags - Backend
 
-## DISCLAIMER - READ CAREFULLY BEFORE PROCEEDING
+### Pre-requisites:
 
 ```
-Before proceeding with the following steps, ensure that
-you have changed directory (cd) into the 'backend' directory.
-
-Ensure that have "nodeJS" installed and added to your path
-
-Ensure that "Docker Desktop" is installed and working
+- NodeJS
+- Docker Desktop
 ```
-
-### Downloaded the repo for the first time?
-
-Make sure to run `npm i` to install the necessary dependencies
 
 ### Running the development environment
 
-Start the dockerized PostgreSQL database (do this first): `docker compose up -d`
-Start the dev server: `npm run dev`
+1. Start Docker Desktop
+2. `npm i` to install necessary dependencies
+3. `npm run dev:setup` to start the dev server
 
-### Running the unit tests
+### Getting errors with the above? Try the following
 
-Start the test database (do this first): `docker compose -f docker-compose.test.yaml up -d`
-Run the tests: `npm run tests`
-
-### Building the application
-
-`npm run build`
+1. Delete the running 'scrumbag' containers in Docker Desktop

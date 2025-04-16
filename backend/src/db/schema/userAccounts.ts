@@ -2,17 +2,17 @@ import { relations } from 'drizzle-orm'
 import {
     boolean,
     pgTable,
-    uuid,
     varchar,
     integer,
-    uniqueIndex
+    uniqueIndex,
+    serial
 } from 'drizzle-orm/pg-core'
 import { userProfilesTable } from './userProfiles'
 
 export const userAccountsTable = pgTable(
     'user_accounts',
     {
-        id: uuid().defaultRandom().primaryKey(),
+        id: serial().primaryKey(),
         username: varchar({ length: 32 }).notNull().unique(),
         password: varchar({ length: 128 }).notNull(),
         userProfileId: integer()

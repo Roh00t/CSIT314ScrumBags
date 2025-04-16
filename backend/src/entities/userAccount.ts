@@ -2,20 +2,21 @@ import {
     InvalidCredentialsError,
     UserAccountNotFound,
     UserAccountSuspendedError
-} from '../exceptions/userExceptions'
-import { UserAccountResponse } from '../dto/userDTOs'
+} from '../exceptions/exceptions'
+import { userProfilesTable } from '../db/schema/userProfiles'
+import { userAccountsTable } from '../db/schema/userAccounts'
+import { UserAccountResponse } from '../shared/dataClasses'
+import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
-import { DrizzleClient } from '../shared/constants'
-import { userProfilesTable } from '../db/schema/userProfiles'
-import { userAccountsTable } from '../db/schema/userAccounts'
+import { string } from 'zod'
 
 export default class UserAccount {
     private db: DrizzleClient
 
     constructor() {
-        this.db = drizzle(process.env.DATABASE_URL!) // Establish database connection
+        this.db = drizzle(process.env.DATABASE_URL!)
     }
 
     /**
@@ -31,7 +32,9 @@ export default class UserAccount {
             .from(userProfilesTable)
             .where(eq(userProfilesTable.label, createAs))
 
-        if (!userProfile) return false
+        if (!userProfile) {
+            return false
+        }
 
         await this.db.insert(userAccountsTable).values({
             username: username,
@@ -43,7 +46,6 @@ export default class UserAccount {
 
     /**
      * @param password The PLAINTEXT password (not encoded)
-     * @returns string uuid of the logged-in user, empty string if unsuccessful
      */
     public async login(
         username: string,
@@ -94,27 +96,39 @@ export default class UserAccount {
         } as UserAccountResponse
     }
 
-    public async createNewUserProfile(profileName: string): Promise<boolean> {
-        try {
-            await this.db
-                .insert(userProfilesTable)
-                .values({ label: profileName })
-            return true
-        } catch (err) {
-            throw err
-        }
-    }
+    public async viewUserAccounts(): Promise<UserAccountResponse[]> {
+        const allUsers = await this.db
+            .select({
+                id: userAccountsTable.id,
+                username: userAccountsTable.username,
+                profileLabel: userProfilesTable.label
+            })
+            .from(userAccountsTable)
+            .leftJoin(
+                userProfilesTable,
+                eq(userAccountsTable.userProfileId, userProfilesTable.id)
+            )
 
-    public async getUserProfiles(): Promise<string[]> {
-        try {
-            type ProfileType = { label: string | null }
-            const profiles: ProfileType[] = await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-            const profileLabels = profiles.map((p) => p.label || '')
-            return profileLabels
-        } catch (err) {
-            throw err
-        }
+        return allUsers.map((u) => {
+            return {
+                id: u.id,
+                username: u.username,
+                userProfile: u.profileLabel
+            } as UserAccountResponse
+        })
+    }
+    // This async Function only retrieves Cleaner names under the assumption that
+    // There will be another page to show the Services provided by the Cleaner.
+    // 15042025 2257 Hours
+    public async viewCleaners(): Promise<string[]> {
+        const queryForCleaners = await this.db
+            .select({ cleanerName: userAccountsTable.username })
+            .from(userAccountsTable)
+            .leftJoin(
+                userProfilesTable,
+                eq(userAccountsTable.userProfileId, userProfilesTable.id)
+            )
+            .where(eq(userProfilesTable.label, 'cleaner'))
+        return queryForCleaners.map((q) => q.cleanerName)
     }
 }
