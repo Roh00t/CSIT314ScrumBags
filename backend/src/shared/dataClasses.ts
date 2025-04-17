@@ -18,3 +18,8 @@ export type ServiceBookingReportDatum = {
     price: number
     date: Date
 }
+
+export type ShortListedCleaner = {
+    userid: number
+    cleanerid: number
+}
