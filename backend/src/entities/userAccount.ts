@@ -6,12 +6,13 @@ import {
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
-import { UserAccountResponse, ShortListedCleaner } from '../shared/dataClasses'
+import { UserAccountResponse } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import { string } from 'zod'
+
 
 export default class UserAccount {
     private db: DrizzleClient
@@ -133,29 +134,33 @@ export default class UserAccount {
         return queryForCleaners.map((q) => q.cleanerName)
     }
 
-    public async addToShortlist(homeownerID: number): Promise<void> {
-        const [shortlistEntry] = await this.db
-            .select({ id: userAccountsTable.id })
-            .from(userAccountsTable)
+    public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
+        // const [shortlistEntry] = await this.db
+        //     .select({ id: userAccountsTable.id })
+        //     .from(userAccountsTable)
 
         await this.db.insert(shortlistedCleanersTable).values({
-            homeownerID: homeownerID,
-            cleanerID: shortlistEntry.id
+            homeownerID, 
+            cleanerID
         })
     }
 
-    // public async ViewShortList(userid: number): Promise<ShortListedCleaner[]> {
-    //     const shortlistedCleaner = await this.db
-    //         .select({
-    //             homeownerID: shortlistedCleanersTable.homeownerID,
-    //             cleanerID: shortlistedCleanersTable.cleanerID
-    //         })
-    //         .from(shortlistedCleanersTable)
-        
-    //     return shortlistedCleaner.map((so) => {
-    //         return {
+    public async ViewShortlist(homeownerID: number): Promise<string[]> {
+        const shortlistedCleaners = await this.db
+        .select({ cleanerID: shortlistedCleanersTable.cleanerID })
+        .from(shortlistedCleanersTable)
+        .where(eq(shortlistedCleanersTable.homeownerID, homeownerID))
+    
+        // Retrieve cleaner names based on the cleanerIDs from shortlistedCleaners
+        const cleanerNames = await Promise.all(shortlistedCleaners.map(async (entry) => {
+            const [cleaner] = await this.db
+                .select({ cleanerName: userAccountsTable.username })
+                .from(userAccountsTable)
+                .where(eq(userAccountsTable.id, entry.cleanerID))
+            
+            return cleaner?.cleanerName || "Unknown Cleaner"
+        }));
 
-    //         }
-    //     })
-    // }
+        return cleanerNames
+    }
 }

@@ -1,9 +1,8 @@
-import { Router } from "express";
-import { UserAccountResponse } from "../shared/dataClasses";
-import { 
-    AddToShortlistController 
-} from "../controllers/homeownersControllers";
-import { StatusCodes } from "http-status-codes";
+import { Router } from "express"
+import { requireAuthMiddleware } from "../shared/middleware"
+import { UserAccountResponse } from "../shared/dataClasses"
+import { AddToShortlistController, ViewShortListController } from "../controllers/homeownerControllers"
+import { StatusCodes } from "http-status-codes"
 
 const homeownerRouter = Router()
 
@@ -13,14 +12,39 @@ declare module 'express-session' {
     }
 }
 
-homeownerRouter.post('/addtoshortlist', async (req, res): Promise<void> =>{
+const addToShortlistController = new AddToShortlistController()
+const viewShortlistController = new ViewShortListController()
+
+// 👇 Add route to shortlist a cleaner
+homeownerRouter.post('/', requireAuthMiddleware, async (req, res): Promise<void> => {
+    const homeownerID = (req.session.user as UserAccountResponse).id
+    const { cleanerID } = req.body
+
     try {
-        await new AddToShortlistController().addToShortlist(req.body.service)
-        res.status(StatusCodes.CREATED).send()
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
+        await addToShortlistController.addToShortlist(homeownerID, cleanerID)
+        res.status(StatusCodes.OK).json({
+            message: "Shortlist successful"
         })
+    } catch (error: any) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            error: error.message || "Shortlist failed"
+        })
+    }
+})
+
+homeownerRouter.get('/', requireAuthMiddleware, async(req, res): Promise<void> => {
+    const homeownerID = (req.session.user as UserAccountResponse).id
+
+    try {
+        const shortlistedCleaners = await viewShortlistController.viewShortlist(homeownerID)
+        res.status(StatusCodes.OK).json({
+            message: "Shortlist retrieved successfully",
+            data: shortlistedCleaners
+        });
+    } catch (error: any) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            error: error.message || "Failed to retrieve shortlist"
+        });
     }
 })
 
