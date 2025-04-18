@@ -4,29 +4,36 @@
 
   const CreateAccountPage: React.FC = () => {
     const [role, setRole] = useState('')
-    const [roles, setRoles] = useState<string[]>([]) // state to store roles
+    const [roles, setRoles] = useState<string[]>([]); // state to store roles
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
 
-    // ✅ Fetch roles from the backend
     useEffect(() => {
       const fetchRoles = async () => {
         try {
           const response = await axios.get('http://localhost:3000/api/user-profiles/', {
             withCredentials: true,
-          })
-          setRoles(response.data.data) // should return ['admin', 'cleaner', 'homeowner']
+          });
+    
+          const data = response.data?.data;
+          if (Array.isArray(data)) {
+            setRoles(data); // ✅ Only set if it's an array
+          } else {
+            console.error('Expected array of roles but got:', data);
+            setRoles([]); // fallback
+            setError('Unexpected server response.');
+          }
         } catch (err) {
-          console.error('Failed to fetch roles:', err)
-          setError('Could not load roles. Please try again later.')
+          console.error('Failed to fetch roles:', err);
+          setError('Could not load roles. Please try again later.');
         }
-      }
-
-      fetchRoles()
-    }, [])
+      };
+    
+      fetchRoles();
+    }, []);
 
 
     const handleCreateAccount = async (e: React.FormEvent) => {
@@ -98,9 +105,18 @@
                 required
               >
                 <option value="">Select Role</option>
-                {roles.map(r => (
-                  <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
-                ))}
+
+                {error ? (
+                  <option disabled>{error}</option>
+                ) : roles.length === 0 ? (
+                  <option disabled>Loading roles...</option>
+                ) : (
+                  roles.map(r => (
+                    <option key={r} value={r}>
+                      {r.charAt(0).toUpperCase() + r.slice(1)}
+                    </option>
+                  ))
+                )}
               </select>
 
               <label>Enter Username:</label>
