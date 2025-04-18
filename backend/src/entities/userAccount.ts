@@ -139,10 +139,12 @@ export default class UserAccount {
         //     .select({ id: userAccountsTable.id })
         //     .from(userAccountsTable)
 
-        await this.db.insert(shortlistedCleanersTable).values({
-            homeownerID, 
-            cleanerID
-        })
+        await this.db
+            .insert(shortlistedCleanersTable)
+            .values({
+                homeownerID, 
+                cleanerID
+            })
     }
 
     public async ViewShortlist(homeownerID: number): Promise<string[]> {

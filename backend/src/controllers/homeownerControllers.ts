@@ -1,21 +1,25 @@
 import UserAccount from "../entities/userAccount";
 
 export class AddToShortlistController {
-    private shortlistedCleaner: UserAccount
+    private userAccount: UserAccount
 
     constructor() {
-        this.shortlistedCleaner = new UserAccount()
+        this.userAccount = new UserAccount()
     }
 
-    public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void>{
-        try {
-            console.log(homeownerID, cleanerID)
-            await this.shortlistedCleaner.addToShortlist(homeownerID, cleanerID)
-            console.log("Shortlist successful")
-        } catch (error) {
-            console.log("Shortlist failed: ", error)
-            throw error
-        }
+    public async addToShortlist(
+        homeownerID: number, 
+        cleanerID: number
+    ): Promise<void>{
+        // try {
+        //     console.log(homeownerID, cleanerID)
+        //     await this.userAccount.addToShortlist(homeownerID, cleanerID)
+        //     console.log("Shortlist successful")
+        // } catch (error) {
+        //     console.log("Shortlist failed: ", error)
+        //     throw error
+        // }
+        return await this.userAccount.addToShortlist(homeownerID, cleanerID)
     }
 }
 
