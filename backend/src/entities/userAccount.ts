@@ -163,4 +163,25 @@ export default class UserAccount {
 
         return cleanerNames
     }
+
+    public async updateUserAccount(
+        userID: number,
+        updateAs: string,
+        updatedUsername: string,
+        updatedPassword: string
+    ): Promise<void> {
+        const [userProfile] = await this.db
+        .select()
+        .from(userProfilesTable)
+        .where(eq(userProfilesTable.label, updateAs))
+
+        await this.db
+            .update(userAccountsTable)
+            .set({
+                username: updatedUsername,
+                password: updatedPassword,
+                userProfileId: userProfile.id
+            })
+            .where(eq(userAccountsTable.id, userID))
+    }
 }
