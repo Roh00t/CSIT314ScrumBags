@@ -4,7 +4,7 @@
 
   const CreateAccountPage: React.FC = () => {
     const [role, setRole] = useState('')
-    const [roles, setRoles] = useState<string[]>([]); // state to store roles
+    const [roles, setRoles] = useState<string[]>([]); // ✅ Correct for array of strings
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -18,12 +18,12 @@
             withCredentials: true,
           });
     
-          const data = response.data?.data;
+          const data = response.data; // ✅ this is already the array of roles
           if (Array.isArray(data)) {
-            setRoles(data); // ✅ Only set if it's an array
+            setRoles(data); // ✅ use directly
           } else {
             console.error('Expected array of roles but got:', data);
-            setRoles([]); // fallback
+            setRoles([]);
             setError('Unexpected server response.');
           }
         } catch (err) {
