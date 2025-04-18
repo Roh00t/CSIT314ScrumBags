@@ -76,9 +76,9 @@
       <div className="page_container">
         <div className="header_container">
           {/* Add the image in */}
-          <h2><Link to="/">About Us</Link></h2>
-          <h2><Link to="/">Our Services</Link></h2>
-          <h2><Link to="/">Contact Us</Link></h2>
+          <h2><Link to="/">Home</Link></h2>
+          <h2><Link to="/">Profiles</Link></h2>
+          <h2><Link to="/">Accounts</Link></h2>
           <h2 id="logout_button">Logout</h2>  {/* This is temporary requires functions to work */}
         </div>
 
