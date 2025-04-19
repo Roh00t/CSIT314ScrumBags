@@ -26,8 +26,8 @@ const ViewCleanerService: React.FC = () => {
 
         const data: UserAccountResponse[] = response.data;
         console.log(data);
-        setUsers(data); // ✅ Set the state with received data
-        setLoading(false); // ✅ Stop loading
+        setUsers(data); // Set the state with received data
+        setLoading(false); // Stop loading
       } catch (err) {
         console.error('Failed to fetch users:', err);
         setError('Could not load users. Please try again later.');
