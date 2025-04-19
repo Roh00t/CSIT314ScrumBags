@@ -4,7 +4,7 @@
 
   const CreateAccountPage: React.FC = () => {
     const [role, setRole] = useState('')
-    const [roles, setRoles] = useState<string[]>([]); // ✅ Correct for array of strings
+    const [roles, setRoles] = useState<string[]>([]); // Correct for array of strings
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
