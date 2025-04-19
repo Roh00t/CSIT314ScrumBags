@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './CleanerViewServices.css';
+import '../css/CleanerViewServices.css';
 import { Link } from 'react-router-dom';
 
 interface UserAccountResponse {

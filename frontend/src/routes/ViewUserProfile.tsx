@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './ViewUserProfile.css';
+import '../css/ViewUserProfile.css';
 import { Link } from 'react-router-dom';
 
 const ViewUserRoles: React.FC = () => {

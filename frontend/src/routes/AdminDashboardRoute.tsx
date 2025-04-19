@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './AdminDashboardRoute.css'
+import '../css/AdminDashboardRoute.css'
 import { Link } from 'react-router-dom'
 
 // Define the type for the response data

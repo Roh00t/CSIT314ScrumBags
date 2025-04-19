@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
-import './CleanerDashboardRoute.css';
+import '../css/CleanerDashboardRoute.css';
 import 'react-calendar/dist/Calendar.css';
 import { Link } from 'react-router-dom'
 

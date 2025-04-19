@@ -12,6 +12,7 @@ import LogoutPage from "./routes/Logout"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
 import ViewUserProfile from "./routes/ViewUserProfile"
 import ViewCleanerService from "./routes/ViewCleanerService"
+import ViewShortlist from "./routes/ViewShortlistRoute"
 
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -23,6 +24,7 @@ const browserRouter = createBrowserRouter([
   { path: "/logout", element: <LogoutPage /> },
   { path: "/ViewUserProfile", element: <ViewUserProfile/>},
   { path: "/ViewCleanerService", element: <ViewCleanerService/>},
+  { path: "/ViewShortlist", element: <ViewShortlist /> },
 
   // Protected Routes (only accessible when logged in)
   {
