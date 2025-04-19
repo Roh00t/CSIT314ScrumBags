@@ -21,11 +21,13 @@ const Login: React.FC = () => {
       console.log(response.data);
 
       // // Simulate session in localStorage
-      // localStorage.setItem('sessionUser', username)
-      // localStorage.setItem('sessionRole', userProfile)
+      localStorage.setItem('sessionUser', username)
+      localStorage.setItem('sessionRole', userProfile)
       // After successful login
-      localStorage.setItem('sessionUser', JSON.stringify(response.data)); // `data` is UserAccountResponse
-
+      localStorage.setItem('sessionObject', JSON.stringify(response.data)); // `data` is UserAccountResponse
+      console.log('sessionUser')
+      console.log('sessionRole')
+      console.log('sessionObject')
 
       // Redirect based on user role
       if (userProfile === 'cleaner') {

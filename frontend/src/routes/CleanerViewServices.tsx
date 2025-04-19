@@ -16,7 +16,7 @@ interface Service {
 }
 
 const CleanerViewServicesRoute: React.FC = () => {
-  const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionUser') || '{}');
+  const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
 
   const [services, setServices] = useState<Service[]>([]);
@@ -31,6 +31,7 @@ const CleanerViewServicesRoute: React.FC = () => {
         }
 
         const data = await response.json();
+        console.log(data);
 
         // Adjust field names if needed based on your backend structure
         const formatted: Service[] = data.map((item: any) => ({
