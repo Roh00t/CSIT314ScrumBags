@@ -47,14 +47,15 @@
 
       try {
         const response = await axios.post('http://localhost:3000/api/user-accounts/create', {
-          createAs:"cleaner",
+          createAs:role,
           username:username,
           password:password,
         },
         { withCredentials: true } 
       )
 
-        if (response.data === true) {
+        if (response.data.message === 'Account created successfully') {
+          console.log('response.data:', response.data);
           setSuccess('Account created successfully!')
           setError('')
           setRole('')
@@ -62,6 +63,7 @@
           setPassword('')
           setConfirmPassword('')
         } else {
+          console.log('response.data:', response.data);
           setError('Failed to create account. Please try again.')
           setSuccess('')
         }
@@ -75,11 +77,10 @@
     return (
       <div className="page_container">
         <div className="header_container">
-          {/* Add the image in */}
           <h2><Link to="/">Home</Link></h2>
           <h2><Link to="/">Profiles</Link></h2>
           <h2><Link to="/">Accounts</Link></h2>
-          <h2 id="logout_button">Logout</h2>  {/* This is temporary requires functions to work */}
+          <h2 id="logout_button">Logout</h2>
         </div>
 
         <div className="create_container">
