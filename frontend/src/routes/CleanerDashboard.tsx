@@ -57,10 +57,9 @@ const CleanerDashboardRoute: React.FC = () => {
   return (
     <div className="dashboard-container">
       <div className="header_container">
-          <h2><Link to="/">Home</Link></h2>
-          <h2><Link to="/">Profiles</Link></h2>
-          <h2><Link to="/">Accounts</Link></h2>
-          <h2 id="logout_button">Logout</h2>
+          <h2><Link to="/cleaner-dashboard">Home</Link></h2>
+          <h2><Link to="/cleaner-view-services">View My Services</Link></h2> 
+          <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
         </div>
       <div className="welcome-message">
         <h2>Welcome back, {sessionUser}!!</h2>

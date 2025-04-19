@@ -80,7 +80,7 @@
           <h2><Link to="/">Home</Link></h2>
           <h2><Link to="/">Profiles</Link></h2>
           <h2><Link to="/">Accounts</Link></h2>
-          <h2 id="logout_button">Logout</h2>
+          <h2><Link to="/">Logout</Link></h2> 
         </div>
 
         <div className="create_container">

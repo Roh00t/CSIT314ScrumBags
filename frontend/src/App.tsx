@@ -5,6 +5,7 @@ import Login from "./routes/Login"
 import CreateAccountPage from "./routes/CreateUserAccount"
 import CreateProfilePage from "./routes/CreateUserProfile"
 import CleanerDashboardRoute from "./routes/CleanerDashboard"
+import CleanerViewServicesRoute from "./routes/CleanerViewServices"
 import LogoutPage from "./routes/Logout"
 
 // Configure all your routes here
@@ -14,9 +15,9 @@ const browserRouter = createBrowserRouter([
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
   { path: "/admin-dashboard", element: <AdminDashboardRoute /> },
-  { path: "/clean-dashboard", element: <CleanerDashboardRoute /> },
-  { path: "/logout", element: <LogoutPage />},
   { path: "/cleaner-dashboard", element: <CleanerDashboardRoute /> },
+  { path: "/logout", element: <LogoutPage />},
+  { path: "/cleaner-view-services", element: <CleanerViewServicesRoute /> },
   { path: "*", element: <div>404 Not Found</div> } // Fallback
 ])
 
