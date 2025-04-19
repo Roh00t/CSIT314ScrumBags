@@ -54,7 +54,7 @@ const AdminDashboard: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-          <h2><Link to="/">Home</Link></h2>
+          <h2><Link to="/admin-dashboard">Home</Link></h2>
           <h2><Link to="/">User Account</Link></h2>
           <h2><Link to="/">User Profile</Link></h2>
           <h2 id="logout_button">{sessionUser}/Logout</h2>
@@ -71,8 +71,11 @@ const AdminDashboard: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="create-btn">Create Account</button>
+          <button className="create-btn"><Link to="/create" className="create-btn">Create Account</Link></button>
         </div>
+
+        {/* Display error message if any */}
+        {error && <div className="error-message">{error}</div>}
 
         {/* User Table */}
         <table className="user-table">

@@ -13,18 +13,20 @@ const HomeRoute: React.FC = () => {
   }
 
   const goToCleanerDashboard = () => {
-    navigate('cleaner-dashboard')
+    navigate('/cleaner-dashboard')
   }
 
   const goToPlatformManagerDashboard = () => {
-    navigate('platformManager-dashboard')
+    navigate('/platformManager-dashboard')
   }
-
+  const goToAdminDashboard = () => {
+    navigate('/admin-dashboard')
+  }
   const goToCreateProfile = () => {
-    navigate('create-profile')
+    navigate('/create-profile')
   }
   const goToCleanerViewSevices = () => {
-    navigate('cleaner-view-services')
+    navigate('/cleaner-view-services')
   }
   return (
     <div
@@ -42,7 +44,8 @@ const HomeRoute: React.FC = () => {
       <button onClick={goToCreate}>Go to Create</button>
       <button onClick={goToCreateProfile}>Go to Create Profile</button>
       <button onClick={goToCleanerDashboard}>Go to Cleaner</button>
-      <button onClick={goToPlatformManagerDashboard}>Go to Cleaner</button>
+      <button onClick={goToPlatformManagerDashboard}>Go to Platform Manager</button>
+      <button onClick={goToAdminDashboard}>Go to User Admin</button>
       <button onClick={goToCleanerViewSevices}>Go to Cleaner View Services</button>
     </div>
   )
