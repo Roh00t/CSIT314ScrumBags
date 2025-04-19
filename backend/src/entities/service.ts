@@ -3,9 +3,10 @@ import { ServiceNotFoundError } from '../exceptions/exceptions'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { servicesTable } from '../db/schema/services'
 import { ServiceProvided } from '../shared/dataClasses'
+import { serviceBookingsTable } from '../db/schema/serviceBookings'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
-import { eq } from 'drizzle-orm'
+import { and, eq, gt, lt, sql } from 'drizzle-orm'
 
 export class Service {
     private db: DrizzleClient
@@ -74,5 +75,59 @@ export class Service {
             description: description,
             price: price.toString()
         })
+    }
+
+    public async viewServiceHistory(
+        userID: number,
+        service: string,
+        date: Date | string
+    ): Promise<string[]> {
+        // Ensure date is a Date object
+        let normalizedDate: Date;
+        if (typeof date === 'string') {
+            normalizedDate = new Date(date);
+        } else {
+            normalizedDate = date;
+        }
+
+        // Normalize the date to 00:00 and calculate the next day
+        const startOfDay = new Date(normalizedDate.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setDate(endOfDay.getDate() + 1);
+
+        const results = await this.db
+        .select({
+            cleanerName: userAccountsTable.username,
+            serviceName: servicesTable.label,
+            date: serviceBookingsTable.startTimestamp,
+            price: servicesProvidedTable.price,
+            status: serviceBookingsTable.status
+        })
+        .from(serviceBookingsTable)
+        .leftJoin(
+            servicesTable,
+            eq(servicesTable.id, serviceBookingsTable.serviceID)
+        )
+        .leftJoin(
+            servicesProvidedTable,
+            eq(servicesProvidedTable.serviceID, servicesTable.id)
+        )
+        .leftJoin(
+            userAccountsTable,
+            eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
+        )
+        .where(
+            and(
+                eq(serviceBookingsTable.homeownerID, userID),
+                eq(servicesTable.label, service),
+                gt(serviceBookingsTable.startTimestamp, startOfDay),
+                lt(serviceBookingsTable.startTimestamp, endOfDay)
+            )
+        )
+    
+        // Map the results to the desired format
+        return results.map((temp1) => 
+            `Service: ${temp1.serviceName}, Cleaner: ${temp1.cleanerName}, Date: ${new Date(temp1.date).toISOString()}, Price: $${temp1.price}, Status: ${temp1.status}`
+        );
     }
 }

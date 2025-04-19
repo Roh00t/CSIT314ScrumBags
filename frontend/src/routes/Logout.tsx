@@ -9,9 +9,11 @@ const LogoutPage: React.FC = () => {
         try {
             await axios.post(
                 'http://localhost:3000/api/user-accounts/logout', 
-                {}, 
-                { withCredentials: true } // keep session behavior consistent
+                {}
             )
+
+            localStorage.clear()
+            
             navigate('/login') // redirect to login after logout
         } catch (error: any) {
             console.error('Logout failed:', error)
