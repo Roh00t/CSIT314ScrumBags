@@ -36,9 +36,8 @@ const CleanerViewServicesRoute: React.FC = () => {
         // Adjust field names if needed based on your backend structure
         const formatted: Service[] = data.map((item: any) => ({
           id: item.id,
-          type: item.service || item.type, // depending on backend
+          type: item.serviceName, 
           price: item.price,
-          status: item.status === true || item.status === 'Active' ? 'Active' : 'Deactivate',
         }));
 
         setServices(formatted);
@@ -78,7 +77,6 @@ const CleanerViewServicesRoute: React.FC = () => {
               <tr>
                 <th><b>Type of Service</b></th>
                 <th>Price</th>
-                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -87,9 +85,6 @@ const CleanerViewServicesRoute: React.FC = () => {
                 <tr key={service.id}>
                   <td>{service.type}</td>
                   <td>${service.price}</td>
-                  <td className={service.status === 'Active' ? 'status-active' : 'status-inactive'}>
-                    {service.status}
-                  </td>
                   <td><button className="edit-btn">Edit</button></td>
                 </tr>
               ))}
