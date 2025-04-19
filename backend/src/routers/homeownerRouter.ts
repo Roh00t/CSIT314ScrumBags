@@ -3,6 +3,7 @@ import { requireAuthMiddleware } from "../shared/middleware"
 import { UserAccountResponse } from "../shared/dataClasses"
 import {
     AddToShortlistController, 
+    ViewServiceHistoryController, 
     ViewShortListController
 } from "../controllers/homeownerControllers"
 import { StatusCodes } from "http-status-codes"
@@ -40,11 +41,31 @@ homeownerRouter.get('/', requireAuthMiddleware, async(req, res): Promise<void> =
         res.status(StatusCodes.OK).json({
             message: "Shortlist retrieved successfully",
             data: shortlistedCleaners
-        });
+        })
     } catch (error: any) {
         res.status(StatusCodes.BAD_REQUEST).json({
             error: error.message || "Failed to retrieve shortlist"
-        });
+        })
+    }
+})
+
+homeownerRouter.get('/servicehistory', requireAuthMiddleware, async(req, res): Promise<void> => {
+    const homeownerID = (req.session.user as UserAccountResponse).id
+    const { service } = req.body
+    const { date } = req.body
+
+    try {
+        const serviceHistory = await new ViewServiceHistoryController().viewServiceHistory(
+            homeownerID, service, date
+        )
+        res.status(StatusCodes.OK).json({
+            message: "Service history retrieved successfully",
+            data: serviceHistory
+        }) 
+    } catch (error: any) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            error: error.message || "Failed to retrieve service history"
+        })
     }
 })
 

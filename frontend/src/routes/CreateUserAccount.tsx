@@ -4,29 +4,36 @@
 
   const CreateAccountPage: React.FC = () => {
     const [role, setRole] = useState('')
-    const [roles, setRoles] = useState<string[]>([]) // state to store roles
+    const [roles, setRoles] = useState<string[]>([]); // Correct for array of strings
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
 
-    // ✅ Fetch roles from the backend
     useEffect(() => {
       const fetchRoles = async () => {
         try {
           const response = await axios.get('http://localhost:3000/api/user-profiles/', {
             withCredentials: true,
-          })
-          setRoles(response.data.data) // should return ['admin', 'cleaner', 'homeowner']
+          });
+    
+          const data = response.data; // ✅ this is already the array of roles
+          if (Array.isArray(data)) {
+            setRoles(data); // ✅ use directly
+          } else {
+            console.error('Expected array of roles but got:', data);
+            setRoles([]);
+            setError('Unexpected server response.');
+          }
         } catch (err) {
-          console.error('Failed to fetch roles:', err)
-          setError('Could not load roles. Please try again later.')
+          console.error('Failed to fetch roles:', err);
+          setError('Could not load roles. Please try again later.');
         }
-      }
-
-      fetchRoles()
-    }, [])
+      };
+    
+      fetchRoles();
+    }, []);
 
 
     const handleCreateAccount = async (e: React.FormEvent) => {
@@ -40,14 +47,15 @@
 
       try {
         const response = await axios.post('http://localhost:3000/api/user-accounts/create', {
-          createAs:"cleaner",
+          createAs:role,
           username:username,
           password:password,
         },
         { withCredentials: true } 
       )
 
-        if (response.data === true) {
+        if (response.data.message === 'Account created successfully') {
+          console.log('response.data:', response.data);
           setSuccess('Account created successfully!')
           setError('')
           setRole('')
@@ -55,6 +63,7 @@
           setPassword('')
           setConfirmPassword('')
         } else {
+          console.log('response.data:', response.data);
           setError('Failed to create account. Please try again.')
           setSuccess('')
         }
@@ -68,11 +77,10 @@
     return (
       <div className="page_container">
         <div className="header_container">
-          {/* Add the image in */}
-          <h2><Link to="/">About Us</Link></h2>
-          <h2><Link to="/">Our Services</Link></h2>
-          <h2><Link to="/">Contact Us</Link></h2>
-          <h2 id="logout_button">Logout</h2>  {/* This is temporary requires functions to work */}
+          <h2><Link to="/">Home</Link></h2>
+          <h2><Link to="/">Profiles</Link></h2>
+          <h2><Link to="/">Accounts</Link></h2>
+          <h2><Link to="/">Logout</Link></h2> 
         </div>
 
         <div className="create_container">
@@ -98,9 +106,18 @@
                 required
               >
                 <option value="">Select Role</option>
-                {roles.map(r => (
-                  <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>
-                ))}
+
+                {error ? (
+                  <option disabled>{error}</option>
+                ) : roles.length === 0 ? (
+                  <option disabled>Loading roles...</option>
+                ) : (
+                  roles.map(r => (
+                    <option key={r} value={r}>
+                      {r.charAt(0).toUpperCase() + r.slice(1)}
+                    </option>
+                  ))
+                )}
               </select>
 
               <label>Enter Username:</label>

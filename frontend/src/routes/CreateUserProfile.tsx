@@ -16,15 +16,17 @@ const CreateProfilePage: React.FC = () => {
       { withCredentials: true } 
     )
 
-      if (response.data === true) {
-        setSuccess('Profile created successfully!')
+      if (response.data.message === 'Success') {
+        console.log('response.data:', response.data);
+        setSuccess('Profile created successfully!🥳')
         setProfileName('')
       } else {
-        setError('Failed to create account. Please try again.')
+        console.log('response.data:', response.data);
+        setError('Failed to create account. Please try again.😢')
         setSuccess('')
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Something went wrong.')
+      setError(err.response?.data?.message || 'Something went wrong.😡')
       console.log({ profileName });
       setSuccess('')
     }
