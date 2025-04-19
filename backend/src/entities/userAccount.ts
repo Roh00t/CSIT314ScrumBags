@@ -103,22 +103,25 @@ export default class UserAccount {
             .select({
                 id: userAccountsTable.id,
                 username: userAccountsTable.username,
-                profileLabel: userProfilesTable.label
+                profileLabel: userProfilesTable.label,
+                isSuspended: userAccountsTable.isSuspended
             })
             .from(userAccountsTable)
             .leftJoin(
                 userProfilesTable,
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
-            )
-
+            );
+    
         return allUsers.map((u) => {
             return {
                 id: u.id,
                 username: u.username,
-                userProfile: u.profileLabel
-            } as UserAccountResponse
-        })
+                userProfile: u.profileLabel,
+                isSuspended: u.isSuspended
+            } as UserAccountResponse;
+        });
     }
+    
     // This async Function only retrieves Cleaner names under the assumption that
     // There will be another page to show the Services provided by the Cleaner.
     // 15042025 2257 Hours
