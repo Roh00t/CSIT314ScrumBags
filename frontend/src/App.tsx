@@ -12,7 +12,7 @@ import LogoutPage from "./routes/Logout"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
 import ViewUserProfile from "./routes/ViewUserProfile"
 import ViewCleanerService from "./routes/ViewCleanerService"
-import ViewShortlist from "./routes/ViewShortlistRoute"
+import ViewShortlist from "./routes/ViewShortlist"
 
 const browserRouter = createBrowserRouter([
   // Public Routes

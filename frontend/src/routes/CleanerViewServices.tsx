@@ -15,15 +15,28 @@ interface Service {
   status?: 'Active' | 'Deactivate';
 }
 
+interface NewServiceInput {
+  service: string;
+  description: string;
+  price: string;
+}
+
 const CleanerViewServicesRoute: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
   const [services, setServices] = useState<Service[]>([]);
   const [search, setSearch] = useState('');
 
+  const [showPopup, setShowPopup] = useState(false);
+  const [newService, setNewService] = useState<NewServiceInput>({
+    service: '',
+    description: '',
+    price: '',
+  });
+
   useEffect(() => {
     const fetchServices = async () => {
-      try {
+      try { 
         const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch services');
@@ -55,6 +68,75 @@ const CleanerViewServicesRoute: React.FC = () => {
         <h2 id="logout_button"><Link to="/login">{sessionUser.id}/Logout</Link></h2>
       </div>
 
+      {showPopup && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Create New Service</h2>
+            <label>Type of service</label>
+            <input
+              type="text"
+              placeholder="e.g Floor cleaning"
+              value={newService.service}
+              onChange={(e) => setNewService({ ...newService, service: e.target.value })}
+            />
+            <label>Description</label>
+            <textarea
+              placeholder="e.g Sweep and mopping of floor"
+              value={newService.description}
+              onChange={(e) => setNewService({ ...newService, description: e.target.value })}
+              rows={4}
+              style={{
+                resize: 'none',
+                width: '100%',
+                padding: '8px',
+                fontSize: '1rem',
+                lineHeight: '1.5',
+              }}
+            />
+            <label>Price</label>
+            <input
+              type="number"
+              placeholder="e.g $20"
+              value={newService.price}
+              onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+            />
+            <div className="modal-buttons">
+              <button onClick={() => setShowPopup(false)}>Cancel</button>
+              <button onClick={async () => {
+                try {
+                  const response = await fetch('http://localhost:3000/api/services/me', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      service: newService.service,
+                      description: newService.description,
+                      price: newService.price,
+                    }),
+                    credentials: 'include',
+                  });
+      
+                  if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to create service');
+                  }
+      
+                  setShowPopup(false);
+                  setNewService({ service: '', description: '', price: '' });
+                  window.location.reload(); // or re-fetch services
+                } catch (error) {
+                  console.error('Error creating service:', error);
+                  alert('Failed to create service.');
+                }
+              }}>
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="content-center">
         <div className="card">
           <h1>View Services</h1>
@@ -66,7 +148,7 @@ const CleanerViewServicesRoute: React.FC = () => {
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
-            <button className="create-btn">Create New Services</button>
+          <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Services</button>
           </div>
 
           <table>
