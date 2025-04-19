@@ -16,6 +16,10 @@ const HomeRoute: React.FC = () => {
     navigate('cleaner-dashboard')
   }
 
+  const goToPlatformManagerDashboard = () => {
+    navigate('platformManager-dashboard')
+  }
+
   const goToCreateProfile = () => {
     navigate('create-profile')
   }
@@ -38,6 +42,7 @@ const HomeRoute: React.FC = () => {
       <button onClick={goToCreate}>Go to Create</button>
       <button onClick={goToCreateProfile}>Go to Create Profile</button>
       <button onClick={goToCleanerDashboard}>Go to Cleaner</button>
+      <button onClick={goToPlatformManagerDashboard}>Go to Cleaner</button>
       <button onClick={goToCleanerViewSevices}>Go to Cleaner View Services</button>
     </div>
   )

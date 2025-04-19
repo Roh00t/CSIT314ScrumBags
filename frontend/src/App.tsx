@@ -1,6 +1,7 @@
 import React from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import AdminDashboardRoute from "./routes/AdminDashboardRoute"
+import PlatformManagerDashboard from "./routes/PlatformManagerDashboard"
 import HomeRoute from "./routes/HomeRoute"
 import Login from "./routes/Login"
 import CreateAccountPage from "./routes/CreateUserAccount"
@@ -16,6 +17,7 @@ const browserRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
+  { path: "/platformManager-profile", element: <PlatformManagerDashboard /> },
   { path: "/logout", element: <LogoutPage /> },
 
   // Protected Routes (only accessible when logged in)
