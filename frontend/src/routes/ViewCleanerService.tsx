@@ -12,41 +12,32 @@ interface UserAccountResponse {
 
 const ViewCleanerService: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-  const [users, setUsers] = useState<UserAccountResponse[]>([]);  // State to store user data
-  const [error, setError] = useState<string>('');  // State to store any errors
-  const [search, setSearch] = useState<string>('');  // State to store the search query
+  const [users, setUsers] = useState<UserAccountResponse[]>([]);
+  const [error, setError] = useState<string>('');
+  const [search, setSearch] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true); // NEW: for loading spinner
 
-  // Fetch users from the backend API on component mount
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // Make the request to your backend endpoint
-        const response = await axios.get('http://localhost:3000/api/user-accounts', {
-          withCredentials: true, // If you're using cookies or sessions
+        const response = await axios.get('http://localhost:3000/api/cleaners/', {
+          withCredentials: true,
         });
 
-        // Get the data from the response and update state
         const data: UserAccountResponse[] = response.data;
         console.log(data);
-        
-        if (Array.isArray(data)) {
-          // Filter the users to only get cleaners (role: 1)
-          const cleaners = data.filter(user => user.userProfile === "cleaner");  // Assuming role 1 is for cleaner
-          setUsers(cleaners);  // Set the filtered users into the state
-        } else {
-          console.error('Unexpected server response:', data);
-          setError('Unexpected server response.');
-        }
+        setUsers(data); // ✅ Set the state with received data
+        setLoading(false); // ✅ Stop loading
       } catch (err) {
         console.error('Failed to fetch users:', err);
         setError('Could not load users. Please try again later.');
+        setLoading(false);
       }
     };
 
-    fetchUsers();  // Call the function to fetch users
-  }, []);  // Empty dependency array means the effect will run only once
+    fetchUsers();
+  }, []);
 
-  // Filter users based on the search query
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(search.toLowerCase())
   );
@@ -65,8 +56,7 @@ const ViewCleanerService: React.FC = () => {
       {/* User Accounts Section */}
       <div className="account-container">
         <h2>Cleaners' Accounts</h2>
-        
-        {/* Display error message if there's an error */}
+
         {error && <div className="error-message">{error}</div>}
         
         <div className="top-row">
@@ -80,51 +70,57 @@ const ViewCleanerService: React.FC = () => {
           <button className="create-btn">Create Account</button>
         </div>
 
-        {/* User Table */}
-        <table className="user-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Username</th>
-              <th>Profile</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>{user.username}</td>
-                  <td>{user.userProfile}</td>
-                  <td>
-                    <span
-                      className={user.isSuspended ? 'status-suspended' : 'status-active'}
-                    >
-                      {user.isSuspended ? 'Suspended' : 'Active'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="action-buttons">
-                      <button className="view-btn">View</button>
-                      <button className="edit-btn">Edit</button>
-                      <button className="delete-btn">Delete</button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
+        {/* Loading Spinner */}
+        {loading ? (
+          <div className="loading">Loading cleaners...</div>
+        ) : (
+          <table className="user-table">
+            <thead>
               <tr>
-                <td colSpan={5}>No cleaners available.</td>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Profile</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.username}</td>
+                    <td>{user.userProfile}</td>
+                    <td>
+                      <span
+                        className={user.isSuspended ? 'status-suspended' : 'status-active'}
+                      >
+                        {user.isSuspended ? 'Suspended' : 'Active'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button className="view-btn">View</button>
+                        <button className="edit-btn">Edit</button>
+                        <button className="delete-btn">Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5}>No cleaners available.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Footer */}
-      <div className="footer"><b>© Copyright 2025 Easy & Breezy - All Rights Reserved</b></div>
+      <div className="footer">
+        <b>© Copyright 2025 Easy & Breezy - All Rights Reserved</b>
+      </div>
     </div>
   );
 };
