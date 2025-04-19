@@ -14,13 +14,10 @@ const browserRouter = createBrowserRouter([
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
   { path: "/admin-dashboard", element: <AdminDashboardRoute /> },
-<<<<<<< Updated upstream
   { path: "/clean-dashboard", element: <CleanerDashboardRoute /> },
-  { path: "/logout", element: <LogoutPage />}
-=======
+  { path: "/logout", element: <LogoutPage />},
   { path: "/cleaner-dashboard", element: <CleanerDashboardRoute /> },
   { path: "*", element: <div>404 Not Found</div> } // Fallback
->>>>>>> Stashed changes
 ])
 
 const App: React.FC = () => {
