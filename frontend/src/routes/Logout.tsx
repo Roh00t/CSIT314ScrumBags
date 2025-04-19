@@ -14,7 +14,7 @@ const LogoutPage: React.FC = () => {
 
             localStorage.clear()
             
-            navigate('/login') // redirect to login after logout
+            navigate('/login', { replace: true }) // redirect to login after logout
         } catch (error: any) {
             console.error('Logout failed:', error)
             alert('Logout failed. Please try again.')
