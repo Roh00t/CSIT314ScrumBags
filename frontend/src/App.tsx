@@ -5,6 +5,7 @@ import Login from "./routes/Login"
 import CreateAccountPage from "./routes/CreateUserAccount"
 import CreateProfilePage from "./routes/CreateUserProfile"
 import CleanerDashboardRoute from "./routes/CleanerDashboard"
+import LogoutPage from "./routes/Logout"
 
 // Configure all your routes here
 const browserRouter = createBrowserRouter([
@@ -14,8 +15,8 @@ const browserRouter = createBrowserRouter([
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage />},
   { path: "/admin-dashboard", element: <AdminDashboardRoute /> },
-  { path: "/clean-dashboard", element: <CleanerDashboardRoute /> }
-  
+  { path: "/clean-dashboard", element: <CleanerDashboardRoute /> },
+  { path: "/logout", element: <LogoutPage />}
 ])
 
 const App: React.FC = () => {
