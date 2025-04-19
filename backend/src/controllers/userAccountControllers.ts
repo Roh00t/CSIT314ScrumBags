@@ -53,3 +53,25 @@ export class CreateNewUserAccountController {
         )
     }
 }
+
+export class UpdateUserAccountController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async updateUserAccount(
+        userID: number,
+        updateAs: string,
+        updatedUsername: string,
+        updatedPassword: string
+    ): Promise<void> {
+        return await this.userAccount.updateUserAccount(
+            userID,
+            updateAs,
+            updatedUsername,
+            updatedPassword
+        )
+    }
+}

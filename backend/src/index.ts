@@ -2,6 +2,7 @@ import userAccountsRouter from './routers/userAccountsRouter'
 import userProfilesRouter from './routers/userProfilesRouter'
 import servicesRouter from './routers/servicesRouter'
 import platformManagerRouter from './routers/platformManagerRouter'
+import homeownerRouter from './routers/homeownerRouter'
 import connectPgSimple from 'connect-pg-simple'
 import express, { urlencoded } from 'express'
 import session from 'express-session'
@@ -39,6 +40,7 @@ app.use('/api/user-accounts/', userAccountsRouter)
 app.use('/api/user-profiles/', userProfilesRouter)
 app.use('/api/services/', servicesRouter)
 app.use('/api/platform-manager/', platformManagerRouter)
+app.use('/api/homeowner/', homeownerRouter)
 
 const APP_PORT = process.env.PORT || 3001
 const server = app.listen(APP_PORT, () => {
