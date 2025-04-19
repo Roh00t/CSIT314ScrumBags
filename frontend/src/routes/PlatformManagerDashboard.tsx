@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 // Define the type for the service data
 interface ServicesResponse {
   id: number;
+  Category: string;
   serviceName: string;
-  price: number;
 }
 
 const PlatformManagerDashboard: React.FC = () => {
@@ -86,7 +86,7 @@ const PlatformManagerDashboard: React.FC = () => {
                 <tr key={service.id}>
                   <td>{service.id}</td>
                   <td>{service.serviceName}</td>
-                  <td>${service.price.toFixed(2)}</td>
+                  <td>${service.Category}</td>
                   <td>
                     <div className="action-buttons">
                       <button className="view-btn">View</button>

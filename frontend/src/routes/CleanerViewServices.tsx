@@ -2,22 +2,21 @@ import React, { useState, useEffect } from 'react';
 import './CleanerViewServices.css';
 import { Link } from 'react-router-dom';
 
-interface UserAccountResponse{
-  id: number
-  username: string
-  userProfile: string
+interface UserAccountResponse {
+  id: number;
+  username: string;
+  userProfile: string;
 }
 
 interface Service {
   id: number;
   type: string;
   price: number;
-  status: 'Active' | 'Deactivate';
+  status?: 'Active' | 'Deactivate';
 }
 
 const CleanerViewServicesRoute: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
-
 
   const [services, setServices] = useState<Service[]>([]);
   const [search, setSearch] = useState('');
@@ -31,12 +30,11 @@ const CleanerViewServicesRoute: React.FC = () => {
         }
 
         const data = await response.json();
-        console.log(data);
+        console.log('Fetched services:', data); // Debugging log
 
-        // Adjust field names if needed based on your backend structure
         const formatted: Service[] = data.map((item: any) => ({
           id: item.id,
-          type: item.serviceName, 
+          type: item.serviceName,
           price: item.price,
         }));
 
@@ -48,7 +46,6 @@ const CleanerViewServicesRoute: React.FC = () => {
 
     fetchServices();
   }, [sessionUser.id]);
-
 
   return (
     <div className="dashboard-container">
@@ -81,8 +78,8 @@ const CleanerViewServicesRoute: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {services.map(service => (
-                <tr key={service.id}>
+              {services.map((service, index) => (
+                <tr key={service.id || index}>
                   <td>{service.type}</td>
                   <td>${service.price}</td>
                   <td><button className="edit-btn">Edit</button></td>

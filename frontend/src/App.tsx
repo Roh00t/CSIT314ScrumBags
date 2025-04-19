@@ -10,6 +10,8 @@ import CleanerDashboardRoute from "./routes/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/CleanerViewServices"
 import LogoutPage from "./routes/Logout"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
+import ViewUserProfile from "./routes/ViewUserProfile"
+import ViewCleanerService from "./routes/ViewCleanerService"
 
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -19,6 +21,8 @@ const browserRouter = createBrowserRouter([
   { path: "/create-profile", element: <CreateProfilePage /> },
   { path: "/platformManager-profile", element: <PlatformManagerDashboard /> },
   { path: "/logout", element: <LogoutPage /> },
+  { path: "/ViewUserProfile", element: <ViewUserProfile/>},
+  { path: "/ViewCleanerService", element: <ViewCleanerService/>},
 
   // Protected Routes (only accessible when logged in)
   {
