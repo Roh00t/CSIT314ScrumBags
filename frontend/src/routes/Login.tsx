@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-  
+    const navigate = useNavigate()
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
     
@@ -15,8 +16,22 @@ const Login: React.FC = () => {
           { withCredentials: true } // 👈 important for session cookies
         )
     
+        const user = response.data
+        const role = user.userProfile?.toLowerCase() // ✅ Define role here!
         console.log('Login successful:', response.data)
         // You can redirect or store user data here
+        // Redirect based on user profile
+        if (role === 'cleaner') {
+          navigate('/cleaner-dashboard')
+        } else if (role === 'user admin') {
+          navigate('/admin-dashboard')
+        } else if (role === 'homeowner') {
+          navigate('/homeowner-dashboard')
+        } else if (role === 'platform manager') {
+          navigate('/platform-dashboard')
+        } else {
+          alert('Unknown role: ' + role)
+        }
       } catch (error: any) {
         if (error.response) {
           // Server responded with a status other than 2xx
