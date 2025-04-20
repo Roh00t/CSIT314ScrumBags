@@ -20,7 +20,7 @@ const browserRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
-  { path: "/platformManager-profile", element: <PlatformManagerDashboard /> },
+  { path: "/platformManager-dashboard", element: <PlatformManagerDashboard /> },
   { path: "/logout", element: <LogoutPage /> },
   { path: "/ViewUserProfile", element: <ViewUserProfile/>},
   { path: "/ViewCleanerService", element: <ViewCleanerService/>},

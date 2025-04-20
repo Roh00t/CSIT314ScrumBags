@@ -3,15 +3,16 @@ import axios from 'axios';
 import '../css/PlatformManagerDashboard.css';
 import { Link } from 'react-router-dom';
 
-// Define the type for the service data
+// Updated interface to match the actual response structure
 interface ServicesResponse {
   id: number;
-  Category: string;
-  serviceName: string;
+  category: string;
+  label: string;
 }
 
 const PlatformManagerDashboard: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
+  const sessionRole = localStorage.getItem('sessionRole') || 'defaultRole';
   const [services, setServices] = useState<ServicesResponse[]>([]);
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>('');
@@ -19,7 +20,7 @@ const PlatformManagerDashboard: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/user-services', {
+        const response = await axios.get('http://localhost:3000/api/services/', {
           withCredentials: true,
         });
 
@@ -41,9 +42,10 @@ const PlatformManagerDashboard: React.FC = () => {
     fetchServices();
   }, []);
 
-  // Filter services based on the search query
-  const filteredServices = services.filter(service =>
-    service.serviceName.toLowerCase().includes(search.toLowerCase())
+  // Adjusted filtering logic to match the new field names
+  const filteredServices = services.filter((service) =>
+    service.category?.toLowerCase().includes(search.toLowerCase()) ||
+    service.label?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -51,19 +53,20 @@ const PlatformManagerDashboard: React.FC = () => {
       {/* Navbar */}
       <div className="header_container">
         <h2><Link to="/">Home</Link></h2>
-        <h2><Link to="/">My Services</Link></h2>
-        <h2><Link to="/">My Bookings</Link></h2>
+        <h2><Link to="/">Service Categorizes</Link></h2>
+        <h2><Link to="/">Report</Link></h2>
         <h2 id="logout_button">{sessionUser}/Logout</h2>
       </div>
 
+      <h2>Welcome back, {sessionRole}!!</h2>
       {/* Services Section */}
       <div className="account-container">
-        <h2>My Services</h2>
+        <h2>List of Service Categories</h2>
         <div className="top-row">
           <input
             type="text"
             className="search-bar"
-            placeholder="Search by service name"
+            placeholder="Search by service name or category"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -74,9 +77,8 @@ const PlatformManagerDashboard: React.FC = () => {
         <table className="user-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Category</th>
-              <th>Services</th>
+              <th>Service Name</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -84,12 +86,10 @@ const PlatformManagerDashboard: React.FC = () => {
             {filteredServices.length > 0 ? (
               filteredServices.map((service) => (
                 <tr key={service.id}>
-                  <td>{service.id}</td>
-                  <td>{service.serviceName}</td>
-                  <td>${service.Category}</td>
+                  <td>{service.category}</td>
+                  <td>{service.label}</td> {/* Display the correct field */}
                   <td>
                     <div className="action-buttons">
-                      <button className="view-btn">View</button>
                       <button className="edit-btn">Edit</button>
                       <button className="delete-btn">Delete</button>
                     </div>
@@ -103,6 +103,8 @@ const PlatformManagerDashboard: React.FC = () => {
             )}
           </tbody>
         </table>
+
+        {error && <div className="error-message">{error}</div>}
       </div>
 
       {/* Footer */}
