@@ -55,7 +55,7 @@ const ViewServiceCategories: React.FC = () => {
       <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Service Categorizes</Link></h2>
         <h2><Link to="/">Report</Link></h2>
-        <h2 id="logout_button"><Link to="/">{sessionUser}/Logout</Link></h2>
+        <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
       </div>
 
       <h2>Welcome back, {sessionRole}!!</h2>

@@ -68,7 +68,7 @@ const AdminDashboard: React.FC = () => {
       {/* Navbar */}
       <div className="header_container">
         <h2><Link to="/admin-dashboard">Home</Link></h2>
-        <h2><Link to="/">User Account</Link></h2>
+        <h2><Link to="/admin-dashboard">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
         <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
       </div>
