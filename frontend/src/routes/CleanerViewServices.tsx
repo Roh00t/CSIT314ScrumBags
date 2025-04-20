@@ -65,7 +65,7 @@ const CleanerViewServicesRoute: React.FC = () => {
       <div className="header_container">
         <h2><Link to="/cleaner-dashboard">Home</Link></h2>
         <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
-        <h2 id="logout_button"><Link to="/login">{sessionUser.id}/Logout</Link></h2>
+        <h2 id="logout_button"><Link to="/logout">{sessionUser.id}/Logout</Link></h2>
       </div>
 
       {showPopup && (
@@ -74,6 +74,7 @@ const CleanerViewServicesRoute: React.FC = () => {
             <h2>Create New Service</h2>
             <label>Type of service</label>
             <input
+              id="serviceInput"
               type="text"
               placeholder="e.g Floor cleaning"
               value={newService.service}
@@ -95,6 +96,7 @@ const CleanerViewServicesRoute: React.FC = () => {
             />
             <label>Price</label>
             <input
+              id="serviceInput"
               type="number"
               placeholder="e.g $20"
               value={newService.price}
