@@ -13,6 +13,7 @@ import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
 import ViewUserProfile from "./routes/ViewUserProfile"
 import ViewCleanerService from "./routes/ViewCleanerService"
 import ViewShortlist from "./routes/ViewShortlist"
+import ViewServiceCategories from "./routes/VIewServiceCategories"
 
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -20,11 +21,12 @@ const browserRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
-  { path: "/platformManager-profile", element: <PlatformManagerDashboard /> },
+  { path: "/platformManager-dashboard", element: <PlatformManagerDashboard /> },
   { path: "/logout", element: <LogoutPage /> },
   { path: "/ViewUserProfile", element: <ViewUserProfile/>},
   { path: "/ViewCleanerService", element: <ViewCleanerService/>},
   { path: "/ViewShortlist", element: <ViewShortlist /> },
+  { path: "/ViewServiceCategories", element: <ViewServiceCategories /> },
 
   // Protected Routes (only accessible when logged in)
   {
