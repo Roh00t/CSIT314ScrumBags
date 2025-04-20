@@ -39,7 +39,7 @@ const Login: React.FC = () => {
       } else if (userProfile === 'homeowner') {
         navigate('/homeowner-dashboard')
       } else if (userProfile === 'platform manager') {
-        navigate('/platform-dashboard')
+        navigate('/platformManager-dashboard')
       } else {
         alert('Unknown role: ' + userProfile)
       }

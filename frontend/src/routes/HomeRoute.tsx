@@ -17,7 +17,7 @@ const HomeRoute: React.FC = () => {
   }
 
   const goToPlatformManagerDashboard = () => {
-    navigate('/platformManager-profile')
+    navigate('/platformManager-dashboard')
   }
   const goToAdminDashboard = () => {
     navigate('/admin-dashboard')
