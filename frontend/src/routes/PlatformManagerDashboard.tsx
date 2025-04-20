@@ -53,9 +53,15 @@ const PlatformManagerDashboard: React.FC = () => {
       {/* Navbar */}
       <div className="header_container">
         <h2><Link to="/">Home</Link></h2>
+<<<<<<< HEAD
         <h2><Link to="/">Service Categorizes</Link></h2>
         <h2><Link to="/">Report</Link></h2>
         <h2 id="logout_button"><Link to="/">{sessionUser}/Logout</Link></h2>
+=======
+        <h2><Link to="/">My Services</Link></h2>
+        <h2><Link to="/">My Bookings</Link></h2>
+        <h2 id="logout_button">{sessionUser}/Logout</h2>
+>>>>>>> a99b0b6a906283d77bb782a0179a6334da387bc1
       </div>
 
       <h2>Welcome back, {sessionRole}!!</h2>
@@ -73,6 +79,9 @@ const PlatformManagerDashboard: React.FC = () => {
           <button className="create-btn">Create New Category</button>
         </div>
 
+        {/* Display error message if any */}
+        {error && <div className="error-message">{error}</div>}
+        
         {/* Services Table */}
         <table className="user-table">
           <thead>
