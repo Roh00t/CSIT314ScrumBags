@@ -45,11 +45,7 @@ const ViewCleanerService: React.FC = () => {
                 <h2><Link to="/">Services</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
                 <h2><Link to="/">My Shortlist</Link></h2>
-<<<<<<< HEAD
                 <h2 id="logout_button"><Link to="/">{sessionUser}/Logout</Link></h2>
-=======
-                <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
->>>>>>> a99b0b6a906283d77bb782a0179a6334da387bc1
             </div>
 
             {/* User Accounts Section */}
