@@ -65,7 +65,7 @@ const CleanerViewServicesRoute: React.FC = () => {
       <div className="header_container">
         <h2><Link to="/cleaner-dashboard">Home</Link></h2>
         <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
-        <h2 id="logout_button"><Link to="/logout">{sessionUser.id}/Logout</Link></h2>
+        <h2 id="logout_button"><Link to="/logout">{sessionUser.username}/Logout</Link></h2>
       </div>
 
       {showPopup && (
