@@ -28,3 +28,11 @@ export type CleanerServicesData = {
     service: string
     price: number
 }
+
+export type ServiceHistory = {
+    cleanerName: string
+    serviceName: string
+    date: Date
+    price: number
+    status: string
+}

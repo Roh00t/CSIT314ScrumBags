@@ -9,7 +9,7 @@ const LogoutPage: React.FC = () => {
         try {
             await axios.post(
                 'http://localhost:3000/api/user-accounts/logout', 
-                {}
+                {}, { withCredentials: true }
             )
 
             localStorage.clear()

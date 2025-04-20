@@ -14,6 +14,7 @@ import ViewUserProfile from "./routes/ViewUserProfile"
 import ViewCleanerService from "./routes/ViewCleanerService"
 import ViewShortlist from "./routes/ViewShortlist"
 import ViewServiceCategories from "./routes/VIewServiceCategories"
+import HomeOwnerViewHistory from "./routes/HomeOwnerViewHistory"
 
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -27,6 +28,7 @@ const browserRouter = createBrowserRouter([
   { path: "/ViewCleanerService", element: <ViewCleanerService/>},
   { path: "/ViewShortlist", element: <ViewShortlist /> },
   { path: "/ViewServiceCategories", element: <ViewServiceCategories /> },
+  { path: "/ViewServiceHistory", element: <HomeOwnerViewHistory />},
 
   // Protected Routes (only accessible when logged in)
   {
