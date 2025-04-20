@@ -5,6 +5,16 @@ import { Link } from 'react-router-dom';
 
 const ViewUserRoles: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
+  
+  // For Update User Profile
+  const [showProfileEditModal, setShowProfileEditModal] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<{
+    currentProfile: string;
+    updatedProfile: string;
+  }>({
+    currentProfile: '',
+    updatedProfile: ''
+  });
   const [roles, setRoles] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>(''); // Search state
@@ -41,22 +51,27 @@ const ViewUserRoles: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-        <h2><Link to="/">Home</Link></h2>
-        <h2><Link to="/">User Account</Link></h2>
-        <h2><Link to="/">User Profile</Link></h2>
-        <h2 id="logout_button">{sessionUser}/Logout</h2>
+        <h2><Link to="/admin-dashboard">Home</Link></h2>
+        <h2><Link to="/">User Account</Link></h2> 
+        <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
+        <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
       </div>
 
       {/* Roles Section */}
+      {/* User Accounts Section */}
       <div className="account-container">
-        <h2>User Roles</h2>
-        <input
-          type="text"
-          className="search-bar"
-          placeholder="Search by role name"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <h2>User Profiles</h2>
+        <div className="top-row">
+          <input
+            type="text"
+            className="search-bar"
+            placeholder="Search by profiles"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button className="create-btn"><Link to="/create-profile" className="create-btn">Create Profile</Link></button>
+        </div>
+
         {error && <p className="error-message">{error}</p>}
         <table className="user-table">
           <thead>
@@ -75,7 +90,14 @@ const ViewUserRoles: React.FC = () => {
                   <td>
                     <div className="action-buttons">
                       <button className="view-btn">View</button>
-                      <button className="edit-btn">Edit</button>
+                      <button
+                      className="edit-btn"
+                      onClick={() => {
+                        setEditingProfile({ currentProfile: role, updatedProfile: '' });
+                        setShowProfileEditModal(true);
+                      }}>
+                        Edit
+                    </button>
                       <button className="delete-btn">Delete</button>
                     </div>
                   </td>
@@ -88,6 +110,48 @@ const ViewUserRoles: React.FC = () => {
             )}
           </tbody>
         </table>
+        {showProfileEditModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Update User Profile</h2>
+            
+            <label>Current Profile:</label>
+            <input type="text" value={editingProfile.currentProfile} disabled />
+
+            <label>Updated Profile:</label>
+            <input
+              type="text"
+              value={editingProfile.updatedProfile}
+              onChange={e =>
+                setEditingProfile({ ...editingProfile, updatedProfile: e.target.value })
+              }
+            />
+
+            <div className="modal-btn-group">
+              <button onClick={() => setShowProfileEditModal(false)}>Cancel</button>
+              <button
+                onClick={async () => {
+                  try {
+                    await axios.put('http://localhost:3000/api/user-profiles/update', {
+                      oldProfileName: editingProfile.currentProfile,
+                      newProfileName: editingProfile.updatedProfile
+                    });
+
+                    alert('Profile updated successfully!');
+                    setShowProfileEditModal(false);
+                    // Optionally refetch profiles here if needed
+                  } catch (err) {
+                    console.error(err);
+                    alert('Update failed!');
+                  }
+                }}
+              >
+                Save Profile
+              </button>
+            </div>
+          </div>
+        </div>
+)}
       </div>
 
       {/* Footer */}

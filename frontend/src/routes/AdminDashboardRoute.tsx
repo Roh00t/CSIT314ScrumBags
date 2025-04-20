@@ -70,11 +70,11 @@ const AdminDashboard: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-          <h2><Link to="/admin-dashboard">Home</Link></h2>
-          <h2><Link to="/">User Account</Link></h2>
-          <h2><Link to="/">User Profile</Link></h2>
-          <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
-        </div>
+        <h2><Link to="/admin-dashboard">Home</Link></h2>
+        <h2><Link to="/">User Account</Link></h2>
+        <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
+        <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
+      </div>
 
       {/* User Accounts Section */}
       <div className="account-container">
