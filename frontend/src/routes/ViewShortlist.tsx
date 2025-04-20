@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import LogoutModal from '../components/LogoutModal';
 const ViewShortlist: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
     const [users, setUsers] = useState<string[]>([]);
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
-
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -39,9 +40,12 @@ const ViewShortlist: React.FC = () => {
                 <h2><Link to="/">Services</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
                 <h2><Link to="/">My Shortlist</Link></h2>
-                <h2 id="logout_button">{sessionUser}/Logout</h2>
-            </div>
-
+                <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             {/* User Accounts Section */}
             <div className="account-container">
                 <h2>View Shortlist</h2>

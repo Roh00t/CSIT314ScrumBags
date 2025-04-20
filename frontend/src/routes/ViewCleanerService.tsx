@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import LogoutModal from '../components/LogoutModal';
 
 const ViewCleanerService: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -8,6 +9,8 @@ const ViewCleanerService: React.FC = () => {
     const [error, setError] = useState<string>('');
     const [search, setSearch] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -43,9 +46,12 @@ const ViewCleanerService: React.FC = () => {
                 <h2><Link to="/Homeowner-dashboard">Home</Link></h2>
                 <h2><Link to="/ViewBooking">My Bookings</Link></h2>
                 <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
-                <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
-            </div>
-
+                <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             {/* User Accounts Section */}
             <div className="account-container">
                 <h2>Cleaners' Services</h2>

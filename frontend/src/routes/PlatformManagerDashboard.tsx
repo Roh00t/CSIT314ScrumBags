@@ -1,22 +1,27 @@
 
 import '../css/PlatformManagerDashboard.css';
 import { Link } from 'react-router-dom';
-
-
+import React, { useState } from 'react';
+import LogoutModal from '../components/LogoutModal';
 const PlatformManagerDashboard: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const sessionRole = localStorage.getItem('sessionRole') || 'defaultRole';
-
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   return (
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
         <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Service Categorizes</Link></h2>
-        <h2><Link to="/">Report</Link></h2>
-        <h2 id="logout_button"><Link to="/">{sessionUser}/Logout</Link></h2>
+        <h2><Link to="/platformManager-view-report">Report</Link></h2>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
       </div>
 
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
       <h2>Welcome back, {sessionRole}!!</h2>
 
       {/* Footer */}

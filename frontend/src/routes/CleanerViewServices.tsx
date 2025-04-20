@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/CleanerViewServices.css';
 import { Link } from 'react-router-dom';
-
+import LogoutModal from '../components/LogoutModal';
 interface UserAccountResponse {
   id: number;
   username: string;
@@ -34,7 +34,8 @@ const CleanerViewServicesRoute: React.FC = () => {
     description: '',
     price: '',
   });
-
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   useEffect(() => {
     const fetchAvailableServices = async () => {
       try {
@@ -83,8 +84,12 @@ const CleanerViewServicesRoute: React.FC = () => {
       <div className="header_container">
         <h2><Link to="/cleaner-dashboard">Home</Link></h2>
         <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
-        <h2 id="logout_button"><Link to="/logout">{sessionUser.username}/Logout</Link></h2>
-      </div>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser.username}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       {showPopup && (
         <div className="modal-overlay">

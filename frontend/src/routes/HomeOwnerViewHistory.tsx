@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/HomeOwnerViewHistory.css';
 import { Link } from 'react-router-dom';
+import LogoutModal from '../components/LogoutModal';
 
 interface UserAccountResponse {
     id: number
@@ -21,7 +22,8 @@ const HomeOwnerViewHistory: React.FC = () => {
 
     const [history, setHistory] = useState<History[]>([])
     const [search, setSearch] = useState('');
-
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
     useEffect(() => {
         const fetchServices = async () => {
         try { 
@@ -62,9 +64,12 @@ const HomeOwnerViewHistory: React.FC = () => {
                 <h2><Link to="/">Services</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
                 <h2><Link to="/">My Shortlist</Link></h2>
-                <h2 id="logout_button"><Link to="/logout">{sessionUser.username}/Logout</Link></h2>
-            </div>
-
+                <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser.username}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             <div className="content-center">
                 <div className="card">
                 <h1>View Services</h1>

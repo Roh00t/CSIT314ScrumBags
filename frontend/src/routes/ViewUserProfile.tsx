@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/ViewUserProfile.css';
 import { Link } from 'react-router-dom';
-
+import LogoutModal from '../components/LogoutModal';
 const ViewUserRoles: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-  
+   // Logout Modal State
+   const [showLogoutModal, setShowLogoutModal] = useState(false); 
   // For Update User Profile
   const [showProfileEditModal, setShowProfileEditModal] = useState(false);
   const [editingProfile, setEditingProfile] = useState<{
@@ -54,8 +55,12 @@ const ViewUserRoles: React.FC = () => {
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/">User Account</Link></h2> 
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
-        <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
-      </div>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       {/* Roles Section */}
       {/* User Accounts Section */}

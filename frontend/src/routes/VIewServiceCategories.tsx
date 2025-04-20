@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import LogoutModal from '../components/LogoutModal';
+// Updated interface to match the actual response structure
+interface ServicesResponse {
+  id: number;
+  category: string;
+  label: string;
+}
+
+interface newServiceCategory {
+  serviceName: string;
+}
 
 const ViewServiceCategories: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -8,7 +19,8 @@ const ViewServiceCategories: React.FC = () => {
   const [services, setServices] = useState<string[]>([]);  // Change to array of strings
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>('');
-
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [newServiceCategory, setNewServiceCategory] = useState<{ serviceName: string }>({
     serviceName: ''
@@ -48,11 +60,15 @@ const ViewServiceCategories: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-        <h2><Link to="/platformManager-dashboard">Home</Link></h2>
-        <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
-        <h2><Link to="/">Report</Link></h2>
-        <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
-      </div>
+      <h2><Link to="/platformManager-dashboard">Home</Link></h2>
+        <h2><Link to="/ViewServiceCategories">Service Categorizes</Link></h2>
+        <h2><Link to="/platformManager-view-report">Report</Link></h2>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       {/* Modal for creating new category */}
       {showPopup && (

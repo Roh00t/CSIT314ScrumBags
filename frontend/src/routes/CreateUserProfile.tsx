@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
+import LogoutModal from '../components/LogoutModal';
 
 const CreateProfilePage: React.FC = () => {
+  const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const [profileName, setProfileName] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleCreateProfile = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -33,7 +37,18 @@ const CreateProfilePage: React.FC = () => {
   }
 
   return (
+    
     <div className="create_container">
+        <div className="header_container">
+        <h2><Link to="/admin-dashboard">Home</Link></h2>
+        <h2><Link to="/admin-dashboard">User Account</Link></h2>
+        <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
       <div className="left_side">
         <h1>Experience a New Level of Clean</h1>
         <p>
