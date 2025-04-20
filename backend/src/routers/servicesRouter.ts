@@ -1,29 +1,33 @@
 import { requireAuthMiddleware } from '../shared/middleware'
-import { UserAccountResponse } from '../shared/dataClasses'
+import { UserAccountData } from '../shared/dataClasses'
 import { StatusCodes } from 'http-status-codes'
 import {
+    CreateServiceCategoryController,
     CreateServiceController,
     CreateServiceProvidedController,
+    ViewServiceCategoriesController,
     ViewServicesController,
     ViewServicesProvidedController
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
+import { ServiceCategoryNotFound } from '../shared/exceptions'
 
 const servicesRouter = Router()
 
 declare module 'express-session' {
     interface SessionData {
-        user: UserAccountResponse
+        user: UserAccountData
     }
 }
 
 /**
- * Create new service 'category' or 'type'
+ * Create new service 'categories'
  */
-servicesRouter.post('/', async (req, res): Promise<void> => {
+servicesRouter.post('/categories', async (req, res): Promise<void> => {
     try {
-        await new CreateServiceController().createService(req.body.service)
-        res.status(StatusCodes.CREATED).send()
+        const { category } = req.body
+        await new CreateServiceCategoryController().createServiceCategory(category)
+        res.status(StatusCodes.OK).send()
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
@@ -32,7 +36,45 @@ servicesRouter.post('/', async (req, res): Promise<void> => {
 })
 
 /**
- * View all the services 'categories' or 'types' that exist
+ * View all service 'categories' that exist
+ */
+servicesRouter.get('/categories', async (_, res): Promise<void> => {
+    try {
+        const allServiceCategories =
+            await new ViewServiceCategoriesController()
+                .viewServiceCategories()
+        res.status(StatusCodes.OK).json(allServiceCategories)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+/**
+ * Create new service, with a certain 'category' or 'type'
+ */
+servicesRouter.post('/', async (req, res): Promise<void> => {
+    try {
+        const { service, category } = req.body
+        await new CreateServiceController().createService(service, category)
+        res.status(StatusCodes.CREATED).send()
+    } catch (err) {
+        if (err instanceof ServiceCategoryNotFound) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: (err as Error).message
+            })
+        }
+        else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
+    }
+})
+
+/**
+ * View all the services that exist, as well as their corresponding 'category'
  */
 servicesRouter.get('/', async (_, res): Promise<void> => {
     try {

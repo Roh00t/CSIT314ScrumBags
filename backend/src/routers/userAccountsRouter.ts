@@ -1,5 +1,5 @@
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
-import { UserAccountResponse } from '../shared/dataClasses'
+import { UserAccountData } from '../shared/dataClasses'
 import {
     CreateNewUserAccountController,
     ViewUserAccountsController,
@@ -10,7 +10,7 @@ import {
     UserAccountSuspendedError,
     InvalidCredentialsError,
     UserAccountNotFound
-} from '../exceptions/exceptions'
+} from '../shared/exceptions'
 import { Router } from 'express'
 import { ViewCleanersController } from '../controllers/cleanerControllers'
 
@@ -70,7 +70,7 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
                 })
                 return
             }
-            ;(req.session as any).user = userAccRes as UserAccountResponse
+            ; (req.session as any).user = userAccRes as UserAccountData
             res.status(StatusCodes.OK).json(userAccRes)
         })
     } catch (err) {
@@ -90,7 +90,7 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
 
 userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     try {
-        await req.session.destroy((_) => {})
+        await req.session.destroy((_) => { })
         res.status(StatusCodes.OK).json({ message: 'Logout successful' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -114,11 +114,11 @@ userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
 userAccountsRouter.post('/update', async (req, res): Promise<void> => {
     try {
         const { userId, updatedAs, updatedUsername, updatedPassword } = req.body
-        const update = 
+        const update =
             await new UpdateUserAccountController().updateUserAccount(
-                userId, 
-                updatedAs, 
-                updatedUsername, 
+                userId,
+                updatedAs,
+                updatedUsername,
                 updatedPassword
             )
         res.status(StatusCodes.OK).json({ message: 'Update Success' })

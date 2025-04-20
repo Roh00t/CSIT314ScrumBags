@@ -1,8 +1,38 @@
-import { ServiceProvided } from '../shared/dataClasses'
+import { ServiceData, ServiceProvidedData } from '../shared/dataClasses'
 import { Service } from '../entities/service'
 
 /**
- * Create new service 'category' or 'type'
+ * Create new service 'categories'
+ */
+export class CreateServiceCategoryController {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async createServiceCategory(categoryLabel: string): Promise<void> {
+        return await this.service.createServiceCategory(categoryLabel)
+    }
+}
+
+/**
+ * View all service 'categories' that exist
+ */
+export class ViewServiceCategoriesController {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async viewServiceCategories(): Promise<string[]> {
+        return await this.service.viewServiceCategories()
+    }
+}
+
+/**
+ * Create new service, with a certain 'category' or 'type'
  */
 export class CreateServiceController {
     private service: Service
@@ -11,13 +41,16 @@ export class CreateServiceController {
         this.service = new Service()
     }
 
-    public async createService(serviceName: string): Promise<void> {
-        await this.service.createService(serviceName)
+    public async createService(
+        serviceName: string,
+        serviceCategory: string
+    ): Promise<void> {
+        await this.service.createService(serviceName, serviceCategory)
     }
 }
 
 /**
- * View all the services 'categories' or 'types' that exist
+ * View all the services that exist, as well as their corresponding 'category'
  */
 export class ViewServicesController {
     private service: Service
@@ -26,7 +59,7 @@ export class ViewServicesController {
         this.service = new Service()
     }
 
-    public async viewServices(): Promise<string[]> {
+    public async viewServices(): Promise<ServiceData[]> {
         return await this.service.viewServices()
     }
 }
@@ -43,7 +76,7 @@ export class ViewServicesProvidedController {
 
     public async viewServicesProvided(
         userID: number
-    ): Promise<ServiceProvided[]> {
+    ): Promise<ServiceProvidedData[]> {
         return await this.service.viewServicesProvided(userID)
     }
 }

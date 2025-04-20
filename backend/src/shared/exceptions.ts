@@ -22,6 +22,12 @@ export class ServiceNotFoundError extends Error {
     }
 }
 
+export class ServiceCategoryNotFound extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
+
 // export class InvalidRoleError extends Error {
 //     constructor(message: string) {
 //         super(message)

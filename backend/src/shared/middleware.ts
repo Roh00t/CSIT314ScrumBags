@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
-import { UserAccountResponse } from './dataClasses'
+import { UserAccountData } from './dataClasses'
 import { StatusCodes } from 'http-status-codes'
 
 declare module 'express-session' {
     interface SessionData {
-        user: UserAccountResponse
+        user: UserAccountData
     }
 }
 

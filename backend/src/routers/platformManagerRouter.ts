@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { UserAccountResponse } from '../shared/dataClasses'
+import { UserAccountData } from '../shared/dataClasses'
 import { StatusCodes } from 'http-status-codes'
 import { GenerateReportController } from '../controllers/platformManagerController'
 
@@ -7,7 +7,7 @@ const platformManagerRouter = Router()
 
 declare module 'express-session' {
     interface SessionData {
-        user: UserAccountResponse
+        user: UserAccountData
     }
 }
 
