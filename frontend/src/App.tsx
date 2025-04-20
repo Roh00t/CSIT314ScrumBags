@@ -16,6 +16,7 @@ import ViewShortlist from "./routes/ViewShortlist"
 import ViewServiceCategories from "./routes/VIewServiceCategories"
 import HomeOwnerViewHistory from "./routes/HomeOwnerViewHistory"
 import PlatformManagerViewReports from "./routes/platformManagerViewReport"
+import HomeownerDashBoard from "./routes/HomeownerDashBoard"
 
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -30,6 +31,7 @@ const browserRouter = createBrowserRouter([
   { path: "/ViewServiceCategories", element: <ViewServiceCategories /> },
   { path: "/ViewServiceHistory", element: <HomeOwnerViewHistory />},
   { path: "/platformManager-view-report", element: <PlatformManagerViewReports />},
+  { path: "/homeowner-dashboard", element: <HomeownerDashBoard />},
   // Protected Routes (only accessible when logged in)
   {
     path: "/ViewUserProfile",
