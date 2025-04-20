@@ -1,4 +1,4 @@
-import { UserAccountResponse } from '../shared/dataClasses'
+import { UserAccountData } from '../shared/dataClasses'
 import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
@@ -10,7 +10,7 @@ export class ViewUserAccountsController {
         this.userAccount = new UserAccount()
     }
 
-    public async viewUserAccounts(): Promise<UserAccountResponse[]> {
+    public async viewUserAccounts(): Promise<UserAccountData[]> {
         return await this.userAccount.viewUserAccounts()
     }
 }
@@ -25,7 +25,7 @@ export class LoginController {
     public async login(
         username: string,
         password: string
-    ): Promise<UserAccountResponse> {
+    ): Promise<UserAccountData> {
         return await this.userAccount.login(username, password)
     }
 }

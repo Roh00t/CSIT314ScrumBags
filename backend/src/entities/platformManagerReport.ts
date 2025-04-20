@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
-import { ServiceBookingReportDatum } from '../shared/dataClasses'
+import { ServiceBookingReportData } from '../shared/dataClasses'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
 import { servicesTable } from '../db/schema/services'
 import { and, eq, gte, lt } from 'drizzle-orm'
@@ -16,7 +16,7 @@ export class ServiceBooking {
 
     public async generateDailyReport(
         myDate: Date
-    ): Promise<ServiceBookingReportDatum[]> {
+    ): Promise<ServiceBookingReportData[]> {
         const dailyreport = await this.db
             .select({
                 bookingID: serviceBookingsTable.serviceID,
@@ -58,7 +58,7 @@ export class ServiceBooking {
                 cleanerName: dr.cleanerName,
                 price: Number(dr.price),
                 date: dr.date
-            } as ServiceBookingReportDatum
+            } as ServiceBookingReportData
         })
         return dailyReportMapped
     }

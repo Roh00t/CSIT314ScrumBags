@@ -1,6 +1,6 @@
 import { integer, pgTable, timestamp, index, serial } from 'drizzle-orm/pg-core'
-import { userAccountsTable } from './userAccounts'
 import { bookingStatusEnum } from './bookingStatusEnum'
+import { userAccountsTable } from './userAccounts'
 import { servicesTable } from './services'
 
 export const serviceBookingsTable = pgTable(

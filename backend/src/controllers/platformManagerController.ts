@@ -1,4 +1,4 @@
-import { ServiceBookingReportDatum } from '../shared/dataClasses'
+import { ServiceBookingReportData } from '../shared/dataClasses'
 import { ServiceBooking } from '../entities/platformManagerReport'
 
 export class GenerateReportController {
@@ -9,7 +9,7 @@ export class GenerateReportController {
 
     public async generateDailyReport(
         myDate: Date
-    ): Promise<ServiceBookingReportDatum[]> {
+    ): Promise<ServiceBookingReportData[]> {
         return await this.serviceBooking.generateDailyReport(myDate)
     }
 }

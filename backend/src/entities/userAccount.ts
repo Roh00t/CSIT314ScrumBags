@@ -2,17 +2,15 @@ import {
     InvalidCredentialsError,
     UserAccountNotFound,
     UserAccountSuspendedError
-} from '../exceptions/exceptions'
+} from '../shared/exceptions'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
-import { UserAccountResponse } from '../shared/dataClasses'
+import { UserAccountData } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
-import { string } from 'zod'
-
 
 export default class UserAccount {
     private db: DrizzleClient
@@ -52,7 +50,7 @@ export default class UserAccount {
     public async login(
         username: string,
         password: string
-    ): Promise<UserAccountResponse> {
+    ): Promise<UserAccountData> {
         const [retrievedUser] = await this.db
             .select({
                 id: userAccountsTable.id,
@@ -95,10 +93,10 @@ export default class UserAccount {
             id: retrievedUser.id,
             username: retrievedUser.username,
             userProfile: retrievedUser.userProfileLabel
-        } as UserAccountResponse
+        } as UserAccountData
     }
 
-    public async viewUserAccounts(): Promise<UserAccountResponse[]> {
+    public async viewUserAccounts(): Promise<UserAccountData[]> {
         const allUsers = await this.db
             .select({
                 id: userAccountsTable.id,
@@ -111,17 +109,17 @@ export default class UserAccount {
                 userProfilesTable,
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
             );
-    
+
         return allUsers.map((u) => {
             return {
                 id: u.id,
                 username: u.username,
                 userProfile: u.profileLabel,
                 isSuspended: u.isSuspended
-            } as UserAccountResponse;
+            } as UserAccountData;
         });
     }
-    
+
     // This async Function only retrieves Cleaner names under the assumption that
     // There will be another page to show the Services provided by the Cleaner.
     // 15042025 2257 Hours
@@ -145,24 +143,24 @@ export default class UserAccount {
         await this.db
             .insert(shortlistedCleanersTable)
             .values({
-                homeownerID, 
+                homeownerID,
                 cleanerID
             })
     }
 
-    public async ViewShortlist(homeownerID: number): Promise<string[]> {
+    public async viewShortlist(homeownerID: number): Promise<string[]> {
         const shortlistedCleaners = await this.db
-        .select({ cleanerID: shortlistedCleanersTable.cleanerID })
-        .from(shortlistedCleanersTable)
-        .where(eq(shortlistedCleanersTable.homeownerID, homeownerID))
-    
+            .select({ cleanerID: shortlistedCleanersTable.cleanerID })
+            .from(shortlistedCleanersTable)
+            .where(eq(shortlistedCleanersTable.homeownerID, homeownerID))
+
         // Retrieve cleaner names based on the cleanerIDs from shortlistedCleaners
         const cleanerNames = await Promise.all(shortlistedCleaners.map(async (entry) => {
             const [cleaner] = await this.db
                 .select({ cleanerName: userAccountsTable.username })
                 .from(userAccountsTable)
                 .where(eq(userAccountsTable.id, entry.cleanerID))
-            
+
             return cleaner?.cleanerName || "Unknown Cleaner"
         }));
 
@@ -176,9 +174,9 @@ export default class UserAccount {
         updatedPassword: string
     ): Promise<void> {
         const [userProfile] = await this.db
-        .select()
-        .from(userProfilesTable)
-        .where(eq(userProfilesTable.label, updateAs))
+            .select()
+            .from(userProfilesTable)
+            .where(eq(userProfilesTable.label, updateAs))
 
         await this.db
             .update(userAccountsTable)

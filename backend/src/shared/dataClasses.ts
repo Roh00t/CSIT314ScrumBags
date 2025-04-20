@@ -1,20 +1,24 @@
-export type UserAccountResponse = {
+export type UserAccountData = {
     id: number
     username: string
     userProfile: string
 }
 
-export type ServiceProvided = {
+export type ServiceProvidedData = {
     serviceName: string
     description: string
     price: number
 }
 
-export type ServiceBookingReportDatum = {
-    // ID , Services, Cleaner Name, Price, Date
+export type ServiceBookingReportData = {
     bookingid: number
     serviceName: string
     cleanerName: string
     price: number
     date: Date
+}
+
+export type ServiceData = {
+    label: string
+    category: string
 }
