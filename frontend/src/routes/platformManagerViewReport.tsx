@@ -9,10 +9,10 @@ const PlatformManagerViewReports: React.FC = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
-  const [reportData, setReportData] = useState<any[]>([]); // Define type later if needed
+  const [reportData, setReportData] = useState<any[]>([]);
 
-/* For the downloading of report */
-const handleDownloadCSV = () => {
+  // For the downloading of report
+  const handleDownloadCSV = () => {
     const csvRows = [
       ['Booking ID', 'Services', 'Cleaners', 'Price', 'Date'],
       ...reportData.map(row => [
@@ -23,11 +23,11 @@ const handleDownloadCSV = () => {
         row.date
       ])
     ];
-  
+
     const csvContent = csvRows.map(e => e.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement("a");
     link.href = url;
     link.download = `${filter}_report.csv`;
@@ -36,20 +36,23 @@ const handleDownloadCSV = () => {
     document.body.removeChild(link);
   };
 
-
-
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/platform-manager/${filter}`, {
-          withCredentials: true
+        const today = new Date();
+        const chosenDate = today.toISOString(); // backend expects chosenDate
+
+        const response = await axios.post(`http://localhost:3000/api/platform-manager/${filter}`, {
+          data: { chosenDate },
+          withCredentials: true,
         });
+
         setReportData(response.data);
       } catch (err) {
         console.error(`Failed to fetch ${filter} report:`, err);
       }
     };
-  
+
     fetchReport();
   }, [filter]);
 

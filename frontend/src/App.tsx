@@ -33,6 +33,12 @@ const browserRouter = createBrowserRouter([
   { path: "/platformManager-view-report", element: <PlatformManagerViewReports />},
   { path: "/homeowner-dashboard", element: <HomeownerDashBoard />},
   // Protected Routes (only accessible when logged in)
+  { path: "/homeowner-dashboard", 
+    element: 
+    <ProtectedRoute>
+      <HomeownerDashBoard />
+    </ProtectedRoute>
+  },
   {
     path: "/ViewUserProfile",
     element: (
