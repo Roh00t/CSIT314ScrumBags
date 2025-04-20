@@ -10,12 +10,21 @@ interface ServicesResponse {
   label: string;
 }
 
+interface newServiceCategory {
+  serviceName: string;
+}
+
 const ViewServiceCategories: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const sessionRole = localStorage.getItem('sessionRole') || 'defaultRole';
   const [services, setServices] = useState<ServicesResponse[]>([]);
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [newServiceCategory, setNewServiceCategory] = useState<newServiceCategory>({
+    serviceName: ''
+  });
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -58,6 +67,54 @@ const ViewServiceCategories: React.FC = () => {
         <h2 id="logout_button"><Link to="/">{sessionUser}/Logout</Link></h2>
       </div>
 
+      {showPopup && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Create New Service Category</h2>
+            <label>Category Name:</label>
+            <input
+              id="categoryInput"
+              type="string"
+              placeholder="e.g Floor cleaning"
+              value={newServiceCategory.serviceName}
+              onChange={(e) => setNewServiceCategory({ ...newServiceCategory, serviceName: e.target.value })}
+            />
+            <div className="modal-buttons">
+              <button onClick={() => setShowPopup(false)}>Cancel</button>
+              <button onClick={async () => {
+                try {
+                  const response = await fetch('http://localhost:3000/api/services/categories', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      category: newServiceCategory.serviceName
+                    }),
+                    credentials: 'include',
+                  });
+      
+                  if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to create service category');
+                  }
+      
+                  setShowPopup(false);
+                  setNewServiceCategory({ serviceName: '' });
+                  window.location.reload(); // or re-fetch services
+                } catch (error) {
+                  console.error('Error creating service category:', error);
+                  alert('Failed to create service category.');
+                }
+              }}>
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       <h2>Welcome back, {sessionRole}!!</h2>
       {/* Services Section */}
       <div className="account-container">
@@ -70,7 +127,7 @@ const ViewServiceCategories: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="create-btn">Create New Category</button>
+          <button  className="create-btn" onClick={() => setShowPopup(true)}>Create New Category</button>
         </div>
 
         {/* Display error message if any */}
