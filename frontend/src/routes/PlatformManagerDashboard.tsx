@@ -1,84 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import '../css/PlatformManagerDashboard.css';
 import { Link } from 'react-router-dom';
 
-// Updated interface to match the actual response structure
-interface ServicesResponse {
-  id: number;
-  category: string;
-  label: string;
-}
 
 const PlatformManagerDashboard: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const sessionRole = localStorage.getItem('sessionRole') || 'defaultRole';
-  const [services, setServices] = useState<ServicesResponse[]>([]);
-  const [error, setError] = useState<string>('');
-  const [search, setSearch] = useState<string>('');
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/services/', {
-          withCredentials: true,
-        });
-
-        const data: ServicesResponse[] = response.data;
-        console.log(data);
-
-        if (Array.isArray(data)) {
-          setServices(data);
-        } else {
-          console.error('Unexpected server response:', data);
-          setError('Unexpected server response.');
-        }
-      } catch (err) {
-        console.error('Failed to fetch services:', err);
-        setError('Could not load services. Please try again later.');
-      }
-    };
-
-    fetchServices();
-  }, []);
-
-  // Adjusted filtering logic to match the new field names
-  const filteredServices = services.filter((service) =>
-    service.category?.toLowerCase().includes(search.toLowerCase()) ||
-    service.label?.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-        <h2><Link to="/">Home</Link></h2>
+        <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Service Categorizes</Link></h2>
         <h2><Link to="/">Report</Link></h2>
         <h2 id="logout_button"><Link to="/">{sessionUser}/Logout</Link></h2>
       </div>
 
       <h2>Welcome back, {sessionRole}!!</h2>
-      {/* Services Section */}
-      <div className="account-container">
-        <h2>Platform Manager Dashboard</h2>
-        <div className="top-row">
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search by service name or category"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button className="create-btn">Create New Category</button>
-        </div>
-
-        {/* Display error message if any */}
-        {error && <div className="error-message">{error}</div>}
-      
-
-        {error && <div className="error-message">{error}</div>}
-      </div>
 
       {/* Footer */}
       <div className="footer">
