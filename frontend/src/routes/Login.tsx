@@ -13,7 +13,9 @@ const Login: React.FC = () => {
     try {
       const response = await axios.post(
         'http://localhost:3000/api/user-accounts/login',
-        { username, password }
+        { username, password }, {
+          withCredentials: true,
+        }
       )
 
       // Assuming server returns: { username: "john", role: "homeowner" }

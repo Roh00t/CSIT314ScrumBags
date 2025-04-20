@@ -8,7 +8,7 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { servicesTable } from '../schema/services'
 import { GLOBALS } from '../../shared/constants'
 import { faker } from '@faker-js/faker'
-import { sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
 import 'dotenv/config'
 
@@ -136,11 +136,33 @@ const main = async (): Promise<void> => {
 
     // ------ Create a bunch of random 'service bookings'
     const randomBookings: ServiceBookingInsert[] = []
-    for (let i = 0; i < NO_OF_SERVICE_BOOKINGS; i++) {
+    for (let i = 0; i < NO_OF_SERVICE_BOOKINGS;) {
+        const randomCleanerID = faker.helpers.arrayElement(allCleaners).id
+        const servicesByCleaner = await db
+            .select({
+                id: servicesTable.id,
+                label: servicesTable.label
+            })
+            .from(servicesProvidedTable)
+            .leftJoin(servicesTable,
+                eq(
+                    servicesProvidedTable.serviceID,
+                    servicesTable.id
+                ))
+            .where(
+                eq(servicesProvidedTable.cleanerID, randomCleanerID)
+            )
+
+        // If cleaner of "randomCleanerID" doesn't provide any services...
+        // Just skip
+        if (servicesByCleaner.length === 0) {
+            continue
+        }
+
         randomBookings.push({
             homeownerID: faker.helpers.arrayElement(allHomeowners).id,
-            cleanerID: faker.helpers.arrayElement(allCleaners).id,
-            serviceID: faker.helpers.arrayElement(allServices).id,
+            cleanerID: randomCleanerID,
+            serviceID: faker.helpers.arrayElement(servicesByCleaner).id,
             startTimestamp: faker.date.anytime(),
             status: faker.helpers.arrayElement([
                 BookingStatus.Requested,
@@ -151,6 +173,7 @@ const main = async (): Promise<void> => {
                 BookingStatus.Done
             ])
         } as ServiceBookingInsert)
+        i++ // Only increment when a service is actually added
     }
     if (randomBookings.length > 0) {
         await db
@@ -166,7 +189,7 @@ const main = async (): Promise<void> => {
                 min: 0,
                 max: allCleaners.length
             })
-            .map((cleaner) => {
+            .map(cleaner => {
                 return {
                     homeownerID: homeowner.id,
                     cleanerID: cleaner.id
@@ -189,6 +212,7 @@ try {
     console.error('Error with seeding the database: ', (err as Error).message)
 }
 
+type ServiceSelect = typeof servicesTable.$inferSelect
 type UserAccountInsert = typeof userAccountsTable.$inferInsert
 type UserAccountSelect = typeof userAccountsTable.$inferSelect
 type ServiceBookingInsert = typeof serviceBookingsTable.$inferInsert

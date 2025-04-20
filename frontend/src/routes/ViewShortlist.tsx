@@ -2,43 +2,37 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const ViewCleanerService: React.FC = () => {
+const ViewShortlist: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-    const [users, setUsers] = useState<string[]>([]); // Change to string[] since data is an array of usernames
+    const [users, setUsers] = useState<string[]>([]);
     const [error, setError] = useState<string>('');
-    const [search, setSearch] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true); // NEW: for loading spinner
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/user-accounts/cleaners', {
+                // Replace with the correct URL for fetching shortlist data
+                const response = await axios.get('http://localhost:3000/api/homeowner/', {
                     withCredentials: true,
                 });
 
-                // Since the response is an array of strings (usernames), we can set it directly
-                const data: string[] = response.data;
-                console.log(data); // Log data to inspect the structure
-                setUsers(data); // Set the state with received data
-                setLoading(false); // Stop loading
+                // Assuming the backend returns { message: 'Shortlist retrieved successfully', data: ['user2', 'User5'] }
+                const data: string[] = response.data.data;  // Access the data property
+                console.log(data);  // Log the data to verify structure
+                setUsers(data);  // Set the users list with the fetched data
+                setLoading(false);  // Stop the loading spinner
             } catch (err) {
                 console.error('Failed to fetch users:', err);
                 setError('Could not load users. Please try again later.');
-                setLoading(false);
+                setLoading(false);  // Stop loading on error
             }
         };
 
         fetchUsers();
-    }, []);
-
-    // Adjusted the filtering logic
-    const filteredUsers = users.filter(user =>
-        (user.toLowerCase().includes(search.toLowerCase()) || false) // Safe check for undefined
-    );
-
+    }, []);  // Empty dependency array ensures this runs once when the component mounts
 
     return (
-        <div className="user-account-page">
+        <div className="ViewShortListPageContainer">
             {/* Navbar */}
             <div className="header_container">
                 <h2><Link to="/">Home</Link></h2>
@@ -50,20 +44,9 @@ const ViewCleanerService: React.FC = () => {
 
             {/* User Accounts Section */}
             <div className="account-container">
-                <h2>Cleaners' Accounts</h2>
+                <h2>View Shortlist</h2>
 
-                {error && <div className="error-message">{error}</div>}
-
-                <div className="top-row">
-                    <input
-                        type="text"
-                        className="search-bar"
-                        placeholder="Search by username"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                    <button className="create-btn">Create Account</button>
-                </div>
+                {error && <div className="error-message">{error}</div>}  {/* Display error message if any */}
 
                 {/* Loading Spinner */}
                 {loading ? (
@@ -78,8 +61,8 @@ const ViewCleanerService: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map((user, index) => (
+                            {users.length > 0 ? (
+                                users.map((user, index) => (
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>{user}</td>
@@ -94,7 +77,7 @@ const ViewCleanerService: React.FC = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={3}>No users found</td>
+                                    <td colSpan={3}>No users found</td>  {/* Message when no users are found */}
                                 </tr>
                             )}
                         </tbody>
@@ -110,4 +93,4 @@ const ViewCleanerService: React.FC = () => {
     );
 };
 
-export default ViewCleanerService;
+export default ViewShortlist;

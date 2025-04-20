@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './PlatformManagerDashboard.css';
+import '../css/PlatformManagerDashboard.css';
 import { Link } from 'react-router-dom';
 
 // Define the type for the service data
