@@ -81,7 +81,7 @@
           <h2><Link to="/admin-dashboard">Home</Link></h2>
           <h2><Link to="/">Profiles</Link></h2>
           <h2><Link to="/">Accounts</Link></h2>
-          <h2 id="logout_button">{sessionUser}/Logout</h2>
+          <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
         </div>
 
         <div className="create_container">
