@@ -22,3 +22,9 @@ export type ServiceData = {
     label: string
     category: string
 }
+
+export type CleanerServicesData = {
+    cleaner: string
+    service: string
+    price: number
+}

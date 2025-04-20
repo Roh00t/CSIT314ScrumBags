@@ -99,7 +99,7 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     }
 })
 
-userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
+userAccountsRouter.get('/cleaners', async (_, res): Promise<void> => {
     try {
         const allAvailableCleaners =
             await new ViewCleanersController().viewCleaners()
@@ -114,13 +114,12 @@ userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
 userAccountsRouter.post('/update', async (req, res): Promise<void> => {
     try {
         const { userId, updatedAs, updatedUsername, updatedPassword } = req.body
-        const update =
-            await new UpdateUserAccountController().updateUserAccount(
-                userId,
-                updatedAs,
-                updatedUsername,
-                updatedPassword
-            )
+        await new UpdateUserAccountController().updateUserAccount(
+            userId,
+            updatedAs,
+            updatedUsername,
+            updatedPassword
+        )
         res.status(StatusCodes.OK).json({ message: 'Update Success' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
