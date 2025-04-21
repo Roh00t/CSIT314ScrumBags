@@ -46,7 +46,7 @@ export class ServiceBooking {
                     gte(serviceBookingsTable.startTimestamp, myDate),
                     lt(
                         serviceBookingsTable.startTimestamp,
-                        new Date(myDate.getDate() + 1)
+                        new Date(myDate.getTime() + 24 * 60 * 60 * 1000) // Corrected date addition
                     )
                 )
             )
@@ -63,3 +63,4 @@ export class ServiceBooking {
         return dailyReportMapped
     }
 }
+
