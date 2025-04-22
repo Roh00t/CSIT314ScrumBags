@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import LogoutModal from '../components/LogoutModal';
 
 const ViewCleanerService: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-    const [users, setUsers] = useState<string[]>([]); // Change to string[] since data is an array of usernames
+    const [users, setUsers] = useState<any[]>([]);
     const [error, setError] = useState<string>('');
     const [search, setSearch] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true); // NEW: for loading spinner
+    const [loading, setLoading] = useState<boolean>(true);
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -16,11 +19,10 @@ const ViewCleanerService: React.FC = () => {
                     withCredentials: true,
                 });
 
-                // Since the response is an array of strings (usernames), we can set it directly
-                const data: string[] = response.data;
-                console.log(data); // Log data to inspect the structure
-                setUsers(data); // Set the state with received data
-                setLoading(false); // Stop loading
+                const data = response.data;
+                console.log(data);
+                setUsers(data);
+                setLoading(false);
             } catch (err) {
                 console.error('Failed to fetch users:', err);
                 setError('Could not load users. Please try again later.');
@@ -31,26 +33,30 @@ const ViewCleanerService: React.FC = () => {
         fetchUsers();
     }, []);
 
-    // Adjusted the filtering logic
+    // Filtering by cleaner's name
     const filteredUsers = users.filter(user =>
-        (user.toLowerCase().includes(search.toLowerCase()) || false) // Safe check for undefined
+        typeof user.cleaner === 'string' &&
+        user.cleaner.toLowerCase().includes(search.toLowerCase())
     );
-
 
     return (
         <div className="user-account-page">
             {/* Navbar */}
             <div className="header_container">
-                <h2><Link to="/">Home</Link></h2>
-                <h2><Link to="/">Services</Link></h2>
+                <h2><Link to="/homeowner-dashboard">Home</Link></h2>
+                <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
-                <h2><Link to="/">My Shortlist</Link></h2>
-                <h2 id="logout_button">{sessionUser}/Logout</h2>
-            </div>
-
+                <h2><Link to="/ViewServiceHistory">My History</Link></h2>
+                <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
+                <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             {/* User Accounts Section */}
             <div className="account-container">
-                <h2>Cleaners' Accounts</h2>
+                <h2>Cleaners' Services</h2>
 
                 {error && <div className="error-message">{error}</div>}
 
@@ -58,11 +64,10 @@ const ViewCleanerService: React.FC = () => {
                     <input
                         type="text"
                         className="search-bar"
-                        placeholder="Search by username"
+                        placeholder="Search by cleaner name"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <button className="create-btn">Create Account</button>
                 </div>
 
                 {/* Loading Spinner */}
@@ -72,21 +77,22 @@ const ViewCleanerService: React.FC = () => {
                     <table className="user-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Username</th>
+                                <th>Cleaner</th>
+                                <th>Type of Service</th>
+                                <th>Price</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map((user, index) => (
+                            {filteredUsers.slice(0, 30).length > 0 ? (
+                                filteredUsers.slice(0, 30).map((user, index) => (
                                     <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{user}</td>
+                                        <td>{user.cleaner}</td>
+                                        <td>{user.service}</td>
+                                        <td>${user.price?.toFixed(2)}</td>
                                         <td>
                                             <div className="action-buttons">
-                                                <button className="view-btn">View</button>
-                                                <button className="edit-btn">Edit</button>
+                                                <button className="edit-btn">Fav</button>
                                                 <button className="delete-btn">Delete</button>
                                             </div>
                                         </td>
@@ -94,7 +100,7 @@ const ViewCleanerService: React.FC = () => {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={3}>No users found</td>
+                                    <td colSpan={4}>No users found</td>
                                 </tr>
                             )}
                         </tbody>

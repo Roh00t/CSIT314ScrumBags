@@ -10,7 +10,7 @@ import {
     ViewServicesProvidedController
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
-import { ServiceCategoryNotFound } from '../shared/exceptions'
+import { ServiceAlreadyProvidedError, ServiceCategoryNotFound } from '../shared/exceptions'
 
 const servicesRouter = Router()
 
@@ -134,9 +134,15 @@ servicesRouter.post(
             )
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
+            if (err instanceof ServiceAlreadyProvidedError) {
+                res.status(StatusCodes.CONFLICT).json({
+                    message: (err as Error).message
+                })
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    message: (err as Error).message
+                })
+            }
         }
     }
 )

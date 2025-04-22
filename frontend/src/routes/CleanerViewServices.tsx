@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/CleanerViewServices.css';
 import { Link } from 'react-router-dom';
-
+import LogoutModal from '../components/LogoutModal';
 interface UserAccountResponse {
   id: number;
   username: string;
@@ -24,6 +24,7 @@ interface NewServiceInput {
 const CleanerViewServicesRoute: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
+  const [availableServices, setAvailableServices] = useState<string[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [search, setSearch] = useState('');
 
@@ -33,6 +34,24 @@ const CleanerViewServicesRoute: React.FC = () => {
     description: '',
     price: '',
   });
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  useEffect(() => {
+    const fetchAvailableServices = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/services/');
+        if (!response.ok) throw new Error('Failed to fetch available services');
+        
+        const data = await response.json();
+        const servicesList = data.map((item: any) => item[Object.keys(item)[0]]); // assuming service is in the first column
+        setAvailableServices(servicesList);
+      } catch (error) {
+        console.error('Error fetching available services:', error);
+      }
+    };
+  
+    fetchAvailableServices();
+  }, []);  
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -65,20 +84,31 @@ const CleanerViewServicesRoute: React.FC = () => {
       <div className="header_container">
         <h2><Link to="/cleaner-dashboard">Home</Link></h2>
         <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
-        <h2 id="logout_button"><Link to="/login">{sessionUser.id}/Logout</Link></h2>
-      </div>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser.username}/Logout
+        </h2>
+        </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       {showPopup && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Create New Service</h2>
             <label>Type of service</label>
-            <input
-              type="text"
-              placeholder="e.g Floor cleaning"
+            <select
+              id="serviceDropdown"
               value={newService.service}
               onChange={(e) => setNewService({ ...newService, service: e.target.value })}
-            />
+            >
+              <option value="">Select a service</option>
+              {availableServices.map((serviceName, index) => (
+                <option key={index} value={serviceName}>
+                  {serviceName}
+                </option>
+              ))}
+            </select>
+
             <label>Description</label>
             <textarea
               placeholder="e.g Sweep and mopping of floor"
@@ -95,6 +125,7 @@ const CleanerViewServicesRoute: React.FC = () => {
             />
             <label>Price</label>
             <input
+              id="serviceInput"
               type="number"
               placeholder="e.g $20"
               value={newService.price}

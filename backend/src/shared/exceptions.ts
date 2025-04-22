@@ -28,8 +28,8 @@ export class ServiceCategoryNotFound extends Error {
     }
 }
 
-// export class InvalidRoleError extends Error {
-//     constructor(message: string) {
-//         super(message)
-//     }
-// }
+export class ServiceAlreadyProvidedError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}

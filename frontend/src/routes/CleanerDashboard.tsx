@@ -3,7 +3,7 @@ import Calendar from 'react-calendar';
 import '../css/CleanerDashboardRoute.css';
 import 'react-calendar/dist/Calendar.css';
 import { Link } from 'react-router-dom'
-
+import LogoutModal from '../components/LogoutModal';
 interface CleaningJob {
   id: number;
   cleanerName: string;
@@ -18,6 +18,9 @@ const CleanerDashboardRoute: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [jobsOnSelectedDate, setJobsOnSelectedDate] = useState<CleaningJob[]>([]);
 
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  
   useEffect(() => {
     // Dummy data with locations
     const dummyJobs: CleaningJob[] = [
@@ -59,8 +62,12 @@ const CleanerDashboardRoute: React.FC = () => {
       <div className="header_container">
           <h2><Link to="/cleaner-dashboard">Home</Link></h2>
           <h2><Link to="/cleaner-view-services">View My Services</Link></h2> 
-          <h2 id="logout_button"><Link to="/login">{sessionUser}/Logout</Link></h2>
+          <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
         </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
       <div className="welcome-message">
         <h2>Welcome back, {sessionUser}!!</h2>
         <p>Manage your cleaning services.</p>

@@ -26,7 +26,7 @@ export class UserProfile {
         const profiles: ProfileType[] = await this.db
             .select({ label: userProfilesTable.label })
             .from(userProfilesTable)
-        const profileLabels = profiles.map((p) => p.label || '')
+        const profileLabels = profiles.map(p => p.label || '')
         return profileLabels
     }
 

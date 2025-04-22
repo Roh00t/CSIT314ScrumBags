@@ -6,11 +6,13 @@ import {
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
-import { UserAccountData } from '../shared/dataClasses'
+import { CleanerServicesData, ServiceProvidedData, UserAccountData } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
 import bcrypt from 'bcrypt'
+import { servicesTable } from '../db/schema/services'
+import { servicesProvidedTable } from '../db/schema/servicesProvided'
 
 export default class UserAccount {
     private db: DrizzleClient
@@ -110,7 +112,7 @@ export default class UserAccount {
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
             );
 
-        return allUsers.map((u) => {
+        return allUsers.map(u => {
             return {
                 id: u.id,
                 username: u.username,
@@ -123,16 +125,35 @@ export default class UserAccount {
     // This async Function only retrieves Cleaner names under the assumption that
     // There will be another page to show the Services provided by the Cleaner.
     // 15042025 2257 Hours
-    public async viewCleaners(): Promise<string[]> {
+    public async viewCleaners(): Promise<CleanerServicesData[]> {
         const queryForCleaners = await this.db
-            .select({ cleanerName: userAccountsTable.username })
-            .from(userAccountsTable)
+            .select({
+                cleaner: userAccountsTable.username,
+                service: servicesTable.label,
+                price: servicesProvidedTable.price
+            })
+            .from(servicesProvidedTable)
+            .leftJoin(
+                userAccountsTable,
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+            )
+            .leftJoin(
+                servicesTable,
+                eq(servicesProvidedTable.serviceID, servicesTable.id)
+            )
             .leftJoin(
                 userProfilesTable,
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
             )
             .where(eq(userProfilesTable.label, 'cleaner'))
-        return queryForCleaners.map((q) => q.cleanerName)
+
+        return queryForCleaners.map(query => {
+            return {
+                cleaner: query.cleaner,
+                service: query.service,
+                price: Number(query.price)
+            } as CleanerServicesData
+        })
     }
 
     public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {

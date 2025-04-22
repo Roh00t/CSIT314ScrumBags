@@ -1,6 +1,9 @@
   import React, { useState, useEffect } from 'react'
   import axios from 'axios'
   import { Link } from 'react-router-dom'
+  import LogoutModal from '../components/LogoutModal';
+
+
 
   const CreateAccountPage: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -12,6 +15,8 @@
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
 
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
     useEffect(() => {
       const fetchRoles = async () => {
         try {
@@ -78,11 +83,15 @@
     return (
       <div className="page_container">
         <div className="header_container">
-          <h2><Link to="/admin-dashboard">Home</Link></h2>
-          <h2><Link to="/">Profiles</Link></h2>
-          <h2><Link to="/">Accounts</Link></h2>
-          <h2 id="logout_button">{sessionUser}/Logout</h2>
+        <h2><Link to="/admin-dashboard">Home</Link></h2>
+        <h2><Link to="/admin-dashboard">User Account</Link></h2>
+        <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+          {sessionUser}/Logout
+        </h2>
         </div>
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
         <div className="create_container">
           <div className="left_side">
@@ -106,11 +115,9 @@
                 onChange={e => setRole(e.target.value)}
                 required
               >
-                <option value="">Select Role</option>
+                <option value="" disabled>Select Role</option>
 
-                {error ? (
-                  <option disabled>{error}</option>
-                ) : roles.length === 0 ? (
+                {roles.length === 0 ? (
                   <option disabled>Loading roles...</option>
                 ) : (
                   roles.map(r => (
@@ -169,7 +176,7 @@
                   setSuccess('')
                 }}
               >
-                Cancel
+                <Link to="/admin-dashboard">Cancel</Link>
               </button>
             </form>
           </div>

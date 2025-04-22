@@ -1,6 +1,7 @@
 import UserAccount from "../entities/userAccount";
 import { Service } from "../entities/service";
 import { Serializer } from "v8";
+import { ServiceHistory } from "../shared/dataClasses";
 
 export class AddToShortlistController {
     private userAccount: UserAccount
@@ -56,6 +57,25 @@ export class ViewServiceHistoryController {
     ): Promise<string[]> {
         try {
             return await this.Service.viewServiceHistory(userID, service, date)
+        } catch (error) {
+            console.log("Failed to retrieve history: ", error)
+            throw error
+        }
+    }
+}
+
+export class ViewAllServiceHistoryController {
+    private Service: Service
+
+    constructor() {
+        this.Service = new Service()
+    }
+
+    public async viewAllServiceHistory(
+        userID: number
+    ): Promise<ServiceHistory[]> {
+        try {
+            return await this.Service.viewAllServiceHistory(userID)
         } catch (error) {
             console.log("Failed to retrieve history: ", error)
             throw error

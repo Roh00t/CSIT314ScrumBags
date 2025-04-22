@@ -1,9 +1,9 @@
-import { ServiceCategoryNotFound, ServiceNotFoundError } from '../shared/exceptions'
+import { ServiceAlreadyProvidedError, ServiceCategoryNotFound, ServiceNotFoundError } from '../shared/exceptions'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { ServiceData, ServiceProvidedData } from '../shared/dataClasses'
+import { ServiceData, ServiceProvidedData, ServiceHistory } from '../shared/dataClasses'
 import { servicesTable } from '../db/schema/services'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
@@ -110,11 +110,67 @@ export class Service {
             )
         }
 
+        const result = await this.db
+            .select()
+            .from(servicesProvidedTable)
+            .where(
+                and(
+                    eq(servicesProvidedTable.cleanerID, userID),
+                    eq(servicesProvidedTable.serviceID, serviceEntry.id)
+                )
+            )
+        if (result.length > 0) {
+            throw new ServiceAlreadyProvidedError(
+                "Cleaner of ID " + userID + " already provides service '" + serviceName + "'"
+            )
+        }
+
         await this.db.insert(servicesProvidedTable).values({
             cleanerID: userID,
             serviceID: serviceEntry.id,
             description: description,
             price: price.toString()
+        })
+    }
+
+    public async viewAllServiceHistory(
+        userID: number
+    ): Promise<ServiceHistory[]> {
+        const results = await this.db
+            .select({
+                cleanerName: userAccountsTable.username,
+                serviceName: servicesTable.label,
+                date: serviceBookingsTable.startTimestamp,
+                price: servicesProvidedTable.price,
+                status: serviceBookingsTable.status
+            })
+            .from(serviceBookingsTable)
+            .leftJoin(
+                servicesTable,
+                eq(servicesTable.id, serviceBookingsTable.serviceID)
+            )
+            .leftJoin(
+                servicesProvidedTable,
+                eq(servicesProvidedTable.serviceID, servicesTable.id)
+            )
+            .leftJoin(
+                userAccountsTable,
+                eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
+            )
+            .where(
+                and(
+                    eq(serviceBookingsTable.homeownerID, userID),
+                )
+            )
+
+        return results.map((so) => {
+            return {
+                cleanerName: so.cleanerName,
+                serviceName: so.serviceName,
+                date: so.date,
+                price: Number(so.price),
+                status: so.status
+            } as ServiceHistory
         })
     }
 
@@ -172,3 +228,5 @@ export class Service {
         );
     }
 }
+
+
