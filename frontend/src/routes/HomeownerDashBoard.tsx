@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
 
@@ -17,7 +17,7 @@ const HomeownerDashBoard: React.FC = () => {
     <div className="user-account-page">
       {/* Header */}
             <div className="header_container">
-            <img src="/logo.png" alt="Logo" height={40} />
+          <img src={logo} alt="Logo" height={40} />
                 <h2><Link to="/homeowner-dashboard">Home</Link></h2>
                 <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>

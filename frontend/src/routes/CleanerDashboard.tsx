@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import '../css/CleanerDashboardRoute.css';
 import 'react-calendar/dist/Calendar.css';
+import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom'
 import LogoutModal from '../components/LogoutModal';
 interface CleaningJob {
@@ -60,7 +61,7 @@ const CleanerDashboardRoute: React.FC = () => {
   return (
     <div className="dashboard-container">
       <div className="header_container">
-      <img src="/logo.png" alt="Logo" height={40} />
+      <img src={logo} alt="Logo" height={40} />
           <h2><Link to="/cleaner-dashboard">Home</Link></h2>
           <h2><Link to="/cleaner-view-services">View My Services</Link></h2> 
           <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>

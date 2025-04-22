@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LogoutModal from '../components/LogoutModal';
 import { Link } from 'react-router-dom';
-
+import logo from '../assets/logo.png';
 const PlatformManagerViewReports: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'Platform Manager';
 
@@ -68,7 +68,7 @@ const PlatformManagerViewReports: React.FC = () => {
     <div className="report-page">
       {/* Navbar */}
       <div className="header_container">
-        <img src="/logo.png" alt="Logo" height={40} />
+             <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Services Categorizes</Link></h2>
         <h2><Link to="/platformManager-view-report">Report</Link></h2>

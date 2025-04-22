@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../css/UserAdminUserAccountManagement.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
+import logo from '../assets/logo.png';
 
 // Define the type for the response data
 interface UserAccountResponse {
@@ -71,7 +72,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
     <div className="user-account-page">
       {/* Header */}
       <div className="header_container">
-      <img src="/logo.png" alt="Logo" height={40} />
+           <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>

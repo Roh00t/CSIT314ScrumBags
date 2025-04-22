@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../css/HomeOwnerViewHistory.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
-
+import logo from '../assets/logo.png';
 interface UserAccountResponse {
     id: number
     username: string
@@ -60,7 +60,7 @@ const HomeOwnerViewHistory: React.FC = () => {
     return (
         <div className="view-history-container">
             <div className="header_container">
-            <img src="/logo.png" alt="Logo" height={40} />
+          <img src={logo} alt="Logo" height={40} />
                 <h2><Link to="/homeowner-dashboard">Home</Link></h2>
                 <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>

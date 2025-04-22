@@ -1,6 +1,7 @@
   import React, { useState, useEffect } from 'react'
   import axios from 'axios'
   import { Link } from 'react-router-dom'
+  import logo from '../assets/logo.png';
   import LogoutModal from '../components/LogoutModal';
 
 
@@ -101,7 +102,7 @@
     return (
       <div className="page_container">
         <div className="header_container">
-        <img src="/logo.png" alt="Logo" height={40} />
+      <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>

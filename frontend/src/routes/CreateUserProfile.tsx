@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
+import logo from '../assets/logo.png';
 import LogoutModal from '../components/LogoutModal';
 
 const CreateProfilePage: React.FC = () => {
@@ -42,7 +43,7 @@ const CreateProfilePage: React.FC = () => {
     {/* Navbar */}
     <div className="create_container">
         <div className="header_container">
-        <img src="/logo.png" alt="Logo" height={40} />
+      <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>

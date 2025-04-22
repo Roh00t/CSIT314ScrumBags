@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
+import logo from '../assets/logo.png';
 const ViewShortlist: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
     const [users, setUsers] = useState<string[]>([]);
@@ -36,7 +37,7 @@ const ViewShortlist: React.FC = () => {
         <div className="ViewShortListPageContainer">
             {/* Navbar */}
             <div className="header_container">
-            <img src="/logo.png" alt="Logo" height={40} />
+                 <img src={logo} alt="Logo" height={40} />
                 <h2><Link to="/homeowner-dashboard">Home</Link></h2>
                 <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
