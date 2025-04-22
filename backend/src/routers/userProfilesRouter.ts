@@ -15,7 +15,10 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body
         const controller = new CreateNewUserProfileController()
-        await controller.createNewUserProfile(profileName)
+        const profileCreated = await controller.createNewUserProfile(profileName)
+        if (!profileCreated) {
+            throw new Error("Unable to create profile '" + profileName + "'")
+        }
         res.status(StatusCodes.CREATED).json({ message: 'Success' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

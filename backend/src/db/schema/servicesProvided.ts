@@ -1,4 +1,4 @@
-import { pgTable, integer, text, numeric } from 'drizzle-orm/pg-core'
+import { pgTable, integer, text, numeric, primaryKey } from 'drizzle-orm/pg-core'
 import { userAccountsTable } from './userAccounts'
 import { servicesTable } from './services'
 

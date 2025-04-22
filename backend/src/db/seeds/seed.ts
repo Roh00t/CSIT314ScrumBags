@@ -47,6 +47,23 @@ const createProfileIdMappings = async (): Promise<Map<string, number>> => {
     return mapping
 }
 
+const createUserAccount = async (
+    username: string,
+    password: string,
+    profile: string
+): Promise<UserAccountSelect> => {
+    const [userAcc] = await db
+        .insert(userAccountsTable)
+        .values({
+            username: username,
+            password: await bcrypt.hash(password, GLOBALS.SALT_ROUNDS),
+            userProfileId: (await createProfileIdMappings()).get(profile) as number,
+        })
+        .onConflictDoNothing()
+        .returning()
+    return userAcc
+}
+
 const generateUserAccounts = async (
     count: number,
     userProfile: string,
@@ -219,6 +236,12 @@ const main = async (): Promise<void> => {
         { label: "platform manager" },
         { label: "user admin" },
     ]).onConflictDoNothing()
+
+    // ---- Seed the present user accounts
+    await createUserAccount("homeowner", "homeowner", "homeowner")
+    await createUserAccount("cleaner", "cleaner", "cleaner")
+    await createUserAccount("user admin", "user admin", "user admin")
+    await createUserAccount("platform manager", "platform manager", "platform manager")
 
     // ----- Generate a bunch of random user accounts
     const allHomeowners = await generateUserAccounts(

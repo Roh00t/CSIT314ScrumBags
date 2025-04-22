@@ -30,7 +30,7 @@ app.use(
         cookie: {
             sameSite: 'lax',
             httpOnly: true,
-            maxAge: 1000 * 60 * 10 // 10 minutes
+            maxAge: 1000 * 60 * 60 * 24 * 365 // 365 days - Because why not
             // secure: process.env.NODE_ENV === 'prod'
         }
     })

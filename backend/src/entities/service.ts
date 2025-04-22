@@ -1,4 +1,4 @@
-import { ServiceCategoryNotFound, ServiceNotFoundError } from '../shared/exceptions'
+import { ServiceAlreadyProvidedError, ServiceCategoryNotFound, ServiceNotFoundError } from '../shared/exceptions'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
@@ -110,6 +110,21 @@ export class Service {
             )
         }
 
+        const result = await this.db
+            .select()
+            .from(servicesProvidedTable)
+            .where(
+                and(
+                    eq(servicesProvidedTable.cleanerID, userID),
+                    eq(servicesProvidedTable.serviceID, serviceEntry.id)
+                )
+            )
+        if (result.length > 0) {
+            throw new ServiceAlreadyProvidedError(
+                "Cleaner of ID " + userID + " already provides service '" + serviceName + "'"
+            )
+        }
+
         await this.db.insert(servicesProvidedTable).values({
             cleanerID: userID,
             serviceID: serviceEntry.id,
@@ -148,15 +163,15 @@ export class Service {
                 )
             )
 
-            return results.map((so) => {
-                return {
-                    cleanerName: so.cleanerName,
-                    serviceName: so.serviceName,
-                    date: so.date,
-                    price: Number(so.price),
-                    status: so.status
-                } as ServiceHistory
-            })
+        return results.map((so) => {
+            return {
+                cleanerName: so.cleanerName,
+                serviceName: so.serviceName,
+                date: so.date,
+                price: Number(so.price),
+                status: so.status
+            } as ServiceHistory
+        })
     }
 
     public async viewServiceHistory(
