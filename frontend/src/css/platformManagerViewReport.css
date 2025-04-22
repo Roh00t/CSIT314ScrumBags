@@ -1,20 +1,49 @@
 /* platformManagerViewReport.css */
 
 .user-account-page {
-    background-color: #c2d9f0; /* Light blue background */
+    background-color: #a5c9f4; /* Light blue background */
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
+  .report-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
   
+  .report-controls input[type="text"] {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    min-width: 200px;
+  }
+  
+  .report-controls input[type="date"] {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .filter-options {
+    display: flex;
+    gap: 1rem;
+    white-space: nowrap;
+    margin-left: auto;
+  }
   .header_container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    background-color: #c2d9f0;
+    background-color: #a5c9f4;;
   }
   
   .header_container h2 {
@@ -111,6 +140,6 @@
     text-align: center;
     padding: 1rem;
     font-size: 0.85rem;
-    background-color: #c2d9f0;
+    background-color: #a5c9f4;
     margin-top: auto;
   }

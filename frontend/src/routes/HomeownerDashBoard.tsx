@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+
 import { Link } from 'react-router-dom';
 import LogoutModal from '../components/LogoutModal';
 
 // Define the type for the response data
-interface UserAccountResponse {
-  id: number | null;
-  username: string;
-  userProfile: string;
-  isSuspended: boolean;
-}
+
 
 const HomeownerDashBoard: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -17,66 +12,19 @@ const HomeownerDashBoard: React.FC = () => {
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // For Update User Account
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editingUser, setEditingUser] = useState<{
-    id: number | null;
-    username: string;
-    role: string;
-    password: string;
-    confirmPassword: string;
-  }>({
-    id: null,
-    username: '',
-    role: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  const [users, setUsers] = useState<UserAccountResponse[]>([]);
-  const [error, setError] = useState<string>('');
-  const [search, setSearch] = useState<string>('');
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/user-accounts', {
-          withCredentials: true,
-        });
-
-        const data: UserAccountResponse[] = response.data;
-        console.log(data);
-
-        if (Array.isArray(data)) {
-          setUsers(data);
-        } else {
-          console.error('Unexpected server response:', data);
-          setError('Unexpected server response.');
-        }
-      } catch (err) {
-        console.error('Failed to fetch users:', err);
-        setError('Could not load users. Please try again later.');
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="user-account-page">
       {/* Header */}
             <div className="header_container">
+            <img src="/logo.png" alt="Logo" height={40} />
                 <h2><Link to="/homeowner-dashboard">Home</Link></h2>
                 <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
                 <h2><Link to="/ViewServiceHistory">My History</Link></h2>
                 <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
                 <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
         </div>
 

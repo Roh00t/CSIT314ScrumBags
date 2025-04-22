@@ -82,10 +82,11 @@ const CleanerViewServicesRoute: React.FC = () => {
   return (
     <div className="dashboard-container">
       <div className="header_container">
+      <img src="/logo.png" alt="Logo" height={40} />
         <h2><Link to="/cleaner-dashboard">Home</Link></h2>
         <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser.username}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
         </h2>
         </div>
       {/* Logout Modal */}

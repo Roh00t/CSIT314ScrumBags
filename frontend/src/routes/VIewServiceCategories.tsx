@@ -60,11 +60,12 @@ const ViewServiceCategories: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
+      <img src="/logo.png" alt="Logo" height={40} />
       <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
         <h2><Link to="/platformManager-view-report">Report</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
         </div>
       {/* Logout Modal */}
