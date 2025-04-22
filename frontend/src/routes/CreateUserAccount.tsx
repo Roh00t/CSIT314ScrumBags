@@ -178,7 +178,7 @@
                   setSuccess('')
                 }}
               >
-                Cancel
+                <Link to="/admin-dashboard">Cancel</Link>
               </button>
             </form>
           </div>

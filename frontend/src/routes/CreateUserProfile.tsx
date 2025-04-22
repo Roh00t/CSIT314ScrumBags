@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import LogoutModal from '../components/LogoutModal';
 
 const CreateProfilePage: React.FC = () => {
@@ -8,6 +8,7 @@ const CreateProfilePage: React.FC = () => {
   const [profileName, setProfileName] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const navigate = useNavigate()
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleCreateProfile = async (e: React.FormEvent) => {
@@ -37,7 +38,8 @@ const CreateProfilePage: React.FC = () => {
   }
 
   return (
-    
+  <div className="user-profile-page">
+    {/* Navbar */}
     <div className="create_container">
         <div className="header_container">
         <h2><Link to="/admin-dashboard">Home</Link></h2>
@@ -47,15 +49,19 @@ const CreateProfilePage: React.FC = () => {
           {sessionUser}/Logout
         </h2>
         </div>
+
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
+        
+      {/* Left Side */}
       <div className="left_side">
         <h1>Experience a New Level of Clean</h1>
         <p>
-          Create an account to book reliable, professional cleaning services
-          for your home or office.
+          Create an profile to allow accounts to be tagged to that profile.
         </p>
       </div>
+
+      {/* Right Side */}
       <div className="right_side">
         <form className="create_form" onSubmit={handleCreateProfile}>
           <h2>Create User Profile</h2>
@@ -79,18 +85,20 @@ const CreateProfilePage: React.FC = () => {
             Save Profile
           </button>
           <button
-            type="button"
-            className="cancel_btn"
-            onClick={() => {
-              setProfileName('')
-              setError('')
-              setSuccess('')
-            }}
-          >
-            Cancel
-          </button>
+        type="button"
+        className="cancel_btn"
+        onClick={() => {
+          setProfileName('')
+          setError('')
+          setSuccess('')
+          navigate('/ViewUserProfile')
+        }}
+      >
+        Cancel
+      </button>
         </form>
       </div>
+    </div>
     </div>
   )
 }

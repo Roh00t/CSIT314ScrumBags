@@ -53,12 +53,12 @@ const ViewUserRoles: React.FC = () => {
       {/* Navbar */}
       <div className="header_container">
         <h2><Link to="/admin-dashboard">Home</Link></h2>
-        <h2><Link to="/">User Account</Link></h2> 
+        <h2><Link to="/admin-dashboard">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           {sessionUser}/Logout
         </h2>
-        </div>
+      </div>
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
