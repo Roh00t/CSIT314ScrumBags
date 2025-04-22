@@ -59,11 +59,12 @@ const HomeOwnerViewHistory: React.FC = () => {
 
     return (
         <div className="view-history-container">
-            <div className="header-container">
-                <h2><Link to="/">Home</Link></h2>
-                <h2><Link to="/">Services</Link></h2>
+            <div className="header_container">
+                <h2><Link to="/homeowner-dashboard">Home</Link></h2>
+                <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
-                <h2><Link to="/">My Shortlist</Link></h2>
+                <h2><Link to="/ViewServiceHistory">My History</Link></h2>
+                <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
                 <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           {sessionUser.username}/Logout
         </h2>
@@ -72,7 +73,7 @@ const HomeOwnerViewHistory: React.FC = () => {
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             <div className="content-center">
                 <div className="card">
-                <h1>View Services</h1>
+                <h1>View History</h1>
 
                 <div className="top-bar">
                     <input

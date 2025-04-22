@@ -13,7 +13,7 @@ const PlatformManagerDashboard: React.FC = () => {
       {/* Navbar */}
       <div className="header_container">
         <h2><Link to="/platformManager-dashboard">Home</Link></h2>
-        <h2><Link to="/ViewServiceCategories">Service Categorizes</Link></h2>
+        <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
         <h2><Link to="/platformManager-view-report">Report</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           {sessionUser}/Logout

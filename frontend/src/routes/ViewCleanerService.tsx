@@ -43,8 +43,10 @@ const ViewCleanerService: React.FC = () => {
         <div className="user-account-page">
             {/* Navbar */}
             <div className="header_container">
-                <h2><Link to="/Homeowner-dashboard">Home</Link></h2>
-                <h2><Link to="/ViewBooking">My Bookings</Link></h2>
+                <h2><Link to="/homeowner-dashboard">Home</Link></h2>
+                <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
+                <h2><Link to="/">My Bookings</Link></h2>
+                <h2><Link to="/ViewServiceHistory">My History</Link></h2>
                 <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
                 <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           {sessionUser}/Logout
@@ -66,7 +68,6 @@ const ViewCleanerService: React.FC = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <button className="create-btn">Create Account</button>
                 </div>
 
                 {/* Loading Spinner */}

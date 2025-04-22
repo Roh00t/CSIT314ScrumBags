@@ -69,14 +69,16 @@ const HomeownerDashBoard: React.FC = () => {
   return (
     <div className="user-account-page">
       {/* Header */}
-      <div className="header_container">
-        <h2><Link to="/homeowner-dashboard">Home</Link></h2>
-        <h2><Link to="/">My Booking</Link></h2>
-        <h2><Link to="/ViewShortlist">View Shortlist</Link></h2>
-        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+            <div className="header_container">
+                <h2><Link to="/homeowner-dashboard">Home</Link></h2>
+                <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
+                <h2><Link to="/">My Bookings</Link></h2>
+                <h2><Link to="/ViewServiceHistory">My History</Link></h2>
+                <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
+                <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           {sessionUser}/Logout
         </h2>
-      </div>
+        </div>
 
      {/* Logout Modal */}
      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
