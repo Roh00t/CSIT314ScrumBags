@@ -128,8 +128,10 @@ const ViewUserRoles: React.FC = () => {
               type="text"
               value={editingProfile.updatedProfile}
               onChange={e =>
-                setEditingProfile({ ...editingProfile, updatedProfile: e.target.value })
+                setEditingProfile({ ...editingProfile, updatedProfile: e.target.value } 
+                )
               }
+              required
             />
 
             <div className="modal-btn-group">
