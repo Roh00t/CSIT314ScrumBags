@@ -115,11 +115,9 @@
                 onChange={e => setRole(e.target.value)}
                 required
               >
-                <option value="">Select Role</option>
+                <option value="" disabled>Select Role</option>
 
-                {error ? (
-                  <option disabled>{error}</option>
-                ) : roles.length === 0 ? (
+                {roles.length === 0 ? (
                   <option disabled>Loading roles...</option>
                 ) : (
                   roles.map(r => (
