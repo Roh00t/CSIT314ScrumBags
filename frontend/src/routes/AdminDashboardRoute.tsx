@@ -176,21 +176,21 @@ const AdminDashboard: React.FC = () => {
                 type="text"
                 value={editingUser.username}
                 onChange={e => setEditingUser({ ...editingUser, username: e.target.value })}
-              />
+              required/>
 
               <label>Password:</label>
               <input
                 type="password"
                 value={editingUser.password}
                 onChange={e => setEditingUser({ ...editingUser, password: e.target.value })}
-              />
+                required/>
 
               <label>Confirm Password:</label>
               <input
                 type="password"
                 value={editingUser.confirmPassword}
                 onChange={e => setEditingUser({ ...editingUser, confirmPassword: e.target.value })}
-              />
+                required/>
 
               <div className="modal-btn-group">
                 <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
