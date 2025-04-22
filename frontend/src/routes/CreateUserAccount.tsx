@@ -14,6 +14,8 @@
     const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
+    const [existingUsernames, setExistingUsernames] = useState<string[]>([]);
+
 
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -41,51 +43,67 @@
       fetchRoles();
     }, []);
 
+      useEffect(() => {
+        const fetchExistingUsers = async () => {
+          try {
+            const response = await axios.get('http://localhost:3000/api/user-accounts', {
+              withCredentials: true
+            });
+            const usernames = response.data.map((user: any) => user.username);
+            setExistingUsernames(usernames);
+          } catch (err) {
+            console.error('Failed to fetch usernames:', err);
+          }
+        };
+        fetchExistingUsers();
+      }, []);
 
-    const handleCreateAccount = async (e: React.FormEvent) => {
-      e.preventDefault()
-
-      if (password !== confirmPassword) {
-        setError('Passwords do not match')
-        setSuccess('')
-        return
-      }
-
-      try {
-        const response = await axios.post('http://localhost:3000/api/user-accounts/create', {
-          createAs:role,
-          username:username,
-          password:password,
-        },
-        { withCredentials: true } 
-      )
-
-        if (response.data.message === 'Account created successfully') {
-          console.log('response.data:', response.data);
-          setSuccess('Account created successfully!')
-          setError('')
-          setRole('')
-          setUsername('')
-          setPassword('')
-          setConfirmPassword('')
-        } else {
-          console.log('response.data:', response.data);
-          setError('Failed to create account. Please try again.')
-          setSuccess('')
+      const handleCreateAccount = async (e: React.FormEvent) => {
+        e.preventDefault();
+      
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          setSuccess('');
+          return;
         }
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Something went wrong.')
-        console.log({ role, username, password, confirmPassword });
-        setSuccess('')
-      }
-    }
+      
+        if (existingUsernames.includes(username)) {
+          setError('Username already exists. Please choose another.');
+          setSuccess('');
+          return;
+        }
+      
+        try {
+          const response = await axios.post('http://localhost:3000/api/user-accounts/create', {
+            createAs: role,
+            username,
+            password,
+          }, { withCredentials: true });
+      
+          if (response.data.message === 'Account created successfully') {
+            setSuccess('Account created successfully!');
+            setError('');
+            setRole('');
+            setUsername('');
+            setPassword('');
+            setConfirmPassword('');
+          } else {
+            setError('Failed to create account. Please try again.');
+            setSuccess('');
+          }
+        } catch (err: any) {
+          setError(err.response?.data?.message || 'Something went wrong.');
+          console.log({ role, username, password, confirmPassword });
+          setSuccess('');
+        }
+      };
 
     return (
       <div className="page_container">
         <div className="header_container">
         <img src="/logo.png" alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
-        <h2><Link to="/admin-dashboard">User Account</Link></h2>
+        <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
