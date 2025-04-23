@@ -1,10 +1,9 @@
-import { ServiceAlreadyProvidedError, ServiceCategoryNotFound, ServiceNotFoundError } from '../shared/exceptions'
+import { ServiceProvidedData, ServiceHistory } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
+import { ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { ServiceData, ServiceProvidedData, ServiceHistory } from '../shared/dataClasses'
-import { servicesTable } from '../db/schema/services'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
 import { and, eq, gt, lt } from 'drizzle-orm'
@@ -27,109 +26,75 @@ export class Service {
         return allServiceCategories.map(sc => sc.label)
     }
 
-    public async createService(serviceName: string, serviceCategory: string): Promise<void> {
-        const [retrievedServiceCat] = await this.db
-            .select()
-            .from(serviceCategoriesTable)
-            .where(eq(serviceCategoriesTable.label, serviceCategory))
-
-        if (!retrievedServiceCat) {
-            throw new ServiceCategoryNotFound(
-                "Could not find service category of name: " + serviceCategory
-            )
-        }
-
-        await this.db.insert(servicesTable).values({
-            label: serviceName,
-            categoryID: retrievedServiceCat.id
-        })
-    }
-
-    public async viewServices(): Promise<ServiceData[]> {
-        const allServices = await this.db
-            .select({
-                label: servicesTable.label,
-                category: serviceCategoriesTable.label
-            })
-            .from(servicesTable)
-            .leftJoin(serviceCategoriesTable,
-                eq(
-                    servicesTable.categoryID,
-                    serviceCategoriesTable.id
-                )
-            )
-        return allServices.map(s => {
-            return {
-                label: s.label,
-                category: s.category
-            } as ServiceData
-        })
-    }
-
     public async viewServicesProvided(
         userID: number
     ): Promise<ServiceProvidedData[]> {
-        const servicesProvided = await this.db
+        const servicesProvidedByCleaner = await this.db
             .select({
-                serviceName: servicesTable.label,
+                serviceName: serviceCategoriesTable.label,
                 description: servicesProvidedTable.description,
                 price: servicesProvidedTable.price
             })
-            .from(userAccountsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
-            )
-            .leftJoin(
-                servicesTable,
-                eq(servicesProvidedTable.serviceID, servicesTable.id)
-            )
+            .from(servicesProvidedTable)
+            .leftJoin(serviceCategoriesTable, eq(
+                servicesProvidedTable.serviceCategoryID,
+                serviceCategoriesTable.id
+            ))
+            .leftJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
             .where(eq(userAccountsTable.id, userID))
 
-        return servicesProvided.map((so) => {
+        return servicesProvidedByCleaner.map(sp => {
             return {
-                serviceName: so.serviceName,
-                description: so.description,
-                price: Number(so.price)
+                serviceName: sp.serviceName,
+                description: sp.description,
+                price: Number(sp.price)
             } as ServiceProvidedData
         })
     }
 
     public async createServiceProvided(
-        userID: number,
+        cleanerID: number,
         serviceName: string,
+        serviceCategory: string,
         description: string,
         price: number
     ): Promise<void> {
-        const [serviceEntry] = await this.db
-            .select({ id: servicesTable.id })
-            .from(servicesTable)
-            .where(eq(servicesTable.label, serviceName))
+        const [serviceCategoryEntry] = await this.db
+            .select()
+            .from(serviceCategoriesTable)
+            .where(eq(serviceCategoriesTable.label, serviceCategory))
 
-        if (!serviceEntry) {
-            throw new ServiceNotFoundError(
+        if (!serviceCategoryEntry) {
+            throw new ServiceCategoryNotFoundError(
                 "Service '" + serviceName + "' not found"
             )
         }
 
-        const result = await this.db
-            .select()
-            .from(servicesProvidedTable)
-            .where(
-                and(
-                    eq(servicesProvidedTable.cleanerID, userID),
-                    eq(servicesProvidedTable.serviceID, serviceEntry.id)
-                )
-            )
-        if (result.length > 0) {
-            throw new ServiceAlreadyProvidedError(
-                "Cleaner of ID " + userID + " already provides service '" + serviceName + "'"
-            )
-        }
+        // TODO: Clarify what are the rules of what can or cannot be duplicated
+        // const serviceProvidedEntries = await this.db
+        //     .select()
+        //     .from(servicesProvidedTable)
+        //     .where(
+        //         and(
+        //             eq(servicesProvidedTable.cleanerID, cleanerID),
+        //             eq(servicesProvidedTable.serviceName, serviceName),
+        //             eq(servicesProvidedTable.serviceCategoryID, serviceCategoryEntry.id)
+        //         )
+        //     )
+        //
+        // if (serviceProvidedEntries.length > 0) {
+        //     throw new ServiceAlreadyProvidedError(
+        //         "Cleaner of ID " + cleanerID + " already provides service '" + serviceName + "'"
+        //     )
+        // }
 
         await this.db.insert(servicesProvidedTable).values({
-            cleanerID: userID,
-            serviceID: serviceEntry.id,
+            cleanerID: cleanerID,
+            serviceCategoryID: serviceCategoryEntry.id,
+            serviceName: serviceName,
             description: description,
             price: price.toString()
         })
@@ -141,42 +106,40 @@ export class Service {
         const results = await this.db
             .select({
                 cleanerName: userAccountsTable.username,
-                serviceName: servicesTable.label,
+                serviceName: serviceCategoriesTable.label,
                 date: serviceBookingsTable.startTimestamp,
                 price: servicesProvidedTable.price,
                 status: serviceBookingsTable.status
             })
             .from(serviceBookingsTable)
             .leftJoin(
-                servicesTable,
-                eq(servicesTable.id, serviceBookingsTable.serviceID)
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
             )
             .leftJoin(
-                servicesProvidedTable,
-                eq(servicesProvidedTable.serviceID, servicesTable.id)
+                serviceCategoriesTable,
+                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
             )
             .leftJoin(
                 userAccountsTable,
-                eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
             )
-            .where(
-                and(
-                    eq(serviceBookingsTable.homeownerID, userID),
-                )
-            )
+            .where(eq(serviceBookingsTable.homeownerID, userID))
 
-        return results.map((so) => {
+        return results.map(res => {
             return {
-                cleanerName: so.cleanerName,
-                serviceName: so.serviceName,
-                date: so.date,
-                price: so.price,
-                status: so.status
+                cleanerName: res.cleanerName,
+                serviceName: res.serviceName,
+                date: res.date,
+                price: res.price,
+                status: res.status
             } as ServiceHistory
         })
     }
 
-    // View & Search(by username) Service History filtered by service and date
+    /**
+     * View & Search (by username) Service History filtered by service and date
+     */
     public async viewServiceHistory(
         userID: number,
         cleanerName: string | null,
@@ -187,55 +150,51 @@ export class Service {
         const startOfDay = new Date(normalizedDate.setHours(0, 0, 0, 0));
         const endOfDay = new Date(startOfDay);
         endOfDay.setDate(endOfDay.getDate() + 1);
-    
+
         // Dynamically build filter conditions
         const conditions = [
             eq(serviceBookingsTable.homeownerID, userID),
-            eq(servicesTable.label, service),
+            eq(serviceCategoriesTable.label, service),
             gt(serviceBookingsTable.startTimestamp, startOfDay),
             lt(serviceBookingsTable.startTimestamp, endOfDay),
         ];
-    
+
         // Only add cleanerName filter if provided
         if (cleanerName) {
             conditions.push(eq(userAccountsTable.username, cleanerName));
         }
-    
+
         const results = await this.db
             .select({
                 cleanerName: userAccountsTable.username,
-                serviceName: servicesTable.label,
+                serviceName: servicesProvidedTable.serviceName,
                 date: serviceBookingsTable.startTimestamp,
                 price: servicesProvidedTable.price,
                 status: serviceBookingsTable.status
             })
             .from(serviceBookingsTable)
             .leftJoin(
-                servicesTable,
-                eq(servicesTable.id, serviceBookingsTable.serviceID)
-            )
-            .leftJoin(
                 servicesProvidedTable,
-                eq(servicesProvidedTable.serviceID, servicesTable.id)
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
             )
             .leftJoin(
                 userAccountsTable,
-                eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
             )
             .where(and(...conditions));
-    
+
         // Handle no results
         if (results.length === 0) {
             throw new Error("No service history found for the given criteria.");
         }
-    
+
         // Map and return results
-        return results.map((result) => ({
-            cleanerName: result.cleanerName,
-            serviceName: result.serviceName,
-            date: new Date(result.date),
-            price: result.price,
-            status: result.status
+        return results.map(res => ({
+            cleanerName: res.cleanerName,
+            serviceName: res.serviceName,
+            date: new Date(res.date),
+            price: res.price,
+            status: res.status
         }));
     }
 }

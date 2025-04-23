@@ -1,4 +1,4 @@
-import { ServiceData, ServiceProvidedData } from '../shared/dataClasses'
+import { ServiceProvidedData } from '../shared/dataClasses'
 import { Service } from '../entities/service'
 
 /**
@@ -32,39 +32,6 @@ export class ViewServiceCategoriesController {
 }
 
 /**
- * Create new service, with a certain 'category' or 'type'
- */
-export class CreateServiceController {
-    private service: Service
-
-    constructor() {
-        this.service = new Service()
-    }
-
-    public async createService(
-        serviceName: string,
-        serviceCategory: string
-    ): Promise<void> {
-        await this.service.createService(serviceName, serviceCategory)
-    }
-}
-
-/**
- * View all the services that exist, as well as their corresponding 'category'
- */
-export class ViewServicesController {
-    private service: Service
-
-    constructor() {
-        this.service = new Service()
-    }
-
-    public async viewServices(): Promise<ServiceData[]> {
-        return await this.service.viewServices()
-    }
-}
-
-/**
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
 export class ViewServicesProvidedController {
@@ -92,14 +59,16 @@ export class CreateServiceProvidedController {
     }
 
     public async createServiceProvided(
-        userID: number,
+        cleanerID: number,
         serviceName: string,
+        serviceCategory: string,
         description: string,
         price: number
     ): Promise<void> {
         await this.service.createServiceProvided(
-            userID,
+            cleanerID,
             serviceName,
+            serviceCategory,
             description,
             price
         )

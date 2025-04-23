@@ -1,18 +1,18 @@
-import {
-    InvalidCredentialsError,
-    UserAccountNotFound,
-    UserAccountSuspendedError
-} from '../shared/exceptions'
+import { CleanerServicesData, UserAccountData } from '../shared/dataClasses'
+import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
+import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
-import { CleanerServicesData, ServiceProvidedData, UserAccountData } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
+import {
+    UserAccountSuspendedError,
+    InvalidCredentialsError,
+    UserAccountNotFound,
+} from '../shared/exceptions'
 import bcrypt from 'bcrypt'
-import { servicesTable } from '../db/schema/services'
-import { servicesProvidedTable } from '../db/schema/servicesProvided'
+import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 
 export default class UserAccount {
     private db: DrizzleClient
@@ -138,38 +138,36 @@ export default class UserAccount {
         const queryForCleaners = await this.db
             .select({
                 cleaner: userAccountsTable.username,
-                service: servicesTable.label,
+                serviceCategory: serviceCategoriesTable.label,
                 price: servicesProvidedTable.price
             })
             .from(servicesProvidedTable)
-            .leftJoin(
-                userAccountsTable,
-                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
-            )
-            .leftJoin(
-                servicesTable,
-                eq(servicesProvidedTable.serviceID, servicesTable.id)
-            )
-            .leftJoin(
-                userProfilesTable,
-                eq(userAccountsTable.userProfileId, userProfilesTable.id)
-            )
-            .where(eq(userProfilesTable.label, 'cleaner'))
+            .innerJoin(serviceCategoriesTable, eq(
+                servicesProvidedTable.serviceCategoryID,
+                serviceCategoriesTable.id
+            ))
+            .innerJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
+            .innerJoin(userProfilesTable, eq(
+                userAccountsTable.userProfileId,
+                userProfilesTable.id
+            ))
+            .where(eq(
+                userProfilesTable.label, 'cleaner'
+            ))
 
         return queryForCleaners.map(query => {
             return {
                 cleaner: query.cleaner,
-                service: query.service,
+                service: query.serviceCategory,
                 price: Number(query.price)
             } as CleanerServicesData
         })
     }
 
     public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
-        // const [shortlistEntry] = await this.db
-        //     .select({ id: userAccountsTable.id })
-        //     .from(userAccountsTable)
-
         await this.db
             .insert(shortlistedCleanersTable)
             .values({

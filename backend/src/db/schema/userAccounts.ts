@@ -33,4 +33,6 @@ export const userAccountsRelations = relations(
     })
 )
 
-export type UserAccountModel = typeof userAccountsTable.$inferSelect
+export type UserAccountsSelect = typeof userAccountsTable.$inferSelect
+export type UserAccountsInsert = typeof userAccountsTable.$inferInsert
+
