@@ -52,12 +52,11 @@ homeownerRouter.get('/', requireAuthMiddleware, async (req, res): Promise<void> 
 
 homeownerRouter.get('/servicehistory', requireAuthMiddleware, async (req, res): Promise<void> => {
     const homeownerID = (req.session.user as UserAccountData).id
-    const { service } = req.body
-    const { date } = req.body
+    const { cleanerName, service, date } = req.body
 
     try {
         const serviceHistory = await new ViewServiceHistoryController().viewServiceHistory(
-            homeownerID, service, date
+            homeownerID, cleanerName, service, date
         )
         res.status(StatusCodes.OK).json({
             message: "Service history retrieved successfully",

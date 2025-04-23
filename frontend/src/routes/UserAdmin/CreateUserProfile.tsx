@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
-import LogoutModal from '../components/LogoutModal';
+import logo from '../assets/logo.png';
+import LogoutModal from '../../components/LogoutModal';
 
 const CreateProfilePage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -42,11 +43,12 @@ const CreateProfilePage: React.FC = () => {
     {/* Navbar */}
     <div className="create_container">
         <div className="header_container">
+      <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
-        <h2><Link to="/admin-dashboard">User Account</Link></h2>
+        <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
         </div>
 

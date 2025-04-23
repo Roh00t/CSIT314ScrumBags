@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
+import logo from '../assets/logo.png';
 
 const ViewCleanerService: React.FC = () => {
     const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -43,13 +44,14 @@ const ViewCleanerService: React.FC = () => {
         <div className="user-account-page">
             {/* Navbar */}
             <div className="header_container">
+                 <img src={logo} alt="Logo" height={40} />
                 <h2><Link to="/homeowner-dashboard">Home</Link></h2>
                 <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
                 <h2><Link to="/">My Bookings</Link></h2>
                 <h2><Link to="/ViewServiceHistory">My History</Link></h2>
                 <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
                 <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
         </div>
       {/* Logout Modal */}

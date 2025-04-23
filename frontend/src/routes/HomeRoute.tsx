@@ -31,6 +31,9 @@ const HomeRoute: React.FC = () => {
   const goToViewReportPage = () => {
     navigate('/platformManager-view-report')
   }
+  const goToUserAdminUserAccountManagement = () => {
+    navigate('/user-account-management')
+  }
   return (
     <div
       style={{
@@ -51,6 +54,7 @@ const HomeRoute: React.FC = () => {
       <button onClick={goToAdminDashboard}>Go to User Admin</button>
       <button onClick={goToCleanerViewSevices}>Go to Cleaner View Services</button>
       <button onClick={goToViewReportPage}>Go to View Report Page</button>
+      <button onClick={goToUserAdminUserAccountManagement}>Go to User Account Management</button>
     </div>
   )
 }

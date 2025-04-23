@@ -1,3 +1,5 @@
+import { BookingStatus } from "../db/schema/bookingStatusEnum"
+
 export type UserAccountData = {
     id: number
     username: string
@@ -30,9 +32,9 @@ export type CleanerServicesData = {
 }
 
 export type ServiceHistory = {
-    cleanerName: string
-    serviceName: string
-    date: Date
-    price: number
-    status: string
-}
+    cleanerName: string | null;
+    serviceName: string | null;
+    date: Date;
+    price: string | null;
+    status: BookingStatus;
+};

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
+import logo from '../assets/logo.png';
 // Updated interface to match the actual response structure
 interface ServicesResponse {
   id: number;
@@ -60,11 +61,12 @@ const ViewServiceCategories: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
+           <img src={logo} alt="Logo" height={40} />
       <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
         <h2><Link to="/platformManager-view-report">Report</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
         </div>
       {/* Logout Modal */}
@@ -117,8 +119,6 @@ const ViewServiceCategories: React.FC = () => {
           </div>
         </div>
       )}
-
-      <h2>Welcome back, {sessionRole}!!</h2>
 
       {/* Services Section */}
       <div className="account-container">

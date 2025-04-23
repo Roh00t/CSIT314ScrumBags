@@ -14,15 +14,12 @@ export class AddToShortlistController {
         homeownerID: number,
         cleanerID: number
     ): Promise<void> {
-        // try {
-        //     console.log(homeownerID, cleanerID)
-        //     await this.userAccount.addToShortlist(homeownerID, cleanerID)
-        //     console.log("Shortlist successful")
-        // } catch (error) {
-        //     console.log("Shortlist failed: ", error)
-        //     throw error
-        // }
-        return await this.userAccount.addToShortlist(homeownerID, cleanerID)
+        try {
+            return await this.userAccount.addToShortlist(homeownerID, cleanerID)
+        } catch (error) {
+            console.log("Failed to add to shortlist: ", error)
+            throw(error)
+        }
     }
 }
 
@@ -52,11 +49,12 @@ export class ViewServiceHistoryController {
 
     public async viewServiceHistory(
         userID: number,
+        cleanerName: string | null,
         service: string,
         date: Date
-    ): Promise<string[]> {
+    ): Promise<ServiceHistory[]> {
         try {
-            return await this.Service.viewServiceHistory(userID, service, date)
+            return await this.Service.viewServiceHistory(userID, cleanerName, service, date)
         } catch (error) {
             console.log("Failed to retrieve history: ", error)
             throw error

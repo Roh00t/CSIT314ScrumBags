@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/AdminDashboardRoute.css';
+import '../css/UserAdminUserAccountManagement.css';
 import { Link } from 'react-router-dom';
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
+import logo from '../assets/logo.png';
 
 // Define the type for the response data
 interface UserAccountResponse {
@@ -12,7 +13,7 @@ interface UserAccountResponse {
   isSuspended: boolean;
 }
 
-const AdminDashboard: React.FC = () => {
+const UserAdminUserAccountManagement: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
 
   // Logout Modal State
@@ -71,11 +72,12 @@ const AdminDashboard: React.FC = () => {
     <div className="user-account-page">
       {/* Header */}
       <div className="header_container">
+           <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
-        <h2><Link to="/admin-dashboard">User Account</Link></h2>
+        <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          {sessionUser}/Logout
+          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
       </div>
 
@@ -176,21 +178,21 @@ const AdminDashboard: React.FC = () => {
                 type="text"
                 value={editingUser.username}
                 onChange={e => setEditingUser({ ...editingUser, username: e.target.value })}
-              />
+              required/>
 
               <label>Password:</label>
               <input
                 type="password"
                 value={editingUser.password}
                 onChange={e => setEditingUser({ ...editingUser, password: e.target.value })}
-              />
+                required/>
 
               <label>Confirm Password:</label>
               <input
                 type="password"
                 value={editingUser.confirmPassword}
                 onChange={e => setEditingUser({ ...editingUser, confirmPassword: e.target.value })}
-              />
+                required/>
 
               <div className="modal-btn-group">
                 <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
@@ -245,4 +247,4 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-export default AdminDashboard;
+export default UserAdminUserAccountManagement;
