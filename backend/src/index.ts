@@ -1,8 +1,8 @@
+import platformManagerRouter from './routers/platformManagerRouter'
 import userAccountsRouter from './routers/userAccountsRouter'
 import userProfilesRouter from './routers/userProfilesRouter'
-import servicesRouter from './routers/servicesRouter'
-import platformManagerRouter from './routers/platformManagerRouter'
 import homeownerRouter from './routers/homeownerRouter'
+import servicesRouter from './routers/servicesRouter'
 import connectPgSimple from 'connect-pg-simple'
 import express, { urlencoded } from 'express'
 import session from 'express-session'
@@ -31,7 +31,6 @@ app.use(
             sameSite: 'lax',
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 365 // 365 days - Because why not
-            // secure: process.env.NODE_ENV === 'prod'
         }
     })
 )
