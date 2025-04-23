@@ -120,8 +120,6 @@ const ViewServiceCategories: React.FC = () => {
         </div>
       )}
 
-      <h2>Welcome back, {sessionRole}!!</h2>
-
       {/* Services Section */}
       <div className="account-container">
         <h2>List of Service Categories</h2>
