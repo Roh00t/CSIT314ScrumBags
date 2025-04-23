@@ -11,9 +11,6 @@ const AdminDashboard: React.FC = () => {
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  
-
-
   return (
     <div className="user-account-page">
       {/* Header */}

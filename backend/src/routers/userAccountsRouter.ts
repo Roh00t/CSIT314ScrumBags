@@ -16,11 +16,16 @@ import { ViewCleanersController } from '../controllers/cleanerControllers'
 
 const userAccountsRouter = Router()
 
-userAccountsRouter.get('/', async (_, res): Promise<void> => {
+// Get User Account
+userAccountsRouter.get('/', async (req, res): Promise<void> => {
     try {
-        const allUserAccountData =
-            await new ViewUserAccountsController().viewUserAccounts()
-        res.status(StatusCodes.OK).json(allUserAccountData)
+        const username = typeof req.query.username === 'string'
+        ? req.query.username
+        : null
+
+        const userAccountData =
+            await new ViewUserAccountsController().viewUserAccounts(username)
+        res.status(StatusCodes.OK).json(userAccountData)
     } catch (err) {
         if (err instanceof UserAccountNotFound) {
             res.status(StatusCodes.NOT_FOUND).json({ message: err.message })

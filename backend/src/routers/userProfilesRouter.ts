@@ -27,13 +27,15 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     }
 })
 
-/**
- * Get all user profiles
- */
-userProfilesRouter.get('/', async (_, res): Promise<void> => {
+// Get User profile
+userProfilesRouter.get('/', async (req, res): Promise<void> => {
     try {
+        const profileName = typeof req.query.profileName === 'string'
+        ? req.query.profileName
+        : null
+
         const profiles =
-            await new ViewUserProfilesController().viewUserProfiles()
+            await new ViewUserProfilesController().viewUserProfiles(profileName)
         res.status(StatusCodes.OK).json(profiles)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

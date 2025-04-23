@@ -98,8 +98,11 @@ export default class UserAccount {
         } as UserAccountData
     }
 
-    public async viewUserAccounts(): Promise<UserAccountData[]> {
-        const allUsers = await this.db
+    // View user account & Search through user account
+    public async viewUserAccounts(
+        username: string | null
+    ): Promise<UserAccountData[]> {
+        const query = this.db
             .select({
                 id: userAccountsTable.id,
                 username: userAccountsTable.username,
@@ -112,14 +115,20 @@ export default class UserAccount {
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
             );
 
+        const filteredQuery = username
+            ? query.where(eq(userAccountsTable.username, username))
+            : query
+
+        const allUsers = await filteredQuery
+
         return allUsers.map(u => {
             return {
                 id: u.id,
                 username: u.username,
                 userProfile: u.profileLabel,
                 isSuspended: u.isSuspended
-            } as UserAccountData;
-        });
+            } as UserAccountData
+        })
     }
 
     // This async Function only retrieves Cleaner names under the assumption that

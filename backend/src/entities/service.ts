@@ -16,7 +16,9 @@ export class Service {
         this.db = drizzle(process.env.DATABASE_URL!)
     }
 
-    public async createServiceCategory(categoryLabel: string): Promise<void> {
+    public async createServiceCategory(
+        categoryLabel: string
+    ): Promise<void> {
         await this.db.insert(serviceCategoriesTable).values({ label: categoryLabel })
     }
 
