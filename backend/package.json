@@ -11,7 +11,7 @@
         "tests": "cross-env NODE_ENV=test jest --detectOpenHandles",
         "db:push": "drizzle-kit push",
         "db:push:test": "cross-env NODE_ENV=test drizzle-kit push",
-        "db:seed": "ts-node ./src/db/seeds/seed.ts",
+        "db:seed": "ts-node ./src/db/seed.ts",
         "set_test_env": "cross-env NODE_ENV=test"
     },
     "author": "",

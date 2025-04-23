@@ -1,13 +1,13 @@
+import { userProfilesTable } from './userProfiles'
 import { relations } from 'drizzle-orm'
 import {
+    uniqueIndex,
     boolean,
     pgTable,
     varchar,
     integer,
-    uniqueIndex,
-    serial
+    serial,
 } from 'drizzle-orm/pg-core'
-import { userProfilesTable } from './userProfiles'
 
 export const userAccountsTable = pgTable(
     'user_accounts',
@@ -20,7 +20,7 @@ export const userAccountsTable = pgTable(
             .references(() => userProfilesTable.id, { onDelete: 'cascade' }),
         isSuspended: boolean().notNull().default(false)
     },
-    (table) => [uniqueIndex().on(table.username)]
+    table => [uniqueIndex().on(table.username)]
 )
 
 export const userAccountsRelations = relations(
