@@ -170,30 +170,37 @@ export class Service {
                 cleanerName: so.cleanerName,
                 serviceName: so.serviceName,
                 date: so.date,
-                price: Number(so.price),
+                price: so.price,
                 status: so.status
             } as ServiceHistory
         })
     }
 
+    // View & Search(by username) Service History filtered by service and date
     public async viewServiceHistory(
         userID: number,
+        cleanerName: string | null,
         service: string,
         date: Date | string
-    ): Promise<string[]> {
-        // Ensure date is a Date object
-        let normalizedDate: Date;
-        if (typeof date === 'string') {
-            normalizedDate = new Date(date);
-        } else {
-            normalizedDate = date;
-        }
-
-        // Normalize the date to 00:00 and calculate the next day
+    ): Promise<ServiceHistory[]> {
+        const normalizedDate = typeof date === 'string' ? new Date(date) : date;
         const startOfDay = new Date(normalizedDate.setHours(0, 0, 0, 0));
         const endOfDay = new Date(startOfDay);
         endOfDay.setDate(endOfDay.getDate() + 1);
-
+    
+        // Dynamically build filter conditions
+        const conditions = [
+            eq(serviceBookingsTable.homeownerID, userID),
+            eq(servicesTable.label, service),
+            gt(serviceBookingsTable.startTimestamp, startOfDay),
+            lt(serviceBookingsTable.startTimestamp, endOfDay),
+        ];
+    
+        // Only add cleanerName filter if provided
+        if (cleanerName) {
+            conditions.push(eq(userAccountsTable.username, cleanerName));
+        }
+    
         const results = await this.db
             .select({
                 cleanerName: userAccountsTable.username,
@@ -215,19 +222,21 @@ export class Service {
                 userAccountsTable,
                 eq(userAccountsTable.id, servicesProvidedTable.cleanerID)
             )
-            .where(
-                and(
-                    eq(serviceBookingsTable.homeownerID, userID),
-                    eq(servicesTable.label, service),
-                    gt(serviceBookingsTable.startTimestamp, startOfDay),
-                    lt(serviceBookingsTable.startTimestamp, endOfDay)
-                )
-            )
-
-        // Map the results to the desired format
-        return results.map((temp1) =>
-            `Service: ${temp1.serviceName}, Cleaner: ${temp1.cleanerName}, Date: ${new Date(temp1.date).toISOString()}, Price: $${temp1.price}, Status: ${temp1.status}`
-        );
+            .where(and(...conditions));
+    
+        // Handle no results
+        if (results.length === 0) {
+            throw new Error("No service history found for the given criteria.");
+        }
+    
+        // Map and return results
+        return results.map((result) => ({
+            cleanerName: result.cleanerName,
+            serviceName: result.serviceName,
+            date: new Date(result.date),
+            price: result.price,
+            status: result.status
+        }));
     }
 }
 
