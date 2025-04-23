@@ -2,7 +2,7 @@
 import '../css/PlatformManagerDashboard.css';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
 import logo from '../assets/logo.png';
 
 const PlatformManagerDashboard: React.FC = () => {

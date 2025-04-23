@@ -1,23 +1,23 @@
 import React from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import AdminDashboardRoute from "./routes/AdminDashboardRoute"
-import PlatformManagerDashboard from "./routes/PlatformManagerDashboard"
+import AdminDashboard from "./routes/UserAdmin/AdminDashboardRoute"
+import PlatformManagerDashboard from "./routes/PlatformManager/PlatformManagerDashboard"
 import HomeRoute from "./routes/HomeRoute"
 import Login from "./routes/Login"
-import CreateAccountPage from "./routes/CreateUserAccount"
-import CreateProfilePage from "./routes/CreateUserProfile"
-import CleanerDashboardRoute from "./routes/CleanerDashboard"
-import CleanerViewServicesRoute from "./routes/CleanerViewServices"
+import CreateAccountPage from "./routes/UserAdmin/CreateUserAccount"
+import CreateProfilePage from "./routes/UserAdmin/CreateUserProfile"
+import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
+import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
 import LogoutPage from "./routes/Logout"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
-import ViewUserProfile from "./routes/ViewUserProfile"
-import ViewCleanerService from "./routes/ViewCleanerService"
-import ViewShortlist from "./routes/ViewShortlist"
-import ViewServiceCategories from "./routes/VIewServiceCategories"
-import HomeOwnerViewHistory from "./routes/HomeOwnerViewHistory"
-import PlatformManagerViewReports from "./routes/platformManagerViewReport"
-import HomeownerDashBoard from "./routes/HomeownerDashBoard"
-import UserAdminUserAccountManagement from "./routes/UserAdminUserAccountManagement"
+import ViewUserProfile from "./routes/UserAdmin/ViewUserProfile"
+import ViewCleanerService from "./routes/HomeOwner/ViewCleanerService"
+import ViewShortlist from "./routes/HomeOwner/ViewShortlist"
+import ViewServiceCategories from "./routes/PlatformManager/ViewServiceCategories"
+import HomeOwnerViewHistory from "./routes/HomeOwner/HomeOwnerViewHistory"
+import PlatformManagerViewReports from "./routes/PlatformManager/platformManagerViewReport"
+import HomeownerDashBoard from "./routes/HomeOwner/HomeownerDashBoard"
+import UserAdminUserAccountManagement from "./routes/UserAdmin/UserAdminUserAccountManagement"
 const browserRouter = createBrowserRouter([
   // Public Routes
   { path: "/", element: <HomeRoute /> },
@@ -74,7 +74,7 @@ const browserRouter = createBrowserRouter([
     path: "/admin-dashboard",
     element: (
       <ProtectedRoute>
-        <AdminDashboardRoute />
+        <AdminDashboard />
       </ProtectedRoute>
     ),
   },

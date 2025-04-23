@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../css/HomeOwnerViewHistory.css';
 import { Link } from 'react-router-dom';
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
 import logo from '../assets/logo.png';
 interface UserAccountResponse {
     id: number

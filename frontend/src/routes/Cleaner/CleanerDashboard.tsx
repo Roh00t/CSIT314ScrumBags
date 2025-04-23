@@ -4,7 +4,7 @@ import '../css/CleanerDashboardRoute.css';
 import 'react-calendar/dist/Calendar.css';
 import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom'
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
 interface CleaningJob {
   id: number;
   cleanerName: string;

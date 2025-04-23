@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../css/ViewUserProfile.css';
 import { Link } from 'react-router-dom';
-import LogoutModal from '../components/LogoutModal';
+import LogoutModal from '../../components/LogoutModal';
 import logo from '../assets/logo.png';
 
 const ViewUserRoles: React.FC = () => {

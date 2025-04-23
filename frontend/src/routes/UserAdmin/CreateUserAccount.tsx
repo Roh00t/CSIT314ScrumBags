@@ -2,7 +2,7 @@
   import axios from 'axios'
   import { Link } from 'react-router-dom'
   import logo from '../assets/logo.png';
-  import LogoutModal from '../components/LogoutModal';
+  import LogoutModal from '../../components/LogoutModal';
 
 
 
