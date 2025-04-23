@@ -3,14 +3,12 @@ import { UserAccountData } from '../shared/dataClasses'
 import { StatusCodes } from 'http-status-codes'
 import {
     CreateServiceCategoryController,
-    CreateServiceController,
     CreateServiceProvidedController,
     ViewServiceCategoriesController,
-    ViewServicesController,
     ViewServicesProvidedController
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
-import { ServiceAlreadyProvidedError, ServiceCategoryNotFound } from '../shared/exceptions'
+import { ServiceAlreadyProvidedError, ServiceCategoryNotFoundError } from '../shared/exceptions'
 
 const servicesRouter = Router()
 
@@ -44,42 +42,6 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
             await new ViewServiceCategoriesController()
                 .viewServiceCategories()
         res.status(StatusCodes.OK).json(allServiceCategories)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
-})
-
-/**
- * Create new service, with a certain 'category' or 'type'
- */
-servicesRouter.post('/', async (req, res): Promise<void> => {
-    try {
-        const { service, category } = req.body
-        await new CreateServiceController().createService(service, category)
-        res.status(StatusCodes.CREATED).send()
-    } catch (err) {
-        if (err instanceof ServiceCategoryNotFound) {
-            res.status(StatusCodes.NOT_FOUND).json({
-                message: (err as Error).message
-            })
-        }
-        else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
-    }
-})
-
-/**
- * View all the services that exist, as well as their corresponding 'category'
- */
-servicesRouter.get('/', async (_, res): Promise<void> => {
-    try {
-        const allServices = await new ViewServicesController().viewServices()
-        res.status(StatusCodes.OK).json(allServices)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
@@ -125,10 +87,11 @@ servicesRouter.post(
                 throw new Error("This isn't (theoretically) possible")
             }
 
-            const { service, description, price } = req.body
+            const { service, category, description, price } = req.body
             await new CreateServiceProvidedController().createServiceProvided(
                 req.session.user?.id,
                 service,
+                category,
                 description,
                 Number(price)
             )
@@ -136,6 +99,10 @@ servicesRouter.post(
         } catch (err) {
             if (err instanceof ServiceAlreadyProvidedError) {
                 res.status(StatusCodes.CONFLICT).json({
+                    message: (err as Error).message
+                })
+            } else if (err instanceof ServiceCategoryNotFoundError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
                     message: (err as Error).message
                 })
             } else {

@@ -1,11 +1,11 @@
+import { serviceCategoriesTable } from '../db/schema/serviceCategories'
+import { servicesProvidedTable } from '../db/schema/servicesProvided'
+import { serviceBookingsTable } from '../db/schema/serviceBookings'
+import { ServiceBookingReportData } from '../shared/dataClasses'
+import { userAccountsTable } from '../db/schema/userAccounts'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
-import { ServiceBookingReportData } from '../shared/dataClasses'
-import { serviceBookingsTable } from '../db/schema/serviceBookings'
-import { servicesTable } from '../db/schema/services'
 import { and, eq, gte, lt } from 'drizzle-orm'
-import { userAccountsTable } from '../db/schema/userAccounts'
-import { servicesProvidedTable } from '../db/schema/servicesProvided'
 
 export class ServiceBooking {
     private db: DrizzleClient
@@ -19,39 +19,36 @@ export class ServiceBooking {
     ): Promise<ServiceBookingReportData[]> {
         const dailyreport = await this.db
             .select({
-                bookingID: serviceBookingsTable.serviceID,
-                serviceName: servicesTable.label,
+                bookingID: serviceBookingsTable.id,
+                serviceName: serviceCategoriesTable.label,
                 cleanerName: userAccountsTable.username,
                 price: servicesProvidedTable.price,
                 date: serviceBookingsTable.startTimestamp
             })
             .from(serviceBookingsTable)
             .leftJoin(
-                servicesTable,
-                eq(serviceBookingsTable.serviceID, servicesTable.id)
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+            )
+            .leftJoin(
+                serviceCategoriesTable,
+                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
             )
             .leftJoin(
                 userAccountsTable,
-                eq(serviceBookingsTable.cleanerID, userAccountsTable.id)
-            )
-            .leftJoin(
-                servicesProvidedTable,
-                eq(
-                    serviceBookingsTable.cleanerID,
-                    servicesProvidedTable.cleanerID
-                )
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
             )
             .where(
                 and(
                     gte(serviceBookingsTable.startTimestamp, myDate),
                     lt(
                         serviceBookingsTable.startTimestamp,
-                        new Date(myDate.getTime() + 24 * 60 * 60 * 1000) // Corrected date addition
+                        new Date(myDate.getTime() + 24 * 60 * 60 * 1000)
                     )
                 )
             )
 
-        const dailyReportMapped = dailyreport.map((dr) => {
+        return dailyreport.map(dr => {
             return {
                 bookingid: dr.bookingID,
                 serviceName: dr.serviceName,
@@ -60,7 +57,5 @@ export class ServiceBooking {
                 date: dr.date
             } as ServiceBookingReportData
         })
-        return dailyReportMapped
     }
 }
-

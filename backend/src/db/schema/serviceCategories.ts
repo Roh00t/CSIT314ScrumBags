@@ -6,7 +6,8 @@ export const serviceCategoriesTable = pgTable(
         id: serial().primaryKey(),
         label: varchar({ length: 32 }).notNull().unique()
     },
-    (table) => [uniqueIndex().on(table.label)]
+    table => [uniqueIndex().on(table.label)]
 )
 
-
+export type ServiceCategoriesInsert = typeof serviceCategoriesTable.$inferInsert
+export type ServiceCategoriesSelect = typeof serviceCategoriesTable.$inferSelect

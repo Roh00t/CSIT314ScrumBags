@@ -18,7 +18,7 @@ export class AddToShortlistController {
             return await this.userAccount.addToShortlist(homeownerID, cleanerID)
         } catch (error) {
             console.log("Failed to add to shortlist: ", error)
-            throw(error)
+            throw (error)
         }
     }
 }
