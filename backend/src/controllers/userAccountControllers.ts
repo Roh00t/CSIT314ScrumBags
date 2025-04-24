@@ -77,3 +77,27 @@ export class UpdateUserAccountController {
         )
     }
 }
+
+export class SuspendUserAccountController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async suspendUserAccount(userID: number) {
+        await this.userAccount.suspendUserAccount(userID)
+    }
+}
+
+export class SearchUserAccountController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async searchUserAccount(search: string): Promise<UserAccountData[]> {
+        return await this.userAccount.searchUserAccounts(search)
+    }
+}

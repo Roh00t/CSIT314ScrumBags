@@ -1,7 +1,7 @@
-import { userProfilesTable } from '../db/schema/userProfiles'
+import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
-import { eq } from 'drizzle-orm'
+import { eq, ilike } from 'drizzle-orm'
 
 export class UserProfile {
     private db: DrizzleClient
@@ -10,7 +10,9 @@ export class UserProfile {
         this.db = drizzle(process.env.DATABASE_URL!)
     }
 
-    // Create user profile
+    /**
+     * Create new user profile 
+     */
     public async createNewUserProfile(
         profileName: string
     ): Promise<boolean> {
@@ -24,7 +26,9 @@ export class UserProfile {
         }
     }
 
-    // View user profile & Search through user profile
+    /**
+     * View user profile & Search through user profile
+     */
     public async viewUserProfiles(
         profileName: string | null
     ): Promise<string[]> {
@@ -38,12 +42,14 @@ export class UserProfile {
             : await this.db
                 .select({ label: userProfilesTable.label })
                 .from(userProfilesTable)
-    
+
         return profiles.map(p => p.label)
     }
 
-    // Update user profile
-    public async updateUserProfiles(
+    /**
+     *  Update user profiles
+     */
+    public async updateUserProfile(
         oldProfileName: string,
         newProfileName: string
     ): Promise<void> {
@@ -51,5 +57,25 @@ export class UserProfile {
             .update(userProfilesTable)
             .set({ label: newProfileName })
             .where(eq(userProfilesTable.label, oldProfileName))
+    }
+
+    /**
+     * Suspend user profile 
+     */
+    public async suspendUserProfile(profileName: string): Promise<void> {
+        await this.db
+            .update(userProfilesTable)
+            .set({ isSuspended: true })
+            .where(eq(userProfilesTable.label, profileName))
+    }
+
+    /**
+     * Search user profiles
+     */
+    public async searchUserProfiles(search: string): Promise<UserProfilesSelect[]> {
+        return await this.db
+            .select()
+            .from(userProfilesTable)
+            .where(ilike(userProfilesTable.label, `%${search}%`))
     }
 }

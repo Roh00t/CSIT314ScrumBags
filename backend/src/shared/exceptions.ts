@@ -16,19 +16,25 @@ export class UserAccountSuspendedError extends Error {
     }
 }
 
-export class ServiceNotFoundError extends Error {
-    constructor(message: string) {
-        super(message)
-    }
-}
-
-export class ServiceCategoryNotFound extends Error {
+export class ServiceCategoryNotFoundError extends Error {
     constructor(message: string) {
         super(message)
     }
 }
 
 export class ServiceAlreadyProvidedError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
+
+export class CannotShortlistSelfError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
+
+export class CleanerAlreadyShortlistedError extends Error {
     constructor(message: string) {
         super(message)
     }

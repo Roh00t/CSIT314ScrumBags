@@ -1,5 +1,7 @@
 import {
     CreateNewUserProfileController,
+    SearchUserProfilesController,
+    SuspendUserProfileController,
     UpdateUserProfileController,
     ViewUserProfilesController
 } from '../controllers/userProfileControllers'
@@ -14,8 +16,8 @@ const userProfilesRouter = Router()
 userProfilesRouter.post('/', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body
-        const controller = new CreateNewUserProfileController()
-        const profileCreated = await controller.createNewUserProfile(profileName)
+        const profileCreated =
+            await new CreateNewUserProfileController().createNewUserProfile(profileName)
         if (!profileCreated) {
             throw new Error("Unable to create profile '" + profileName + "'")
         }
@@ -27,12 +29,11 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     }
 })
 
-// Get User profile
 userProfilesRouter.get('/', async (req, res): Promise<void> => {
     try {
         const profileName = typeof req.query.profileName === 'string'
-        ? req.query.profileName
-        : null
+            ? req.query.profileName
+            : null
 
         const profiles =
             await new ViewUserProfilesController().viewUserProfiles(profileName)
@@ -47,11 +48,10 @@ userProfilesRouter.get('/', async (req, res): Promise<void> => {
 userProfilesRouter.put('/update', async (req, res): Promise<void> => {
     try {
         const { oldProfileName, newProfileName } = req.body
-        const update =
-            await new UpdateUserProfileController().updateUserProfile(
-                oldProfileName,
-                newProfileName
-            )
+        await new UpdateUserProfileController().updateUserProfile(
+            oldProfileName,
+            newProfileName
+        )
         res.status(StatusCodes.OK).json({ message: 'Update Success' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -59,4 +59,33 @@ userProfilesRouter.put('/update', async (req, res): Promise<void> => {
         })
     }
 })
+
+userProfilesRouter.post('/suspend', async (req, res): Promise<void> => {
+    try {
+        const { profileName } = req.body
+        await new SuspendUserProfileController().updateUserProfile(profileName)
+        res.status(StatusCodes.OK).json({ message: 'UserProfile suspended' })
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+userProfilesRouter.get('/search', async (req, res): Promise<void> => {
+    try {
+        const search = req.query.search as string | undefined
+        if (!search) {
+            res.status(StatusCodes.BAD_REQUEST).json({ message: 'Search query is required' })
+            return
+        }
+        const data = await new SearchUserProfilesController().searchUserProfiles(search)
+        res.status(StatusCodes.OK).json(data)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
 export default userProfilesRouter

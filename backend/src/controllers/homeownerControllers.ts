@@ -1,7 +1,6 @@
-import UserAccount from "../entities/userAccount";
-import { Service } from "../entities/service";
-import { Serializer } from "v8";
-import { ServiceHistory } from "../shared/dataClasses";
+import { ServiceHistory } from "../shared/dataClasses"
+import UserAccount from "../entities/userAccount"
+import { Service } from "../entities/service"
 
 export class AddToShortlistController {
     private userAccount: UserAccount
@@ -14,12 +13,7 @@ export class AddToShortlistController {
         homeownerID: number,
         cleanerID: number
     ): Promise<void> {
-        try {
-            return await this.userAccount.addToShortlist(homeownerID, cleanerID)
-        } catch (error) {
-            console.log("Failed to add to shortlist: ", error)
-            throw(error)
-        }
+        return await this.userAccount.addToShortlist(homeownerID, cleanerID)
     }
 }
 
@@ -31,12 +25,7 @@ export class ViewShortListController {
     }
 
     public async viewShortlist(homeownerID: number): Promise<string[]> {
-        try {
-            return await this.userAccount.viewShortlist(homeownerID)
-        } catch (error) {
-            console.log("Failed to retrieve shortlist: ", error)
-            throw error
-        }
+        return await this.userAccount.viewShortlist(homeownerID)
     }
 }
 
@@ -53,12 +42,7 @@ export class ViewServiceHistoryController {
         service: string,
         date: Date
     ): Promise<ServiceHistory[]> {
-        try {
-            return await this.Service.viewServiceHistory(userID, cleanerName, service, date)
-        } catch (error) {
-            console.log("Failed to retrieve history: ", error)
-            throw error
-        }
+        return await this.Service.viewServiceHistory(userID, cleanerName, service, date)
     }
 }
 
@@ -72,11 +56,6 @@ export class ViewAllServiceHistoryController {
     public async viewAllServiceHistory(
         userID: number
     ): Promise<ServiceHistory[]> {
-        try {
-            return await this.Service.viewAllServiceHistory(userID)
-        } catch (error) {
-            console.log("Failed to retrieve history: ", error)
-            throw error
-        }
+        return await this.Service.viewAllServiceHistory(userID)
     }
 }

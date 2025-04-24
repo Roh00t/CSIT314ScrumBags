@@ -1,27 +1,28 @@
+import { ViewCleanersController } from '../controllers/cleanerControllers'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { UserAccountData } from '../shared/dataClasses'
 import {
     CreateNewUserAccountController,
+    UpdateUserAccountController,
     ViewUserAccountsController,
     LoginController,
-    UpdateUserAccountController
+    SuspendUserAccountController,
+    SearchUserAccountController,
 } from '../controllers/userAccountControllers'
+import { Router } from 'express'
 import {
     UserAccountSuspendedError,
     InvalidCredentialsError,
     UserAccountNotFound
 } from '../shared/exceptions'
-import { Router } from 'express'
-import { ViewCleanersController } from '../controllers/cleanerControllers'
 
 const userAccountsRouter = Router()
 
-// Get User Account
 userAccountsRouter.get('/', async (req, res): Promise<void> => {
     try {
         const username = typeof req.query.username === 'string'
-        ? req.query.username
-        : null
+            ? req.query.username
+            : null
 
         const userAccountData =
             await new ViewUserAccountsController().viewUserAccounts(username)
@@ -126,6 +127,37 @@ userAccountsRouter.post('/update', async (req, res): Promise<void> => {
             updatedPassword
         )
         res.status(StatusCodes.OK).json({ message: 'Update Success' })
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
+    try {
+        const { id } = req.body
+        await new SuspendUserAccountController().suspendUserAccount(id)
+        res.status(StatusCodes.OK).json({
+            message: "User account of ID '" + id + "' has been suspended"
+        })
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+userAccountsRouter.get('/search', async (req, res): Promise<void> => {
+    try {
+        const search = req.query.search as string | undefined
+        if (!search) {
+            res.status(StatusCodes.BAD_REQUEST).json({ message: 'Search query is required' })
+            return
+        }
+        const foundUserAccounts =
+            await new SearchUserAccountController().searchUserAccount(search)
+        res.status(StatusCodes.OK).json(foundUserAccounts)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message

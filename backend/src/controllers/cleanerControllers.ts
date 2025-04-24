@@ -1,5 +1,5 @@
-import UserAccount from '../entities/userAccount'
 import { CleanerServicesData } from '../shared/dataClasses'
+import UserAccount from '../entities/userAccount'
 
 export class ViewCleanersController {
     private userAccount: UserAccount
