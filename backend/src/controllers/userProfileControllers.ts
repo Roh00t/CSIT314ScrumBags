@@ -1,3 +1,4 @@
+import { UserProfilesSelect } from '../db/schema/userProfiles'
 import { UserProfile } from '../entities/userProfile'
 
 export class CreateNewUserProfileController {
@@ -37,9 +38,33 @@ export class UpdateUserProfileController {
         oldProfileName: string,
         newProfileName: string
     ): Promise<void> {
-        return await this.userProfile.updateUserProfiles(
+        return await this.userProfile.updateUserProfile(
             oldProfileName,
             newProfileName
         )
+    }
+}
+
+export class SuspendUserProfileController {
+    private userProfile: UserProfile
+
+    constructor() {
+        this.userProfile = new UserProfile()
+    }
+
+    public async updateUserProfile(profileName: string): Promise<void> {
+        await this.userProfile.suspendUserProfile(profileName)
+    }
+}
+
+export class SearchUserProfilesController {
+    private userProfile: UserProfile
+
+    constructor() {
+        this.userProfile = new UserProfile()
+    }
+
+    public async searchUserProfiles(search: string): Promise<UserProfilesSelect[]> {
+        return await this.userProfile.searchUserProfiles(search)
     }
 }

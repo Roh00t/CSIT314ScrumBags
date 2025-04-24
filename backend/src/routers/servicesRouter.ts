@@ -8,7 +8,10 @@ import {
     ViewServicesProvidedController
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
-import { ServiceAlreadyProvidedError, ServiceCategoryNotFoundError } from '../shared/exceptions'
+import {
+    ServiceCategoryNotFoundError,
+    ServiceAlreadyProvidedError
+} from '../shared/exceptions'
 
 const servicesRouter = Router()
 
@@ -56,9 +59,8 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
         const servicesProvided =
-            await new ViewServicesProvidedController().viewServicesProvided(
-                Number(id)
-            )
+            await new ViewServicesProvidedController()
+                .viewServicesProvided(Number(id))
 
         res.status(StatusCodes.OK).json(servicesProvided)
     } catch (err) {
@@ -113,5 +115,7 @@ servicesRouter.post(
         }
     }
 )
+
+// servicesRouter.get('/history', )
 
 export default servicesRouter

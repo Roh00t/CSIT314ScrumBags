@@ -6,11 +6,12 @@ import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { eq } from 'drizzle-orm'
+import { and, eq, ilike } from 'drizzle-orm'
 import {
+    CleanerAlreadyShortlistedError,
     UserAccountSuspendedError,
     InvalidCredentialsError,
-    UserAccountNotFound,
+    UserAccountNotFound
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
 
@@ -22,6 +23,7 @@ export default class UserAccount {
     }
 
     /**
+     * Create new user account
      * @param password The ENCODED password
      */
     public async createNewUserAccount(
@@ -47,6 +49,7 @@ export default class UserAccount {
     }
 
     /**
+     * Login user account
      * @param password The PLAINTEXT password (not encoded)
      */
     public async login(
@@ -98,7 +101,9 @@ export default class UserAccount {
         } as UserAccountData
     }
 
-    // View user account & Search through user account
+    /**
+     * View user account & Search through user account
+     */
     public async viewUserAccounts(
         username: string | null
     ): Promise<UserAccountData[]> {
@@ -137,6 +142,7 @@ export default class UserAccount {
     public async viewCleaners(): Promise<CleanerServicesData[]> {
         const queryForCleaners = await this.db
             .select({
+                cleanerID: userAccountsTable.id,
                 cleaner: userAccountsTable.username,
                 serviceCategory: serviceCategoriesTable.label,
                 price: servicesProvidedTable.price
@@ -160,6 +166,7 @@ export default class UserAccount {
 
         return queryForCleaners.map(query => {
             return {
+                cleanerID: query.cleanerID,
                 cleaner: query.cleaner,
                 service: query.serviceCategory,
                 price: Number(query.price)
@@ -167,8 +174,22 @@ export default class UserAccount {
         })
     }
 
+    /**
+     * Add to shortlist
+     */
     public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
-
+        const result = await this.db
+            .select()
+            .from(shortlistedCleanersTable)
+            .where(and(
+                eq(shortlistedCleanersTable.homeownerID, homeownerID),
+                eq(shortlistedCleanersTable.cleanerID, cleanerID)
+            ))
+        if (result.length > 0) {
+            throw new CleanerAlreadyShortlistedError(
+                "Already shortlisted cleaner of ID " + cleanerID
+            )
+        }
 
         await this.db
             .insert(shortlistedCleanersTable)
@@ -194,6 +215,9 @@ export default class UserAccount {
         return cleanerNames
     }
 
+    /**
+     * Update user account
+     */
     public async updateUserAccount(
         userID: number,
         updateAs: string,
@@ -213,5 +237,43 @@ export default class UserAccount {
                 userProfileId: userProfile.id
             })
             .where(eq(userAccountsTable.id, userID))
+    }
+
+    /**
+     * Suspend user account
+     */
+    public async suspendUserAccount(userID: number): Promise<void> {
+        await this.db
+            .update(userAccountsTable)
+            .set({ isSuspended: true })
+            .where(eq(userAccountsTable.id, userID))
+    }
+
+    /**
+     * Search user accounts
+     */
+    public async searchUserAccounts(search: string): Promise<UserAccountData[]> {
+        const result = await this.db
+            .select({
+                id: userAccountsTable.id,
+                username: userAccountsTable.username,
+                userProfile: userProfilesTable.label,
+                isSuspended: userAccountsTable.isSuspended
+            })
+            .from(userAccountsTable)
+            .leftJoin(userProfilesTable, eq(
+                userAccountsTable.userProfileId,
+                userProfilesTable.id
+            ))
+            .where(ilike(userAccountsTable.username, `%${search}%`))
+
+        return result.map(res => {
+            return {
+                id: res.id,
+                username: res.username,
+                userProfile: res.userProfile,
+                isSuspended: res.isSuspended
+            } as UserAccountData
+        })
     }
 }

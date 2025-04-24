@@ -1,8 +1,9 @@
-import { ServiceBookingReportData } from '../shared/dataClasses'
 import { ServiceBooking } from '../entities/platformManagerReport'
+import { ServiceBookingReportData } from '../shared/dataClasses'
 
 export class GenerateReportController {
     private serviceBooking: ServiceBooking
+
     constructor() {
         this.serviceBooking = new ServiceBooking()
     }

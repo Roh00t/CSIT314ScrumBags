@@ -1,4 +1,4 @@
-import { integer, pgTable } from 'drizzle-orm/pg-core'
+import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core'
 import { userAccountsTable } from './userAccounts'
 import { relations } from 'drizzle-orm'
 
@@ -9,7 +9,9 @@ export const shortlistedCleanersTable = pgTable('shortlisted_cleaners', {
     cleanerID: integer()
         .notNull()
         .references(() => userAccountsTable.id, { onDelete: 'cascade' })
-})
+}, table => [
+    primaryKey({ columns: [table.homeownerID, table.cleanerID] })
+])
 
 export const shortlistedCleanersRelations = relations(
     shortlistedCleanersTable,
