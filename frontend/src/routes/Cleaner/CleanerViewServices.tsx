@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../css/CleanerViewServices.css';
+import '../../css/Cleaner/CleanerViewServices.css';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/LogoutModal';
 interface UserAccountResponse {
   id: number;
@@ -42,7 +42,7 @@ const CleanerViewServicesRoute: React.FC = () => {
       try {
         const response = await fetch('http://localhost:3000/api/services/');
         if (!response.ok) throw new Error('Failed to fetch available services');
-        
+
         const data = await response.json();
         const servicesList = data.map((item: any) => item[Object.keys(item)[0]]); // assuming service is in the first column
         setAvailableServices(servicesList);
@@ -50,13 +50,13 @@ const CleanerViewServicesRoute: React.FC = () => {
         console.error('Error fetching available services:', error);
       }
     };
-  
+
     fetchAvailableServices();
-  }, []);  
+  }, []);
 
   useEffect(() => {
     const fetchServices = async () => {
-      try { 
+      try {
         const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch services');
@@ -83,13 +83,13 @@ const CleanerViewServicesRoute: React.FC = () => {
   return (
     <div className="dashboard-container">
       <div className="header_container">
-      <img src={logo} alt="Logo" height={40} />
+        <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/cleaner-dashboard">Home</Link></h2>
         <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
         <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
         </h2>
-        </div>
+      </div>
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
@@ -149,12 +149,12 @@ const CleanerViewServicesRoute: React.FC = () => {
                     }),
                     credentials: 'include',
                   });
-      
+
                   if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Failed to create service');
                   }
-      
+
                   setShowPopup(false);
                   setNewService({ service: '', description: '', price: '' });
                   window.location.reload(); // or re-fetch services
@@ -181,7 +181,7 @@ const CleanerViewServicesRoute: React.FC = () => {
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
-          <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Services</button>
+            <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Services</button>
           </div>
 
           <table>

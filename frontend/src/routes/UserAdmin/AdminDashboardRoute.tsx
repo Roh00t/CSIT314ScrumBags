@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import logo from '../assets/logo.png';
-import '../css/AdminDashboardRoute.css';
+import logo from '../../assets/logo.png';
+import '../../css/UserAdmin/AdminDashboardRoute.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
-
-
 
 const AdminDashboard: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -15,7 +13,7 @@ const AdminDashboard: React.FC = () => {
     <div className="user-account-page">
       {/* Header */}
       <div className="header_container">
-      <img src={logo} alt="Logo" height={40} />
+        <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>

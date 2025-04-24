@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/UserAdminUserAccountManagement.css';
+import '../../css/UserAdmin/UserAdminUserAccountManagement.css'
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
 // Define the type for the response data
 interface UserAccountResponse {
@@ -72,7 +72,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
     <div className="user-account-page">
       {/* Header */}
       <div className="header_container">
-           <img src={logo} alt="Logo" height={40} />
+        <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
@@ -178,21 +178,21 @@ const UserAdminUserAccountManagement: React.FC = () => {
                 type="text"
                 value={editingUser.username}
                 onChange={e => setEditingUser({ ...editingUser, username: e.target.value })}
-              required/>
+                required />
 
               <label>Password:</label>
               <input
                 type="password"
                 value={editingUser.password}
                 onChange={e => setEditingUser({ ...editingUser, password: e.target.value })}
-                required/>
+                required />
 
               <label>Confirm Password:</label>
               <input
                 type="password"
                 value={editingUser.confirmPassword}
                 onChange={e => setEditingUser({ ...editingUser, confirmPassword: e.target.value })}
-                required/>
+                required />
 
               <div className="modal-btn-group">
                 <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>

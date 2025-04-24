@@ -1,9 +1,9 @@
 
-import '../css/PlatformManagerDashboard.css';
+import '../../css/PlatformManager/PlatformManagerDashboard.css';
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import LogoutModal from '../../components/LogoutModal';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
 const PlatformManagerDashboard: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -14,7 +14,7 @@ const PlatformManagerDashboard: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-           <img src={logo} alt="Logo" height={40} />
+        <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/platformManager-dashboard">Home</Link></h2>
         <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
         <h2><Link to="/platformManager-view-report">Report</Link></h2>
