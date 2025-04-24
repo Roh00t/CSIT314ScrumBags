@@ -31,15 +31,11 @@ export class Service {
     ): Promise<ServiceProvidedData[]> {
         const servicesProvidedByCleaner = await this.db
             .select({
-                serviceName: serviceCategoriesTable.label,
+                serviceName: servicesProvidedTable.serviceName,
                 description: servicesProvidedTable.description,
                 price: servicesProvidedTable.price
             })
             .from(servicesProvidedTable)
-            .leftJoin(serviceCategoriesTable, eq(
-                servicesProvidedTable.serviceCategoryID,
-                serviceCategoriesTable.id
-            ))
             .leftJoin(userAccountsTable, eq(
                 servicesProvidedTable.cleanerID,
                 userAccountsTable.id
@@ -69,7 +65,7 @@ export class Service {
 
         if (!serviceCategoryEntry) {
             throw new ServiceCategoryNotFoundError(
-                "Service '" + serviceName + "' not found"
+                "Service category'" + serviceCategory + "' not found"
             )
         }
 

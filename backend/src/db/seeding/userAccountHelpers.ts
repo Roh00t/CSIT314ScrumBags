@@ -1,7 +1,11 @@
-import { UserAccountsInsert, UserAccountsSelect, userAccountsTable } from "../schema/userAccounts"
 import { DrizzleClient, GLOBALS } from "../../shared/constants"
 import { createProfileIdMappings } from "./shared"
 import { faker } from "@faker-js/faker"
+import {
+    UserAccountsInsert,
+    UserAccountsSelect,
+    userAccountsTable
+} from "../schema/userAccounts"
 import bcrypt from 'bcrypt'
 
 export const createUserAccount = async (
