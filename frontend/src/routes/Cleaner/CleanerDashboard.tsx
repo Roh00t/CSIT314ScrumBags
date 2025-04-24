@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
-import '../css/CleanerDashboardRoute.css';
+import '../../css/Cleaner/CleanerDashboardRoute.css';
 import 'react-calendar/dist/Calendar.css';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 import { Link } from 'react-router-dom'
 import LogoutModal from '../../components/LogoutModal';
+
 interface CleaningJob {
   id: number;
   cleanerName: string;
@@ -21,7 +22,7 @@ const CleanerDashboardRoute: React.FC = () => {
 
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  
+
   useEffect(() => {
     // Dummy data with locations
     const dummyJobs: CleaningJob[] = [
@@ -61,13 +62,13 @@ const CleanerDashboardRoute: React.FC = () => {
   return (
     <div className="dashboard-container">
       <div className="header_container">
-      <img src={logo} alt="Logo" height={40} />
-          <h2><Link to="/cleaner-dashboard">Home</Link></h2>
-          <h2><Link to="/cleaner-view-services">View My Services</Link></h2> 
-          <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+        <img src={logo} alt="Logo" height={40} />
+        <h2><Link to="/cleaner-dashboard">Home</Link></h2>
+        <h2><Link to="/cleaner-view-services">View My Services</Link></h2>
+        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
           <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
-        </div>
+      </div>
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
       <div className="welcome-message">

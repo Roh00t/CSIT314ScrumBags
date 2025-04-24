@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../css/ViewUserProfile.css';
+import '../../css/UserAdmin/ViewUserProfile.css'
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
 const ViewUserRoles: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-   // Logout Modal State
-   const [showLogoutModal, setShowLogoutModal] = useState(false); 
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   // For Update User Profile
   const [showProfileEditModal, setShowProfileEditModal] = useState(false);
   const [editingProfile, setEditingProfile] = useState<{
@@ -54,7 +54,7 @@ const ViewUserRoles: React.FC = () => {
     <div className="user-account-page">
       {/* Navbar */}
       <div className="header_container">
-           <img src={logo} alt="Logo" height={40} />
+        <img src={logo} alt="Logo" height={40} />
         <h2><Link to="/admin-dashboard">Home</Link></h2>
         <h2><Link to="/user-account-management">User Account</Link></h2>
         <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
@@ -99,13 +99,13 @@ const ViewUserRoles: React.FC = () => {
                     <div className="action-buttons">
                       <button className="view-btn">View</button>
                       <button
-                      className="edit-btn"
-                      onClick={() => {
-                        setEditingProfile({ currentProfile: role, updatedProfile: '' });
-                        setShowProfileEditModal(true);
-                      }}>
+                        className="edit-btn"
+                        onClick={() => {
+                          setEditingProfile({ currentProfile: role, updatedProfile: '' });
+                          setShowProfileEditModal(true);
+                        }}>
                         Edit
-                    </button>
+                      </button>
                       <button className="delete-btn">Delete</button>
                     </div>
                   </td>
@@ -119,49 +119,49 @@ const ViewUserRoles: React.FC = () => {
           </tbody>
         </table>
         {showProfileEditModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Update User Profile</h2>
-            
-            <label>Current Profile:</label>
-            <input type="text" value={editingProfile.currentProfile} disabled />
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>Update User Profile</h2>
 
-            <label>Updated Profile:</label>
-            <input
-              type="text"
-              value={editingProfile.updatedProfile}
-              onChange={e =>
-                setEditingProfile({ ...editingProfile, updatedProfile: e.target.value } 
-                )
-              }
-              required
-            />
+              <label>Current Profile:</label>
+              <input type="text" value={editingProfile.currentProfile} disabled />
 
-            <div className="modal-btn-group">
-              <button onClick={() => setShowProfileEditModal(false)}>Cancel</button>
-              <button
-                onClick={async () => {
-                  try {
-                    await axios.put('http://localhost:3000/api/user-profiles/update', {
-                      oldProfileName: editingProfile.currentProfile,
-                      newProfileName: editingProfile.updatedProfile
-                    });
+              <label>Updated Profile:</label>
+              <input
+                type="text"
+                value={editingProfile.updatedProfile}
+                onChange={e =>
+                  setEditingProfile({ ...editingProfile, updatedProfile: e.target.value }
+                  )
+                }
+                required
+              />
 
-                    alert('Profile updated successfully!');
-                    setShowProfileEditModal(false);
-                    // Optionally refetch profiles here if needed
-                  } catch (err) {
-                    console.error(err);
-                    alert('Update failed!');
-                  }
-                }}
-              >
-                Save Profile
-              </button>
+              <div className="modal-btn-group">
+                <button onClick={() => setShowProfileEditModal(false)}>Cancel</button>
+                <button
+                  onClick={async () => {
+                    try {
+                      await axios.put('http://localhost:3000/api/user-profiles/update', {
+                        oldProfileName: editingProfile.currentProfile,
+                        newProfileName: editingProfile.updatedProfile
+                      });
+
+                      alert('Profile updated successfully!');
+                      setShowProfileEditModal(false);
+                      // Optionally refetch profiles here if needed
+                    } catch (err) {
+                      console.error(err);
+                      alert('Update failed!');
+                    }
+                  }}
+                >
+                  Save Profile
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-)}
+        )}
       </div>
 
       {/* Footer */}
