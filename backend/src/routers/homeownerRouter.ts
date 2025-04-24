@@ -1,13 +1,14 @@
-import { Router } from "express"
 import { requireAuthMiddleware } from "../shared/middleware"
 import { UserAccountData } from "../shared/dataClasses"
-import {
-    AddToShortlistController,
-    ViewServiceHistoryController,
-    ViewShortListController,
-    ViewAllServiceHistoryController
-} from "../controllers/homeownerControllers"
 import { StatusCodes } from "http-status-codes"
+import {
+    ViewAllServiceHistoryController,
+    ViewServiceHistoryController,
+    AddToShortlistController,
+    ViewShortListController
+} from "../controllers/homeownerControllers"
+import { Router } from "express"
+import { CleanerAlreadyShortlistedError } from "../shared/exceptions"
 
 const homeownerRouter = Router()
 
@@ -17,36 +18,50 @@ declare module 'express-session' {
     }
 }
 
-homeownerRouter.post('/', requireAuthMiddleware, async (req, res): Promise<void> => {
-    const homeownerID = (req.session.user as UserAccountData).id
-    const { cleanerID } = req.body
-    try {
-        await new AddToShortlistController().addToShortlist(homeownerID, cleanerID)
-        res.status(StatusCodes.OK).json({
-            message: "Shortlist successful"
-        })
-    } catch (error: any) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            error: error.message || "Shortlist failed"
-        })
+homeownerRouter.post(
+    '/shortlist',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        const homeownerID = (req.session.user as UserAccountData).id
+        const { cleanerID } = req.body
+        try {
+            await new AddToShortlistController().addToShortlist(homeownerID, cleanerID)
+            res.status(StatusCodes.OK).json({
+                message: "Shortlist successful"
+            })
+        } catch (err: any) {
+            if (err instanceof CleanerAlreadyShortlistedError) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    error: err.message
+                })
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    error: err.message || "Shortlist failed"
+                })
+            }
+        }
     }
-})
+)
 
-homeownerRouter.get('/', requireAuthMiddleware, async (req, res): Promise<void> => {
-    const homeownerID = (req.session.user as UserAccountData).id
-    try {
-        const shortlistedCleaners =
-            await new ViewShortListController().viewShortlist(homeownerID)
-        res.status(StatusCodes.OK).json({
-            message: "Shortlist retrieved successfully",
-            data: shortlistedCleaners
-        })
-    } catch (error: any) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            error: error.message || "Failed to retrieve shortlist"
-        })
+homeownerRouter.get(
+    '/shortlist',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        const homeownerID = (req.session.user as UserAccountData).id
+        try {
+            const shortlistedCleaners =
+                await new ViewShortListController().viewShortlist(homeownerID)
+            res.status(StatusCodes.OK).json({
+                message: "Shortlist retrieved successfully",
+                data: shortlistedCleaners
+            })
+        } catch (error: any) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                error: error.message || "Failed to retrieve shortlist"
+            })
+        }
     }
-})
+)
 
 homeownerRouter.get(
     '/servicehistory',

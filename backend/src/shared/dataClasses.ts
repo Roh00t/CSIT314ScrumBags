@@ -4,6 +4,7 @@ export type UserAccountData = {
     id: number
     username: string
     userProfile: string
+    isSuspended: boolean
 }
 
 export type ServiceProvidedData = {
@@ -26,6 +27,7 @@ export type ServiceData = {
 }
 
 export type CleanerServicesData = {
+    cleanerID: number
     cleaner: string
     service: string
     price: number

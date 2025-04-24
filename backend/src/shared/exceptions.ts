@@ -33,3 +33,9 @@ export class CannotShortlistSelfError extends Error {
         super(message)
     }
 }
+
+export class CleanerAlreadyShortlistedError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
