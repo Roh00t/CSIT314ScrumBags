@@ -1,7 +1,6 @@
-import UserAccount from "../entities/userAccount";
-import { Service } from "../entities/service";
-import { Serializer } from "v8";
-import { ServiceHistory } from "../shared/dataClasses";
+import { ServiceHistory } from "../shared/dataClasses"
+import UserAccount from "../entities/userAccount"
+import { Service } from "../entities/service"
 
 export class AddToShortlistController {
     private userAccount: UserAccount
@@ -17,8 +16,8 @@ export class AddToShortlistController {
         try {
             return await this.userAccount.addToShortlist(homeownerID, cleanerID)
         } catch (error) {
-            console.log("Failed to add to shortlist: ", error)
-            throw (error)
+            console.log()
+            throw new Error("Failed to add to shortlist error: " + (error as any).message)
         }
     }
 }

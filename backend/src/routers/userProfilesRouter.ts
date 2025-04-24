@@ -14,8 +14,8 @@ const userProfilesRouter = Router()
 userProfilesRouter.post('/', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body
-        const controller = new CreateNewUserProfileController()
-        const profileCreated = await controller.createNewUserProfile(profileName)
+        const profileCreated =
+            await new CreateNewUserProfileController().createNewUserProfile(profileName)
         if (!profileCreated) {
             throw new Error("Unable to create profile '" + profileName + "'")
         }
@@ -27,12 +27,11 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     }
 })
 
-// Get User profile
 userProfilesRouter.get('/', async (req, res): Promise<void> => {
     try {
         const profileName = typeof req.query.profileName === 'string'
-        ? req.query.profileName
-        : null
+            ? req.query.profileName
+            : null
 
         const profiles =
             await new ViewUserProfilesController().viewUserProfiles(profileName)
@@ -47,11 +46,10 @@ userProfilesRouter.get('/', async (req, res): Promise<void> => {
 userProfilesRouter.put('/update', async (req, res): Promise<void> => {
     try {
         const { oldProfileName, newProfileName } = req.body
-        const update =
-            await new UpdateUserProfileController().updateUserProfile(
-                oldProfileName,
-                newProfileName
-            )
+        await new UpdateUserProfileController().updateUserProfile(
+            oldProfileName,
+            newProfileName
+        )
         res.status(StatusCodes.OK).json({ message: 'Update Success' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

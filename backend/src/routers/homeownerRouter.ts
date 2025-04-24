@@ -17,11 +17,9 @@ declare module 'express-session' {
     }
 }
 
-// 👇 Add route to shortlist a cleaner
 homeownerRouter.post('/', requireAuthMiddleware, async (req, res): Promise<void> => {
     const homeownerID = (req.session.user as UserAccountData).id
     const { cleanerID } = req.body
-
     try {
         await new AddToShortlistController().addToShortlist(homeownerID, cleanerID)
         res.status(StatusCodes.OK).json({
@@ -36,9 +34,9 @@ homeownerRouter.post('/', requireAuthMiddleware, async (req, res): Promise<void>
 
 homeownerRouter.get('/', requireAuthMiddleware, async (req, res): Promise<void> => {
     const homeownerID = (req.session.user as UserAccountData).id
-
     try {
-        const shortlistedCleaners = await new ViewShortListController().viewShortlist(homeownerID)
+        const shortlistedCleaners =
+            await new ViewShortListController().viewShortlist(homeownerID)
         res.status(StatusCodes.OK).json({
             message: "Shortlist retrieved successfully",
             data: shortlistedCleaners
@@ -50,41 +48,47 @@ homeownerRouter.get('/', requireAuthMiddleware, async (req, res): Promise<void> 
     }
 })
 
-homeownerRouter.get('/servicehistory', requireAuthMiddleware, async (req, res): Promise<void> => {
-    const homeownerID = (req.session.user as UserAccountData).id
-    const { cleanerName, service, date } = req.body
-
-    try {
-        const serviceHistory = await new ViewServiceHistoryController().viewServiceHistory(
-            homeownerID, cleanerName, service, date
-        )
-        res.status(StatusCodes.OK).json({
-            message: "Service history retrieved successfully",
-            data: serviceHistory
-        })
-    } catch (error: any) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            error: error.message || "Failed to retrieve service history"
-        })
+homeownerRouter.get(
+    '/servicehistory',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        const homeownerID = (req.session.user as UserAccountData).id
+        const { cleanerName, service, date } = req.body
+        try {
+            const serviceHistory = await new ViewServiceHistoryController()
+                .viewServiceHistory(homeownerID, cleanerName, service, date)
+            res.status(StatusCodes.OK).json({
+                message: "Service history retrieved successfully",
+                data: serviceHistory
+            })
+        } catch (error: any) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                error: error.message || "Failed to retrieve service history"
+            })
+        }
     }
-})
+)
 
-homeownerRouter.get('/allservicehistory', requireAuthMiddleware, async (req, res): Promise<void> => {
-    const homeownerID = (req.session.user as UserAccountData).id
+homeownerRouter.get(
+    '/allservicehistory',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        const homeownerID = (req.session.user as UserAccountData).id
+        try {
+            const serviceHistory =
+                await new ViewAllServiceHistoryController()
+                    .viewAllServiceHistory(homeownerID)
 
-    try {
-        const serviceHistory = await new ViewAllServiceHistoryController().viewAllServiceHistory(
-            homeownerID
-        )
-        res.status(StatusCodes.OK).json({
-            message: "Service history retrieved successfully",
-            data: serviceHistory
-        })
-    } catch (error: any) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-            error: error.message || "Failed to retrieve service history"
-        })
+            res.status(StatusCodes.OK).json({
+                message: "Service history retrieved successfully",
+                data: serviceHistory
+            })
+        } catch (error: any) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                error: error.message || "Failed to retrieve service history"
+            })
+        }
     }
-})
+)
 
 export default homeownerRouter

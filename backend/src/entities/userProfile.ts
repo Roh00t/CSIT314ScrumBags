@@ -10,7 +10,9 @@ export class UserProfile {
         this.db = drizzle(process.env.DATABASE_URL!)
     }
 
-    // Create user profile
+    /**
+     * Create new user profile 
+     */
     public async createNewUserProfile(
         profileName: string
     ): Promise<boolean> {
@@ -24,7 +26,9 @@ export class UserProfile {
         }
     }
 
-    // View user profile & Search through user profile
+    /**
+     * View user profile & Search through user profile
+     */
     public async viewUserProfiles(
         profileName: string | null
     ): Promise<string[]> {
@@ -38,11 +42,13 @@ export class UserProfile {
             : await this.db
                 .select({ label: userProfilesTable.label })
                 .from(userProfilesTable)
-    
+
         return profiles.map(p => p.label)
     }
 
-    // Update user profile
+    /**
+     *  Update user profiles
+     */
     public async updateUserProfiles(
         oldProfileName: string,
         newProfileName: string

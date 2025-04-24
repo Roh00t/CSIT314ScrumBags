@@ -27,3 +27,9 @@ export class ServiceAlreadyProvidedError extends Error {
         super(message)
     }
 }
+
+export class CannotShortlistSelfError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}

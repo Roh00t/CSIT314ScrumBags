@@ -1,5 +1,6 @@
 import { CleanerServicesData, UserAccountData } from '../shared/dataClasses'
 import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
+import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
@@ -12,7 +13,6 @@ import {
     UserAccountNotFound,
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
-import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 
 export default class UserAccount {
     private db: DrizzleClient
@@ -168,12 +168,11 @@ export default class UserAccount {
     }
 
     public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
+
+
         await this.db
             .insert(shortlistedCleanersTable)
-            .values({
-                homeownerID,
-                cleanerID
-            })
+            .values({ homeownerID, cleanerID })
     }
 
     public async viewShortlist(homeownerID: number): Promise<string[]> {
