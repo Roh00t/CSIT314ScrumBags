@@ -1,6 +1,6 @@
 import {
     CreateNewUserProfileController,
-    SearchUserProfilesController,
+    SearchUserProfileController,
     SuspendUserProfileController,
     UpdateUserProfileController,
     ViewUserProfilesController
@@ -29,14 +29,10 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     }
 })
 
-userProfilesRouter.get('/', async (req, res): Promise<void> => {
+userProfilesRouter.get('/', async (_, res): Promise<void> => {
     try {
-        const profileName = typeof req.query.profileName === 'string'
-            ? req.query.profileName
-            : null
-
         const profiles =
-            await new ViewUserProfilesController().viewUserProfiles(profileName)
+            await new ViewUserProfilesController().viewUserProfiles()
         res.status(StatusCodes.OK).json(profiles)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -79,7 +75,7 @@ userProfilesRouter.get('/search', async (req, res): Promise<void> => {
             res.status(StatusCodes.BAD_REQUEST).json({ message: 'Search query is required' })
             return
         }
-        const data = await new SearchUserProfilesController().searchUserProfiles(search)
+        const data = await new SearchUserProfileController().searchUserProfiles(search)
         res.status(StatusCodes.OK).json(data)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
