@@ -1,7 +1,8 @@
 import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles'
-import { drizzle } from 'drizzle-orm/node-postgres'
+import { UserProfileNotFoundError } from '../shared/exceptions'
 import { DrizzleClient } from '../shared/constants'
-import { eq, ilike } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/node-postgres'
+import { eq } from 'drizzle-orm'
 
 export class UserProfile {
     private db: DrizzleClient
@@ -27,23 +28,13 @@ export class UserProfile {
     }
 
     /**
-     * View user profile & Search through user profile
+     * View user profile 
      */
-    public async viewUserProfiles(
-        profileName: string | null
-    ): Promise<string[]> {
-        type ProfileType = { label: string }
-
-        const profiles: ProfileType[] = profileName
-            ? await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-                .where(eq(userProfilesTable.label, profileName))
-            : await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-
-        return profiles.map(p => p.label)
+    public async viewUserProfiles(): Promise<string[]> {
+        const result = await this.db
+            .select({ label: userProfilesTable.label })
+            .from(userProfilesTable)
+        return result.map(res => res.label)
     }
 
     /**
@@ -72,10 +63,16 @@ export class UserProfile {
     /**
      * Search user profiles
      */
-    public async searchUserProfiles(search: string): Promise<UserProfilesSelect[]> {
-        return await this.db
+    public async searchUserProfile(search: string): Promise<UserProfilesSelect> {
+        const [profile] = await this.db
             .select()
             .from(userProfilesTable)
-            .where(ilike(userProfilesTable.label, `%${search}%`))
+            .where(eq(userProfilesTable.label, search))
+            .limit(1)
+
+        if (!profile) {
+            throw new UserProfileNotFoundError("User profile doesn't exist")
+        }
+        return profile
     }
 }
