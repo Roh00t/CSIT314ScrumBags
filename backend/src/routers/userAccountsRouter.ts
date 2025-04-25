@@ -20,12 +20,8 @@ const userAccountsRouter = Router()
 
 userAccountsRouter.get('/', async (req, res): Promise<void> => {
     try {
-        const username = typeof req.query.username === 'string'
-            ? req.query.username
-            : null
-
         const userAccountData =
-            await new ViewUserAccountsController().viewUserAccounts(username)
+            await new ViewUserAccountsController().viewUserAccounts()
         res.status(StatusCodes.OK).json(userAccountData)
     } catch (err) {
         if (err instanceof UserAccountNotFound) {

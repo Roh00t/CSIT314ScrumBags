@@ -104,10 +104,8 @@ export default class UserAccount {
     /**
      * View user account & Search through user account
      */
-    public async viewUserAccounts(
-        username: string | null
-    ): Promise<UserAccountData[]> {
-        const query = this.db
+    public async viewUserAccounts(): Promise<UserAccountData[]> {
+        const query = await this.db
             .select({
                 id: userAccountsTable.id,
                 username: userAccountsTable.username,
@@ -118,15 +116,9 @@ export default class UserAccount {
             .leftJoin(
                 userProfilesTable,
                 eq(userAccountsTable.userProfileId, userProfilesTable.id)
-            );
+            )
 
-        const filteredQuery = username
-            ? query.where(eq(userAccountsTable.username, username))
-            : query
-
-        const allUsers = await filteredQuery
-
-        return allUsers.map(u => {
+        return query.map(u => {
             return {
                 id: u.id,
                 username: u.username,

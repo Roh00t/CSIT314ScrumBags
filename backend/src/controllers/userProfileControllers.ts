@@ -20,10 +20,8 @@ export class ViewUserProfilesController {
         this.userProfile = new UserProfile()
     }
 
-    public async viewUserProfiles(
-        profileName: string | null
-    ): Promise<string[]> {
-        return await this.userProfile.viewUserProfiles(profileName)
+    public async viewUserProfiles(): Promise<string[]> {
+        return await this.userProfile.viewUserProfiles()
     }
 }
 

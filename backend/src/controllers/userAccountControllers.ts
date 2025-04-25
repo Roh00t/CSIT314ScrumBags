@@ -10,10 +10,8 @@ export class ViewUserAccountsController {
         this.userAccount = new UserAccount()
     }
 
-    public async viewUserAccounts(
-        username: string | null
-    ): Promise<UserAccountData[]> {
-        return await this.userAccount.viewUserAccounts(username)
+    public async viewUserAccounts(): Promise<UserAccountData[]> {
+        return await this.userAccount.viewUserAccounts()
     }
 }
 

@@ -27,23 +27,13 @@ export class UserProfile {
     }
 
     /**
-     * View user profile & Search through user profile
+     * View user profile 
      */
-    public async viewUserProfiles(
-        profileName: string | null
-    ): Promise<string[]> {
-        type ProfileType = { label: string }
-
-        const profiles: ProfileType[] = profileName
-            ? await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-                .where(eq(userProfilesTable.label, profileName))
-            : await this.db
-                .select({ label: userProfilesTable.label })
-                .from(userProfilesTable)
-
-        return profiles.map(p => p.label)
+    public async viewUserProfiles(): Promise<string[]> {
+        const result = await this.db
+            .select({ label: userProfilesTable.label })
+            .from(userProfilesTable)
+        return result.map(res => res.label)
     }
 
     /**
