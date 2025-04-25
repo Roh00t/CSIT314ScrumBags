@@ -4,6 +4,7 @@ import axios from 'axios';
 import LogoutModal from '../../components/LogoutModal';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
+
 const PlatformManagerViewReports: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'Platform Manager';
 
@@ -40,8 +41,17 @@ const PlatformManagerViewReports: React.FC = () => {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const today = selectedDate ? new Date(selectedDate) : new Date();
-        const chosenDate = today.toISOString();
+        const baseDate = selectedDate ? new Date(selectedDate) : new Date();
+        let chosenDate = baseDate.toISOString();
+
+        if (filter === 'weekly') {
+          const startOfWeek = new Date(baseDate);
+          startOfWeek.setDate(baseDate.getDate() - baseDate.getDay());
+          chosenDate = startOfWeek.toISOString();
+        } else if (filter === 'monthly') {
+          const startOfMonth = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+          chosenDate = startOfMonth.toISOString();
+        }
 
         const response = await axios.post(`http://localhost:3000/api/platform-manager/${filter}`, {
           chosenDate
@@ -62,6 +72,17 @@ const PlatformManagerViewReports: React.FC = () => {
     entry.serviceName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     entry.cleanerName.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const getDateInputMode = () => {
+    switch (filter) {
+      case 'weekly':
+        return 'week';
+      case 'monthly':
+        return 'month';
+      default:
+        return 'date';
+    }
+  };
 
   return (
     <div className="report-page">
@@ -92,7 +113,7 @@ const PlatformManagerViewReports: React.FC = () => {
           />
 
           <input
-            type="date"
+            type={getDateInputMode()}
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
             style={{ marginLeft: '1rem' }}
