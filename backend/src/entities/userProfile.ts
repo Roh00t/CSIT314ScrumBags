@@ -1,8 +1,8 @@
 import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles'
-import { drizzle } from 'drizzle-orm/node-postgres'
-import { DrizzleClient } from '../shared/constants'
-import { eq, ilike } from 'drizzle-orm'
 import { UserProfileNotFoundError } from '../shared/exceptions'
+import { DrizzleClient } from '../shared/constants'
+import { drizzle } from 'drizzle-orm/node-postgres'
+import { eq } from 'drizzle-orm'
 
 export class UserProfile {
     private db: DrizzleClient
