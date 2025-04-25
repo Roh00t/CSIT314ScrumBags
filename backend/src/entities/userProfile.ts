@@ -2,6 +2,7 @@ import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
 import { eq, ilike } from 'drizzle-orm'
+import { UserProfileNotFoundError } from '../shared/exceptions'
 
 export class UserProfile {
     private db: DrizzleClient
@@ -62,10 +63,16 @@ export class UserProfile {
     /**
      * Search user profiles
      */
-    public async searchUserProfiles(search: string): Promise<UserProfilesSelect[]> {
-        return await this.db
+    public async searchUserProfile(search: string): Promise<UserProfilesSelect> {
+        const [profile] = await this.db
             .select()
             .from(userProfilesTable)
-            .where(ilike(userProfilesTable.label, `%${search}%`))
+            .where(eq(userProfilesTable.label, search))
+            .limit(1)
+
+        if (!profile) {
+            throw new UserProfileNotFoundError("User profile doesn't exist")
+        }
+        return profile
     }
 }

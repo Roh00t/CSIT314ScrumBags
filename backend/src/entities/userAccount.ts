@@ -11,7 +11,7 @@ import {
     CleanerAlreadyShortlistedError,
     UserAccountSuspendedError,
     InvalidCredentialsError,
-    UserAccountNotFound
+    UserAccountNotFoundError
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
 
@@ -73,7 +73,7 @@ export default class UserAccount {
             .limit(1)
 
         if (!retrievedUser) {
-            throw new UserAccountNotFound(
+            throw new UserAccountNotFoundError(
                 "Couldn't find user of username: " + username
             )
         }
@@ -244,8 +244,8 @@ export default class UserAccount {
     /**
      * Search user accounts
      */
-    public async searchUserAccounts(search: string): Promise<UserAccountData[]> {
-        const result = await this.db
+    public async searchUserAccount(search: string): Promise<UserAccountData> {
+        const [res] = await this.db
             .select({
                 id: userAccountsTable.id,
                 username: userAccountsTable.username,
@@ -257,15 +257,18 @@ export default class UserAccount {
                 userAccountsTable.userProfileId,
                 userProfilesTable.id
             ))
-            .where(ilike(userAccountsTable.username, `%${search}%`))
+            .where(eq(userAccountsTable.username, search))
+            .limit(1)
 
-        return result.map(res => {
-            return {
-                id: res.id,
-                username: res.username,
-                userProfile: res.userProfile,
-                isSuspended: res.isSuspended
-            } as UserAccountData
-        })
+        if (!res) {
+            throw new UserAccountNotFoundError("This user account doesn't exist")
+        }
+
+        return {
+            id: res.id,
+            username: res.username,
+            userProfile: res.userProfile,
+            isSuspended: res.isSuspended
+        } as UserAccountData
     }
 }

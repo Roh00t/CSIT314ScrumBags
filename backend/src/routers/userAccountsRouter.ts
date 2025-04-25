@@ -13,18 +13,18 @@ import { Router } from 'express'
 import {
     UserAccountSuspendedError,
     InvalidCredentialsError,
-    UserAccountNotFound
+    UserAccountNotFoundError
 } from '../shared/exceptions'
 
 const userAccountsRouter = Router()
 
-userAccountsRouter.get('/', async (req, res): Promise<void> => {
+userAccountsRouter.get('/', async (_, res): Promise<void> => {
     try {
         const userAccountData =
             await new ViewUserAccountsController().viewUserAccounts()
         res.status(StatusCodes.OK).json(userAccountData)
     } catch (err) {
-        if (err instanceof UserAccountNotFound) {
+        if (err instanceof UserAccountNotFoundError) {
             res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -72,11 +72,11 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
                 })
                 return
             }
-            ; (req.session as any).user = userAccRes as UserAccountData
+            (req.session as any).user = userAccRes as UserAccountData
             res.status(StatusCodes.OK).json(userAccRes)
         })
     } catch (err) {
-        if (err instanceof UserAccountNotFound) {
+        if (err instanceof UserAccountNotFoundError) {
             res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
         } else if (err instanceof InvalidCredentialsError) {
             res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message })
@@ -148,7 +148,8 @@ userAccountsRouter.get('/search', async (req, res): Promise<void> => {
     try {
         const search = req.query.search as string | undefined
         if (!search) {
-            res.status(StatusCodes.BAD_REQUEST).json({ message: 'Search query is required' })
+            res.status(StatusCodes.BAD_REQUEST)
+                .json({ message: 'Search query is required' })
             return
         }
         const foundUserAccounts =

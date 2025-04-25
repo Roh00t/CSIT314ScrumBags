@@ -1,4 +1,10 @@
-export class UserAccountNotFound extends Error {
+export class UserAccountNotFoundError extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
+
+export class UserProfileNotFoundError extends Error {
     constructor(message: string) {
         super(message)
     }

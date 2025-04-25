@@ -55,14 +55,14 @@ export class SuspendUserProfileController {
     }
 }
 
-export class SearchUserProfilesController {
+export class SearchUserProfileController {
     private userProfile: UserProfile
 
     constructor() {
         this.userProfile = new UserProfile()
     }
 
-    public async searchUserProfiles(search: string): Promise<UserProfilesSelect[]> {
-        return await this.userProfile.searchUserProfiles(search)
+    public async searchUserProfiles(search: string): Promise<UserProfilesSelect> {
+        return await this.userProfile.searchUserProfile(search)
     }
 }
