@@ -57,11 +57,9 @@ export class Service {
                 serviceName: servicesProvidedTable.serviceName,
             })
             .from(servicesProvidedTable)
-            .groupBy(servicesProvidedTable.serviceName, servicesProvidedTable.description, servicesProvidedTable.price)
+            .groupBy(servicesProvidedTable.serviceName)
             
-        return uniqueServices.map(sp => ({
-            serviceName: sp.serviceName,
-        })) as uniqueServiceData[];
+        return uniqueServices as uniqueServiceData[];
     }
 
     public async createServiceProvided(

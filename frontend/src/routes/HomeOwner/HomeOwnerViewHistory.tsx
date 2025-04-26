@@ -44,7 +44,7 @@ const HomeOwnerViewHistory: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/uniqueservices');
+        const response = await fetch('http://localhost:3000/api/services/uniqueservices');
         if (!response.ok) {
           throw new Error('Failed to fetch services');
         }
@@ -151,14 +151,20 @@ const HomeOwnerViewHistory: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {history.map((service, index) => (
-                <tr key={index}>
-                  <td>{service.cleanerName}</td>
-                  <td>{service.typeOfService}</td>
-                  <td>${service.price}</td>
-                  <td>{new Date(service.date).toLocaleDateString('en-GB')}</td>
+              {history.length === 0 ? (
+                <tr>
+                  <td colSpan={4}>No history found for the selected filters.</td>
                 </tr>
-              ))}
+              ) : (
+                history.map((service, index) => (
+                  <tr key={index}>
+                    <td>{service.cleanerName}</td>
+                    <td>{service.typeOfService}</td>
+                    <td>${service.price}</td>
+                    <td>{new Date(service.date).toLocaleDateString('en-GB')}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
