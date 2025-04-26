@@ -39,8 +39,8 @@ export class ViewServiceHistoryController {
     public async viewServiceHistory(
         userID: number,
         cleanerName: string | null,
-        service: string,
-        date: Date
+        service: string | null,
+        date: Date | null
     ): Promise<ServiceHistory[]> {
         return await this.Service.viewServiceHistory(userID, cleanerName, service, date)
     }

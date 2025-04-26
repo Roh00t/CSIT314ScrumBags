@@ -1,4 +1,4 @@
-import { ServiceProvidedData } from '../shared/dataClasses'
+import { ServiceProvidedData, uniqueServiceData } from '../shared/dataClasses'
 import { Service } from '../entities/service'
 
 /**
@@ -45,6 +45,18 @@ export class ViewServicesProvidedController {
         userID: number
     ): Promise<ServiceProvidedData[]> {
         return await this.service.viewServicesProvided(userID)
+    }
+}
+
+export class ViewUniqueServicesProvided {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async viewUniqueServicesProvided(): Promise<uniqueServiceData[]> {
+        return await this.service.viewUniqueServicesProvided()
     }
 }
 

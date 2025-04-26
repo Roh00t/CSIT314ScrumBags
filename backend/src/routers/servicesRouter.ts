@@ -5,7 +5,8 @@ import {
     CreateServiceCategoryController,
     CreateServiceProvidedController,
     ViewServiceCategoriesController,
-    ViewServicesProvidedController
+    ViewServicesProvidedController,
+    ViewUniqueServicesProvided
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
 import {
@@ -61,6 +62,19 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
         const servicesProvided =
             await new ViewServicesProvidedController()
                 .viewServicesProvided(Number(id))
+
+        res.status(StatusCodes.OK).json(servicesProvided)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+servicesRouter.get('/uniqueservices', async (_, res): Promise<void> => {
+    try {
+        const servicesProvided =
+            await new ViewUniqueServicesProvided().viewUniqueServicesProvided()
 
         res.status(StatusCodes.OK).json(servicesProvided)
     } catch (err) {

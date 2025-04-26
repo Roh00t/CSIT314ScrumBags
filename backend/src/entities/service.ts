@@ -1,4 +1,4 @@
-import { ServiceProvidedData, ServiceHistory } from '../shared/dataClasses'
+import { ServiceProvidedData, ServiceHistory, uniqueServiceData } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { ServiceCategoryNotFoundError } from '../shared/exceptions'
@@ -49,6 +49,19 @@ export class Service {
                 price: Number(sp.price)
             } as ServiceProvidedData
         })
+    }
+
+    public async viewUniqueServicesProvided(): Promise<uniqueServiceData[]> {
+        const uniqueServices = await this.db
+            .select({
+                serviceName: servicesProvidedTable.serviceName,
+            })
+            .from(servicesProvidedTable)
+            .groupBy(servicesProvidedTable.serviceName, servicesProvidedTable.description, servicesProvidedTable.price)
+            
+        return uniqueServices.map(sp => ({
+            serviceName: sp.serviceName,
+        })) as uniqueServiceData[];
     }
 
     public async createServiceProvided(
@@ -102,7 +115,7 @@ export class Service {
         const results = await this.db
             .select({
                 cleanerName: userAccountsTable.username,
-                serviceName: serviceCategoriesTable.label,
+                serviceName: servicesProvidedTable.serviceName,
                 date: serviceBookingsTable.startTimestamp,
                 price: servicesProvidedTable.price,
                 status: serviceBookingsTable.status
@@ -111,10 +124,6 @@ export class Service {
             .leftJoin(
                 servicesProvidedTable,
                 eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                serviceCategoriesTable,
-                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
             )
             .leftJoin(
                 userAccountsTable,
@@ -139,21 +148,32 @@ export class Service {
     public async viewServiceHistory(
         userID: number,
         cleanerName: string | null,
-        service: string,
-        date: Date | string
+        service: string | null,
+        date: Date | string | null
     ): Promise<ServiceHistory[]> {
         const normalizedDate = typeof date === 'string' ? new Date(date) : date;
-        const startOfDay = new Date(normalizedDate.setHours(0, 0, 0, 0));
-        const endOfDay = new Date(startOfDay);
-        endOfDay.setDate(endOfDay.getDate() + 1);
+
 
         // Dynamically build filter conditions
         const conditions = [
-            eq(serviceBookingsTable.homeownerID, userID),
-            eq(serviceCategoriesTable.label, service),
-            gt(serviceBookingsTable.startTimestamp, startOfDay),
-            lt(serviceBookingsTable.startTimestamp, endOfDay),
+            eq(serviceBookingsTable.homeownerID, userID)
         ];
+
+        if (service) {
+            conditions.push(eq(servicesProvidedTable.serviceName, service));
+        }
+
+        if (date) {
+            const normalizedDate = typeof date === 'string' ? new Date(date) : date;
+            const startOfDay = new Date(normalizedDate.setHours(0, 0, 0, 0));
+            const endOfDay = new Date(startOfDay);
+            endOfDay.setDate(endOfDay.getDate() + 1);
+    
+            conditions.push(
+                gt(serviceBookingsTable.startTimestamp, startOfDay),
+                lt(serviceBookingsTable.startTimestamp, endOfDay)
+            );
+        }
 
         // Only add cleanerName filter if provided
         if (cleanerName) {
