@@ -3,6 +3,7 @@ import '../../css/Cleaner/CleanerViewServices.css';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/LogoutModal';
+
 interface UserAccountResponse {
   id: number;
   username: string;
@@ -35,8 +36,10 @@ const CleanerViewServicesRoute: React.FC = () => {
     description: '',
     price: '',
   });
-  // Logout Modal State
+  
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  // Fetch available services
   useEffect(() => {
     const fetchAvailableServices = async () => {
       try {
@@ -44,7 +47,7 @@ const CleanerViewServicesRoute: React.FC = () => {
         if (!response.ok) throw new Error('Failed to fetch available services');
         const data = await response.json();
         console.log('Fetched available services:', data);
-        setAvailableServices(data); 
+        setAvailableServices(data);
       } catch (error) {
         console.error('Error fetching available services:', error);
       }
@@ -52,31 +55,61 @@ const CleanerViewServicesRoute: React.FC = () => {
     fetchAvailableServices();
   }, []);
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch services');
-        }
-
-        const data = await response.json();
-        console.log('Fetched services:', data); // Debugging log
-
-        const formatted: Service[] = data.map((item: any) => ({
-          id: item.id,
-          type: item.serviceName,
-          price: item.price,
-        }));
-
-        setServices(formatted);
-      } catch (error) {
-        console.error('Error fetching services:', error);
+  // Fetch current services
+  const fetchServices = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch services');
       }
-    };
+      const data = await response.json();
+      console.log('Fetched services:', data);
 
+      const formatted: Service[] = data.map((item: any) => ({
+        id: item.id,
+        type: item.serviceName,
+        price: item.price,
+      }));
+
+      setServices(formatted);
+    } catch (error) {
+      console.error('Error fetching services:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchServices();
   }, [sessionUser.id]);
+
+  const handleCreateService = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/services/me', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          service: newService.service,
+          category: newService.service,
+          description: newService.description,
+          price: Number(newService.price),
+        }),
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create service');
+      }
+
+      setShowPopup(false);
+      setNewService({ service: '', description: '', price: '' });
+      await fetchServices(); // re-fetch without refreshing
+    } catch (error) {
+      console.error('Error creating service:', error);
+      alert('Failed to create service.');
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -88,14 +121,17 @@ const CleanerViewServicesRoute: React.FC = () => {
           <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
         </h2>
       </div>
+
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
+      {/* Popup for Create Service */}
       {showPopup && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Create New Service</h2>
-            <label>Type of service</label>
+
+            <label>Service Categories</label>
             <select
               id="serviceDropdown"
               value={newService.service}
@@ -109,7 +145,7 @@ const CleanerViewServicesRoute: React.FC = () => {
               ))}
             </select>
 
-            <label>Description</label>
+            <label>Type of service</label>
             <textarea
               placeholder="e.g Sweep and mopping of floor"
               value={newService.description}
@@ -123,51 +159,26 @@ const CleanerViewServicesRoute: React.FC = () => {
                 lineHeight: '1.5',
               }}
             />
+
             <label>Price</label>
             <input
               id="serviceInput"
               type="number"
-              placeholder="e.g $20"
+              placeholder="e.g 20"
+               min="0"
               value={newService.price}
               onChange={(e) => setNewService({ ...newService, price: e.target.value })}
             />
+
             <div className="modal-buttons">
               <button onClick={() => setShowPopup(false)}>Cancel</button>
-              <button onClick={async () => {
-                try {
-                  const response = await fetch('http://localhost:3000/api/services/categories/', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      service: newService.service,
-                      description: newService.description,
-                      price: newService.price,
-                    }),
-                    credentials: 'include',
-                  });
-
-                  if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to create service');
-                  }
-
-                  setShowPopup(false);
-                  setNewService({ service: '', description: '', price: '' });
-                  window.location.reload(); // or re-fetch services
-                } catch (error) {
-                  console.error('Error creating service:', error);
-                  alert('Failed to create service.');
-                }
-              }}>
-                Add
-              </button>
+              <button onClick={handleCreateService}>Add</button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Main Content */}
       <div className="content-center">
         <div className="card">
           <h1>View Services</h1>
@@ -191,13 +202,15 @@ const CleanerViewServicesRoute: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {services.map((service, index) => (
-                <tr key={service.id || index}>
-                  <td>{service.type}</td>
-                  <td>${service.price}</td>
-                  <td><button className="edit-btn">Edit</button></td>
-                </tr>
-              ))}
+              {services
+                .filter(service => service.type.toLowerCase().includes(search.toLowerCase()))
+                .map((service, index) => (
+                  <tr key={service.id || index}>
+                    <td>{service.type}</td>
+                    <td>${service.price}</td>
+                    <td><button className="edit-btn">Edit</button></td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
