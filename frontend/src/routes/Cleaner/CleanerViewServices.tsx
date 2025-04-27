@@ -49,9 +49,6 @@ const CleanerViewServicesRoute: React.FC = () => {
         console.error('Error fetching available services:', error);
       }
     };
-    
-    
-
     fetchAvailableServices();
   }, []);
 
