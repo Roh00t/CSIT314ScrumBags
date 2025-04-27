@@ -77,15 +77,16 @@ const ViewUserRoles: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="create-btn"><Link to="/create-profile" className="create-btn">Create Profile</Link></button>
+          <button className="create-btn"><Link to="/create-profile" className="create-btn">Create New Profile</Link></button>
         </div>
 
         {error && <p className="error-message">{error}</p>}
         <table className="user-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Role Name</th>
+              <th>ID</th>
+              <th>Profile Name</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
