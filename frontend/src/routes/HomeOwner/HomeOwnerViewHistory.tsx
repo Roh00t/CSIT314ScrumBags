@@ -93,6 +93,12 @@ const HomeOwnerViewHistory: React.FC = () => {
     }
   };
 
+
+  // Fetch service history on page load
+  useEffect(() => {
+    fetchServiceHist();
+  }, []);
+
   return (
     <div className="view-history-container">
       <div className="header_container">
