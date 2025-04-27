@@ -135,7 +135,7 @@ const CleanerViewServicesRoute: React.FC = () => {
               <button onClick={() => setShowPopup(false)}>Cancel</button>
               <button onClick={async () => {
                 try {
-                  const response = await fetch('http://localhost:3000/api/services/', {
+                  const response = await fetch('http://localhost:3000/api/services/categories/', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
