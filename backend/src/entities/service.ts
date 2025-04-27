@@ -52,6 +52,48 @@ export class Service {
         })
     }
 
+    public async updateServiceCategory(
+        category: string,
+        newCategory: string
+    ): Promise<void>{
+        await this.db.update(
+            serviceCategoriesTable
+        ).set({
+            label: newCategory
+        }).where(
+            eq(serviceCategoriesTable.label,
+                category))
+    }
+
+    public async deleteServiceCategory(
+        category: string
+    ): Promise<void>{
+        const arrayWhereLabelEqualsToCategory = await this.db.select().from(
+            serviceCategoriesTable
+        ).where(
+            eq(serviceCategoriesTable.label,
+                category))
+        
+        if (arrayWhereLabelEqualsToCategory.length === 0){
+            throw new ServiceCategoryNotFoundError("Service Category Not Found")
+        }
+
+        await this.db.delete(
+            serviceCategoriesTable
+        ).where(
+            eq(serviceCategoriesTable.label,
+                category))
+    }
+    public async searchServiceCategory(
+        category: string
+    ): Promise<string> {
+        const [result] = await this.db.select().from(serviceCategoriesTable).where(eq(serviceCategoriesTable.label,category))
+        if (!result){
+            throw new ServiceCategoryNotFoundError("Service Category Not Found")
+        }
+        return result.label
+    }
+
     public async viewUniqueServicesProvided(): Promise<string[]> {
         const uniqueServices = await this.db
             .select({
@@ -62,6 +104,8 @@ export class Service {
             
         return uniqueServices.map((service) => service.serviceName);
     }
+
+    
 
     public async createServiceProvided(
         cleanerID: number,

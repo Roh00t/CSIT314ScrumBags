@@ -4,6 +4,9 @@ import { StatusCodes } from 'http-status-codes'
 import {
     CreateServiceCategoryController,
     CreateServiceProvidedController,
+    DeleteServiceCategoryController,
+    SearchServiceCategoryController,
+    UpdateServiceCategoryController,
     ViewServiceCategoriesController,
     ViewServicesProvidedController,
     ViewUniqueServicesProvided
@@ -37,6 +40,8 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
     }
 })
 
+
+
 /**
  * View all service 'categories' that exist
  */
@@ -52,19 +57,84 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
         })
     }
 })
-
-servicesRouter.get('/uniqueservices', async (_, res): Promise<void> => {
+/**
+ * update service 'categories'
+ */
+servicesRouter.patch('/categories', async (req, res): Promise<void> => {
     try {
-        const servicesProvided =
-            await new ViewUniqueServicesProvided().viewUniqueServicesProvided()
-
-        res.status(StatusCodes.OK).json(servicesProvided)
+        const { category, newCategory } = req.body
+        await new UpdateServiceCategoryController().updateServiceCategory(category, newCategory)
+        res.status(StatusCodes.OK).send()
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
         })
     }
 })
+/**
+ * delete service 'categories'
+ */
+servicesRouter.delete('/categories', async (req, res): Promise<void> => {
+    try {
+        const { category } = req.body
+        await new DeleteServiceCategoryController().deleteServiceCategory(category)
+        res.status(StatusCodes.OK).send()
+    } catch (err) {
+        if (err instanceof ServiceCategoryNotFoundError){
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: (err as Error).message
+            })
+        }
+        else{
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
+    }
+})
+/**
+ * delete service 'categories'
+ */
+servicesRouter.delete('/categories', async (req, res): Promise<void> => {
+    try {
+        const { category } = req.body
+        await new DeleteServiceCategoryController().deleteServiceCategory(category)
+        res.status(StatusCodes.OK).send()
+    } catch (err) {
+        if (err instanceof ServiceCategoryNotFoundError){
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: (err as Error).message
+            })
+        }
+        else{
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
+    }
+})
+/**
+ * search service "categories"
+ */
+servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
+    try {
+        const search = req.query.search as string | undefined
+        if (!search) {
+            res.status(StatusCodes.BAD_REQUEST)
+                .json({ message: 'Search query is required' })
+            return
+        }
+        const searchedcategory = await new SearchServiceCategoryController().searchServiceCategory(search)
+        res.status(StatusCodes.OK).json(searchedcategory)
+
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+
 
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)

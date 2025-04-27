@@ -1,11 +1,13 @@
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
-import { ServiceBookingReportData } from '../shared/dataClasses'
+import { CleanerServiceBookingData, ServiceBookingReportData } from '../shared/dataClasses'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { and, eq, gte, lt } from 'drizzle-orm'
+import { date } from 'drizzle-orm/mysql-core'
+import { BookingStatus, bookingStatusEnum } from '../db/schema/bookingStatusEnum'
 
 export class ServiceBooking {
     private db: DrizzleClient
@@ -104,5 +106,90 @@ export class ServiceBooking {
                 date: wr.date
             } as ServiceBookingReportData
         })
+    }
+    public async generateMonthlyReport(
+        startDate: Date
+    ): Promise<ServiceBookingReportData[]> {
+        const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+        const date = new Date(startDate)
+        const NEXT_MONTH = new Date(date.setMonth(startDate.getMonth() + 1))
+
+        const MonthlyReport = await this.db
+            .select({
+                bookingID: serviceBookingsTable.id,
+                serviceName: serviceCategoriesTable.label,
+                cleanerName: userAccountsTable.username,
+                price: servicesProvidedTable.price,
+                date: serviceBookingsTable.startTimestamp
+            })
+            .from(serviceBookingsTable)
+            .leftJoin(
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+            )
+            .leftJoin(
+                serviceCategoriesTable,
+                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+            )
+            .leftJoin(
+                userAccountsTable,
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+            )
+            .where(
+                and(
+                    gte(serviceBookingsTable.startTimestamp, startDate),
+                    lt(
+                        serviceBookingsTable.startTimestamp,
+                        NEXT_MONTH
+                    )
+                )
+            )
+        return MonthlyReport.map(dr => {
+            return {
+                bookingid: dr.bookingID,
+                serviceName: dr.serviceName,
+                cleanerName: dr.cleanerName,
+                price: Number(dr.price),
+                date: dr.date
+            } as ServiceBookingReportData
+        })
+    }
+    public async viewCleanerServiceHistory(
+        cleanerID : number,
+        service : string | null,
+        startDate : Date | null,
+        endDate : Date | null
+    ): Promise<CleanerServiceBookingData[]>{
+
+        const conditions = [
+            eq(servicesProvidedTable.cleanerID, cleanerID),
+            eq(serviceBookingsTable.status,BookingStatus.Confirmed)
+        ];
+        if (startDate != null && endDate != null){
+            conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
+            conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+        }
+
+        const queryresult = await this.db.select().from(
+            serviceBookingsTable
+        ).leftJoin(
+            servicesProvidedTable,
+            eq(serviceBookingsTable.serviceProvidedID, 
+                servicesProvidedTable.id)
+            ).leftJoin(userAccountsTable,
+                eq(serviceBookingsTable.homeownerID, 
+                    userAccountsTable.id)
+                ).where(and(
+                    ...conditions
+                ))
+        
+        
+        return queryresult.map(qr => {return {
+            bookingid: qr.service_bookings.id,
+            serviceName: qr.services_provided?.serviceName,
+            date:qr.service_bookings.startTimestamp,
+            homeOwnerName:qr.user_accounts?.username
+        } as CleanerServiceBookingData}) 
+
     }
 }

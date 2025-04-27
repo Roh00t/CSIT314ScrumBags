@@ -16,6 +16,7 @@ export class CreateServiceCategoryController {
     }
 }
 
+
 /**
  * View all service 'categories' that exist
  */
@@ -31,6 +32,49 @@ export class ViewServiceCategoriesController {
     }
 }
 
+/**
+ * Update service 'categories'
+ */
+export class UpdateServiceCategoryController {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async updateServiceCategory(category: string, newCategory: string): Promise<void> {
+        await this.service.updateServiceCategory(category, newCategory)
+    }
+}
+
+/**
+ * Delete service 'categories'
+ */
+export class DeleteServiceCategoryController {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async deleteServiceCategory(category: string): Promise<void> {
+        await this.service.deleteServiceCategory(category)
+    }
+}
+/**
+ * Search for service 'categories'
+ */
+export class SearchServiceCategoryController {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async searchServiceCategory(category: string): Promise<string> {
+        return await this.service.searchServiceCategory(category)
+    }
+}
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */

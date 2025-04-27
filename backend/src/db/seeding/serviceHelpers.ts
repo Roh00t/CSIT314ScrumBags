@@ -90,7 +90,7 @@ export const initServiceBookings = async (
                 startTimestamp: faker.date.anytime(),
                 status: faker.helpers.arrayElement([
                     BookingStatus.Requested,
-                    BookingStatus.Accepted,
+                    BookingStatus.Confirmed,
                     BookingStatus.Rejected,
                     BookingStatus.Pending,
                     BookingStatus.Cancelled,
