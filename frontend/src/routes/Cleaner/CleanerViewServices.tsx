@@ -40,16 +40,17 @@ const CleanerViewServicesRoute: React.FC = () => {
   useEffect(() => {
     const fetchAvailableServices = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/services/');
+        const response = await fetch('http://localhost:3000/api/services/categories/');
         if (!response.ok) throw new Error('Failed to fetch available services');
-
         const data = await response.json();
-        const servicesList = data.map((item: any) => item[Object.keys(item)[0]]); // assuming service is in the first column
-        setAvailableServices(servicesList);
+        console.log('Fetched available services:', data);
+        setAvailableServices(data); 
       } catch (error) {
         console.error('Error fetching available services:', error);
       }
     };
+    
+    
 
     fetchAvailableServices();
   }, []);
@@ -137,7 +138,7 @@ const CleanerViewServicesRoute: React.FC = () => {
               <button onClick={() => setShowPopup(false)}>Cancel</button>
               <button onClick={async () => {
                 try {
-                  const response = await fetch('http://localhost:3000/api/services/me', {
+                  const response = await fetch('http://localhost:3000/api/services/', {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
