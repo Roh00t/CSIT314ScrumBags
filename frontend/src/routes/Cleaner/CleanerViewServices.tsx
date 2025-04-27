@@ -208,7 +208,14 @@ const CleanerViewServicesRoute: React.FC = () => {
                   <tr key={service.id || index}>
                     <td>{service.type}</td>
                     <td>${service.price}</td>
-                    <td><button className="edit-btn">Edit</button></td>
+                    <div className="action-buttons">
+                      <button className="view-btn">View</button>
+                      <button
+                        className="edit-btn">
+                        Edit
+                      </button>
+                      <button className="delete-btn">Delete</button>
+                    </div>
                   </tr>
                 ))}
             </tbody>
