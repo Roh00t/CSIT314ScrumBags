@@ -107,14 +107,14 @@ export class ServiceBooking {
             } as ServiceBookingReportData
         })
     }
+
     public async generateMonthlyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
-        const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
         const date = new Date(startDate)
-        const NEXT_MONTH = new Date(date.setMonth(startDate.getMonth() + 1))
+        const nextMonth = new Date(date.setMonth(startDate.getMonth() + 1))
 
-        const MonthlyReport = await this.db
+        const monthlyReport = await this.db
             .select({
                 bookingID: serviceBookingsTable.id,
                 serviceName: serviceCategoriesTable.label,
@@ -140,56 +140,63 @@ export class ServiceBooking {
                     gte(serviceBookingsTable.startTimestamp, startDate),
                     lt(
                         serviceBookingsTable.startTimestamp,
-                        NEXT_MONTH
+                        nextMonth
                     )
                 )
             )
-        return MonthlyReport.map(dr => {
+        return monthlyReport.map(mr => {
             return {
-                bookingid: dr.bookingID,
-                serviceName: dr.serviceName,
-                cleanerName: dr.cleanerName,
-                price: Number(dr.price),
-                date: dr.date
+                bookingid: mr.bookingID,
+                serviceName: mr.serviceName,
+                cleanerName: mr.cleanerName,
+                price: Number(mr.price),
+                date: mr.date
             } as ServiceBookingReportData
         })
     }
+
     public async viewCleanerServiceHistory(
-        cleanerID : number,
-        service : string | null,
-        startDate : Date | null,
-        endDate : Date | null
-    ): Promise<CleanerServiceBookingData[]>{
+        cleanerID: number,
+        service: string | null,
+        startDate: Date | null,
+        endDate: Date | null
+    ): Promise<CleanerServiceBookingData[]> {
 
         const conditions = [
             eq(servicesProvidedTable.cleanerID, cleanerID),
-            eq(serviceBookingsTable.status,BookingStatus.Confirmed)
-        ];
-        if (startDate != null && endDate != null){
+            eq(serviceBookingsTable.status, BookingStatus.Confirmed)
+        ]
+        if (service) {
+            conditions.push(eq(servicesProvidedTable.serviceName, service))
+        }
+        if (startDate && endDate) {
             conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
             conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
         }
 
-        const queryresult = await this.db.select().from(
-            serviceBookingsTable
-        ).leftJoin(
-            servicesProvidedTable,
-            eq(serviceBookingsTable.serviceProvidedID, 
-                servicesProvidedTable.id)
-            ).leftJoin(userAccountsTable,
-                eq(serviceBookingsTable.homeownerID, 
-                    userAccountsTable.id)
-                ).where(and(
-                    ...conditions
-                ))
-        
-        
-        return queryresult.map(qr => {return {
-            bookingid: qr.service_bookings.id,
-            serviceName: qr.services_provided?.serviceName,
-            date:qr.service_bookings.startTimestamp,
-            homeOwnerName:qr.user_accounts?.username
-        } as CleanerServiceBookingData}) 
+        const queryResult = await this.db.select()
+            .from(serviceBookingsTable)
+            .leftJoin(
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+            )
+            .leftJoin(
+                userAccountsTable,
+                eq(serviceBookingsTable.homeownerID, userAccountsTable.id)
+            )
+            .leftJoin(
+                serviceCategoriesTable,
+                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+            )
+            .where(and(...conditions))
 
+        return queryResult.map(qr => {
+            return {
+                bookingid: qr.service_bookings.id,
+                serviceName: qr.services_provided?.serviceName,
+                date: qr.service_bookings.startTimestamp,
+                homeOwnerName: qr.user_accounts?.username
+            } as CleanerServiceBookingData
+        })
     }
 }

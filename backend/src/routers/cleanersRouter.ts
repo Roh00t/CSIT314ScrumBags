@@ -1,19 +1,10 @@
+import { ViewCleanerServiceHistoryController } from "../controllers/cleanerControllers"
 import { requireAuthMiddleware } from "../shared/middleware"
-import { Router } from "express"
 import { UserAccountData } from "../shared/dataClasses"
 import { StatusCodes } from "http-status-codes"
-import { ViewCleanerServiceHistoryController } from "../controllers/cleanerControllers"
-
+import { Router } from "express"
 
 const cleanersRouter = Router()
-
-cleanersRouter.get(
-    '/services',
-    requireAuthMiddleware,
-    async (req, res): Promise<void> => {
-
-    }
-)
 
 cleanersRouter.get(
     '/serviceHistory',
@@ -22,9 +13,13 @@ cleanersRouter.get(
         const cleanerID = (req.session.user as UserAccountData).id
         const { service, startDate, endDate } = req.body
         try {
-            console.log({ cleanerID, service, startDate, endDate })
             const serviceHistory = await new ViewCleanerServiceHistoryController()
-                .viewCleanerServiceHistory(cleanerID, service, new Date(startDate), new Date(endDate))
+                .viewCleanerServiceHistory(
+                    cleanerID,
+                    service,
+                    startDate ? new Date(startDate) : null,
+                    endDate ? new Date(endDate) : null
+                )
             res.status(StatusCodes.OK).json({
                 message: "Service history retrieved successfully",
                 data: serviceHistory
