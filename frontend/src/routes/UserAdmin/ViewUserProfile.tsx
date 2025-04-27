@@ -86,7 +86,7 @@ const ViewUserRoles: React.FC = () => {
             <tr>
               <th>ID</th>
               <th>Profile Name</th>
-              <th>Status</th>
+              {/* <th>Status</th> */}
               <th>Actions</th>
             </tr>
           </thead>

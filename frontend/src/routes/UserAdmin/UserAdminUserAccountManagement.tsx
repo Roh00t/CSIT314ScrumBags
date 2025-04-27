@@ -86,7 +86,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
 
       {/* User Account Management */}
       <div className="account-container">
-        <h2>User Account Viewing</h2>
+        <h2>User Accounts</h2>
         <div className="top-row">
           <input
             type="text"
