@@ -41,20 +41,51 @@ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
 /* Top bar for search */
 .top-bar {
-display: flex;
-justify-content: space-between;
-margin-bottom: 1.5rem;
+    max-width: 100%;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    display: block;
 }
 
-.top-bar input {
-flex: 1;
-padding: 0.7rem 1rem;
-font-size: 1rem;
-border-radius: 8px;
-border: 1px solid #ccc;
-margin-right: 1rem;
-background-color: white;
-color: black;
+.top-bar select{
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    flex: 1;
+    background-color: white;
+    color: black;
+    margin: 0.3rem;
+}
+
+.top-bar input[type="date"] {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    color: black;
+    margin: 0.3rem;
+}
+
+.top-bar .date-range {
+    margin: 0.3rem;
+}
+
+.top-bar input[type="text"] {
+    padding: 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    flex: 1;
+    margin: 0.3rem;
+}
+
+.top-bar button {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    cursor: pointer;
 }
 
 /* Table */

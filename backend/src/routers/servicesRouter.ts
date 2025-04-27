@@ -53,6 +53,19 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
     }
 })
 
+servicesRouter.get('/uniqueservices', async (_, res): Promise<void> => {
+    try {
+        const servicesProvided =
+            await new ViewUniqueServicesProvided().viewUniqueServicesProvided()
+
+        res.status(StatusCodes.OK).json(servicesProvided)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
@@ -71,18 +84,7 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
     }
 })
 
-servicesRouter.get('/uniqueservices', async (_, res): Promise<void> => {
-    try {
-        const servicesProvided =
-            await new ViewUniqueServicesProvided().viewUniqueServicesProvided()
 
-        res.status(StatusCodes.OK).json(servicesProvided)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
-})
 
 /**
  * Cleaners can add the types of services they provide

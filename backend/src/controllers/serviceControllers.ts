@@ -1,4 +1,4 @@
-import { ServiceProvidedData, uniqueServiceData } from '../shared/dataClasses'
+import { ServiceProvidedData } from '../shared/dataClasses'
 import { Service } from '../entities/service'
 
 /**
@@ -55,7 +55,7 @@ export class ViewUniqueServicesProvided {
         this.service = new Service()
     }
 
-    public async viewUniqueServicesProvided(): Promise<uniqueServiceData[]> {
+    public async viewUniqueServicesProvided(): Promise<string[]> {
         return await this.service.viewUniqueServicesProvided()
     }
 }

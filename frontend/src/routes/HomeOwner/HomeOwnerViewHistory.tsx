@@ -10,10 +10,6 @@ interface UserAccountResponse {
   userProfile: string;
 }
 
-interface ServiceProvided {
-  serviceName: string;
-}
-
 interface History {
   cleanerName: string | null;
   typeOfService: string | null;
@@ -25,9 +21,11 @@ interface History {
 const HomeOwnerViewHistory: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
-  const [services, setServices] = useState<ServiceProvided[]>([]); // State for services options (corrected to ServiceProvided[])
+  const [services, setServices] = useState<string[]>([]); // State for services options (corrected to ServiceProvided[])
   const [serviceName, setServiceName] = useState('');
-  const [date, setDate] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
   const [history, setHistory] = useState<History[]>([]);
   const [search, setSearch] = useState('');
 
@@ -69,12 +67,13 @@ const HomeOwnerViewHistory: React.FC = () => {
         body: JSON.stringify({
           cleanerName: search,
           service: serviceName,
-          date: formatDate(date),
+          fromDate: fromDate ? formatDate(fromDate) : null,
+          toDate: toDate ? formatDate(toDate) : null,
         }),
       });
 
-      console.log(date)
       if (!response.ok) {
+        setHistory([])
         throw new Error('Failed to fetch service history');
       }
 
@@ -120,17 +119,32 @@ const HomeOwnerViewHistory: React.FC = () => {
             >
               <option value="">Select Service</option>
               {services.map((service, index) => (
-                <option key={index} value={service.serviceName}>
-                  {service.serviceName}
+                <option key={index} value={service}>
+                  {service}
                 </option>
               ))}
             </select>
 
-            <input
+            {/* <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-            />
+            /> */}
+
+            <div className="date-range">
+              <label>From:</label>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+              />
+              <label>To:</label>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+              />
+            </div>
 
             <input
               type="text"

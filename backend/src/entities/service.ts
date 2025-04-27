@@ -1,4 +1,4 @@
-import { ServiceProvidedData, ServiceHistory, uniqueServiceData } from '../shared/dataClasses'
+import { ServiceProvidedData, ServiceHistory } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { ServiceCategoryNotFoundError } from '../shared/exceptions'
@@ -7,6 +7,7 @@ import { userAccountsTable } from '../db/schema/userAccounts'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
 import { and, eq, gt, lt } from 'drizzle-orm'
+import { BookingStatus } from '../db/schema/bookingStatusEnum'
 
 export class Service {
     private db: DrizzleClient
@@ -51,7 +52,7 @@ export class Service {
         })
     }
 
-    public async viewUniqueServicesProvided(): Promise<uniqueServiceData[]> {
+    public async viewUniqueServicesProvided(): Promise<string[]> {
         const uniqueServices = await this.db
             .select({
                 serviceName: servicesProvidedTable.serviceName,
@@ -59,7 +60,7 @@ export class Service {
             .from(servicesProvidedTable)
             .groupBy(servicesProvidedTable.serviceName)
             
-        return uniqueServices as uniqueServiceData[];
+        return uniqueServices.map((service) => service.serviceName);
     }
 
     public async createServiceProvided(
@@ -147,33 +148,40 @@ export class Service {
         userID: number,
         cleanerName: string | null,
         service: string | null,
-        date: Date | string | null
-    ): Promise<ServiceHistory[]> {
-        const normalizedDate = typeof date === 'string' ? new Date(date) : date;
-
-
+        fromDate: Date | string | null,
+        toDate: Date | string | null
+    ): Promise<ServiceHistory[]> {        
         // Dynamically build filter conditions
+
         const conditions = [
-            eq(serviceBookingsTable.homeownerID, userID)
+            eq(serviceBookingsTable.homeownerID, userID),
+            eq(serviceBookingsTable.status, BookingStatus.Done)
         ];
 
         if (service) {
             conditions.push(eq(servicesProvidedTable.serviceName, service));
         }
 
-        if (date) {
-            const normalizedDate = typeof date === 'string' ? new Date(date) : date;
-            const startOfDay = new Date(normalizedDate.setHours(0, 0, 0, 0));
-            const endOfDay = new Date(startOfDay);
-            endOfDay.setDate(endOfDay.getDate() + 1);
-    
+        if (fromDate) {
+            const normalizedFromDate = typeof fromDate === 'string' ? new Date(fromDate) : fromDate;
+            const startOfFromDay = new Date(normalizedFromDate.setHours(0, 0, 0, 0));
+
             conditions.push(
-                gt(serviceBookingsTable.startTimestamp, startOfDay),
-                lt(serviceBookingsTable.startTimestamp, endOfDay)
+                gt(serviceBookingsTable.startTimestamp, startOfFromDay)
             );
         }
 
-        // Only add cleanerName filter if provided
+        if (toDate) {
+            const normalizedToDate = typeof toDate === 'string' ? new Date(toDate) : toDate;
+            const startOfToDay = new Date(normalizedToDate.setHours(0, 0, 0, 0));
+            const endOfToDay = new Date(startOfToDay);
+            endOfToDay.setDate(endOfToDay.getDate() + 1);
+
+            conditions.push(
+                lt(serviceBookingsTable.startTimestamp, endOfToDay)
+            );
+        }
+
         if (cleanerName) {
             conditions.push(eq(userAccountsTable.username, cleanerName));
         }

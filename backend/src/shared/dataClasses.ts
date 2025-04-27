@@ -13,10 +13,6 @@ export type ServiceProvidedData = {
     price: number
 }
 
-export type uniqueServiceData = {
-    serviceName: string
-}
-
 export type ServiceBookingReportData = {
     bookingid: number
     serviceName: string

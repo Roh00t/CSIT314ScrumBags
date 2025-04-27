@@ -40,9 +40,10 @@ export class ViewServiceHistoryController {
         userID: number,
         cleanerName: string | null,
         service: string | null,
-        date: Date | null
+        fromDate: Date | string | null,
+        toDate: Date | string | null
     ): Promise<ServiceHistory[]> {
-        return await this.Service.viewServiceHistory(userID, cleanerName, service, date)
+        return await this.Service.viewServiceHistory(userID, cleanerName, service, fromDate, toDate)
     }
 }
 
