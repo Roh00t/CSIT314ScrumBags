@@ -3,11 +3,11 @@ import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
+import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
 import { and, eq, gt, lt } from 'drizzle-orm'
-import { BookingStatus } from '../db/schema/bookingStatusEnum'
 
 export class Service {
     private db: DrizzleClient
@@ -55,7 +55,7 @@ export class Service {
     public async updateServiceCategory(
         category: string,
         newCategory: string
-    ): Promise<void>{
+    ): Promise<void> {
         await this.db.update(
             serviceCategoriesTable
         ).set({
@@ -67,14 +67,14 @@ export class Service {
 
     public async deleteServiceCategory(
         category: string
-    ): Promise<void>{
+    ): Promise<void> {
         const arrayWhereLabelEqualsToCategory = await this.db.select().from(
             serviceCategoriesTable
         ).where(
             eq(serviceCategoriesTable.label,
                 category))
-        
-        if (arrayWhereLabelEqualsToCategory.length === 0){
+
+        if (arrayWhereLabelEqualsToCategory.length === 0) {
             throw new ServiceCategoryNotFoundError("Service Category Not Found")
         }
 
@@ -87,8 +87,11 @@ export class Service {
     public async searchServiceCategory(
         category: string
     ): Promise<string> {
-        const [result] = await this.db.select().from(serviceCategoriesTable).where(eq(serviceCategoriesTable.label,category))
-        if (!result){
+        const [result] = await this.db
+            .select()
+            .from(serviceCategoriesTable)
+            .where(eq(serviceCategoriesTable.label, category))
+        if (!result) {
             throw new ServiceCategoryNotFoundError("Service Category Not Found")
         }
         return result.label
@@ -101,11 +104,11 @@ export class Service {
             })
             .from(servicesProvidedTable)
             .groupBy(servicesProvidedTable.serviceName)
-            
+
         return uniqueServices.map((service) => service.serviceName);
     }
 
-    
+
 
     public async createServiceProvided(
         cleanerID: number,
@@ -194,12 +197,11 @@ export class Service {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {        
-        // Dynamically build filter conditions
+    ): Promise<ServiceHistory[]> {
 
         const conditions = [
             eq(serviceBookingsTable.homeownerID, userID),
-            eq(serviceBookingsTable.status, BookingStatus.Done)
+            eq(serviceBookingsTable.status, BookingStatus.Confirmed)
         ];
 
         if (service) {

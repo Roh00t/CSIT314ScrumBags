@@ -1,13 +1,12 @@
+import { CleanerServiceBookingData, ServiceBookingReportData } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
-import { CleanerServiceBookingData, ServiceBookingReportData } from '../shared/dataClasses'
+import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { and, eq, gte, lt } from 'drizzle-orm'
-import { date } from 'drizzle-orm/mysql-core'
-import { BookingStatus, bookingStatusEnum } from '../db/schema/bookingStatusEnum'
 
 export class ServiceBooking {
     private db: DrizzleClient
@@ -19,6 +18,9 @@ export class ServiceBooking {
     public async generateDailyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
+        const startOfNextDay = new Date(startDate)
+        startOfNextDay.setDate(startDate.getDate() + 1)
+
         const dailyReport = await this.db
             .select({
                 bookingID: serviceBookingsTable.id,
@@ -43,10 +45,7 @@ export class ServiceBooking {
             .where(
                 and(
                     gte(serviceBookingsTable.startTimestamp, startDate),
-                    lt(
-                        serviceBookingsTable.startTimestamp,
-                        new Date(startDate.getTime() + 24 * 60 * 60 * 1000)
-                    )
+                    lt(serviceBookingsTable.startTimestamp, startOfNextDay)
                 )
             )
 
@@ -64,7 +63,8 @@ export class ServiceBooking {
     public async generateWeeklyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
-        const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
+        const startOfNextWeek = new Date(startDate)
+        startOfNextWeek.setDate(startOfNextWeek.getDate() + 7)
 
         const weeklyReport = await this.db
             .select({
@@ -90,10 +90,7 @@ export class ServiceBooking {
             .where(
                 and(
                     gte(serviceBookingsTable.startTimestamp, startDate),
-                    lt(
-                        serviceBookingsTable.startTimestamp,
-                        new Date(startDate.getTime() + (MILLISECONDS_PER_DAY * 7))
-                    )
+                    lt(serviceBookingsTable.startTimestamp, startOfNextWeek)
                 )
             )
 

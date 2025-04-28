@@ -70,7 +70,6 @@ homeownerRouter.post(
         const homeownerID = (req.session.user as UserAccountData).id
         const { cleanerName, service, fromDate, toDate } = req.body
         try {
-            console.log({ homeownerID, cleanerName, service, fromDate, toDate })
             const serviceHistory = await new ViewServiceHistoryController()
                 .viewServiceHistory(homeownerID, cleanerName, service, fromDate, toDate)
             res.status(StatusCodes.OK).json({
