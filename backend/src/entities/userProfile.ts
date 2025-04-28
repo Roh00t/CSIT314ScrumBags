@@ -30,11 +30,15 @@ export class UserProfile {
     /**
      * View user profile 
      */
-    public async viewUserProfiles(): Promise<string[]> {
+    public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
         const result = await this.db
-            .select({ label: userProfilesTable.label })
+            .select({ label: userProfilesTable.label, isSuspended: userProfilesTable.isSuspended })
             .from(userProfilesTable)
-        return result.map(res => res.label)
+    
+        return result.map(profile => ({
+            name: profile.label,
+            isSuspended: profile.isSuspended
+        }))
     }
 
     /**
@@ -59,7 +63,15 @@ export class UserProfile {
             .set({ isSuspended: true })
             .where(eq(userProfilesTable.label, profileName))
     }
-
+    /**
+     * Unsuspend user profile 
+     */
+    public async unsuspendUserProfile(profileName: string): Promise<void> {
+        await this.db
+            .update(userProfilesTable)
+            .set({ isSuspended: false })
+            .where(eq(userProfilesTable.label, profileName))
+    }
     /**
      * Search user profiles
      */

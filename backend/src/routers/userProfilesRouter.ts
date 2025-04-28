@@ -67,6 +67,17 @@ userProfilesRouter.post('/suspend', async (req, res): Promise<void> => {
         })
     }
 })
+userProfilesRouter.post('/unsuspend', async (req, res): Promise<void> => {
+    try {
+        const { profileName } = req.body;
+        await new SuspendUserProfileController().unsuspendProfile(profileName);
+        res.status(StatusCodes.OK).json({ message: 'UserProfile unsuspended' });
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        });
+    }
+});
 
 userProfilesRouter.get('/search', async (req, res): Promise<void> => {
     try {

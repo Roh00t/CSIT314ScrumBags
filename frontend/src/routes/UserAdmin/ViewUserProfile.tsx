@@ -4,6 +4,10 @@ import '../../css/UserAdmin/ViewUserProfile.css'
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
+interface Role {
+  name: string;
+  isSuspended: boolean;
+}
 
 const ViewUserRoles: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -18,9 +22,38 @@ const ViewUserRoles: React.FC = () => {
     currentProfile: '',
     updatedProfile: ''
   });
-  const [roles, setRoles] = useState<string[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>(''); // Search state
+  const handleToggleSuspendProfile = async (profileName: string, isSuspended: boolean) => {
+    try {
+      const confirmText = isSuspended
+        ? `Are you sure you want to un-suspend "${profileName}"?`
+        : `Are you sure you want to suspend "${profileName}"?`;
+  
+      if (!window.confirm(confirmText)) return;
+  
+      const url = `http://localhost:3000/api/user-profiles/${isSuspended ? 'unsuspend' : 'suspend'}`;
+  
+      await axios.post(url, {
+        profileName
+      }, {
+        withCredentials: true
+      });
+  
+      alert(`Profile "${profileName}" has been ${isSuspended ? 'unsuspended' : 'suspended'} successfully!`);
+  
+      // Refresh list
+      const refreshed = await axios.get('http://localhost:3000/api/user-profiles/', {
+        withCredentials: true,
+      });
+      setRoles(refreshed.data);
+  
+    } catch (error) {
+      console.error('Failed to toggle suspension:', error);
+      alert('Failed to update profile status.');
+    }
+  };
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -28,8 +61,8 @@ const ViewUserRoles: React.FC = () => {
         const response = await axios.get('http://localhost:3000/api/user-profiles/', {
           withCredentials: true,
         });
-
-        const data: string[] = response.data;
+    
+        const data: Role[] = response.data;
         if (Array.isArray(data)) {
           setRoles(data);
         } else {
@@ -47,7 +80,7 @@ const ViewUserRoles: React.FC = () => {
 
   // Filter roles based on search
   const filteredRoles = roles.filter(role =>
-    role.toLowerCase().includes(search.toLowerCase())
+    role.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -86,7 +119,7 @@ const ViewUserRoles: React.FC = () => {
             <tr>
               <th>ID</th>
               <th>Profile Name</th>
-              {/* <th>Status</th> */}
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -95,26 +128,34 @@ const ViewUserRoles: React.FC = () => {
               filteredRoles.map((role, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{role}</td>
+                  <td>{role.name}</td>
+                  <td style={{ color: role.isSuspended ? 'red' : 'green', fontWeight: 'bold' }}>
+                    {role.isSuspended ? 'Suspended' : 'Active'}
+                  </td>
                   <td>
                     <div className="action-buttons">
                       <button className="view-btn">View</button>
                       <button
                         className="edit-btn"
                         onClick={() => {
-                          setEditingProfile({ currentProfile: role, updatedProfile: '' });
+                          setEditingProfile({ currentProfile: role.name, updatedProfile: '' });
                           setShowProfileEditModal(true);
                         }}>
                         Edit
                       </button>
-                      <button className="delete-btn">Delete</button>
+                      <button
+                      className={role.isSuspended ? 'unsuspend-btn' : 'suspend-btn'}
+                      onClick={() => handleToggleSuspendProfile(role.name, role.isSuspended)}
+                    >
+                      {role.isSuspended ? 'Unsuspend' : 'Suspend'}
+                      </button>
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={3}>No roles available.</td>
+                <td colSpan={4}>No roles available.</td>
               </tr>
             )}
           </tbody>
