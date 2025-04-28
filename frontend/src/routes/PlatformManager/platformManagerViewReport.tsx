@@ -13,6 +13,33 @@ const PlatformManagerViewReports: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+  
+    if (filter === 'weekly') {
+      const [year, week] = value.split('-W');
+      const date = getDateOfISOWeek(Number(week), Number(year));
+      setSelectedDate(date.toISOString());
+    } else if (filter === 'monthly') {
+      const [year, month] = value.split('-');
+      const date = new Date(Number(year), Number(month) - 1, 1);
+      setSelectedDate(date.toISOString());
+    } else {
+      setSelectedDate(new Date(value).toISOString());
+    }
+  };
+  
+  // Helper function to get Monday of ISO week
+  function getDateOfISOWeek(week: number, year: number) {
+    const simple = new Date(year, 0, 1 + (week - 1) * 7);
+    const dow = simple.getDay();
+    const ISOweekStart = simple;
+    if (dow <= 4) 
+      ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else
+      ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    return ISOweekStart;
+  }
 
   const handleDownloadCSV = () => {
     const csvRows = [
@@ -113,10 +140,10 @@ const PlatformManagerViewReports: React.FC = () => {
           />
 
           <input
-            type={getDateInputMode()}
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            style={{ marginLeft: '1rem' }}
+          type={getDateInputMode()}
+          value={selectedDate ? selectedDate.split('T')[0] : ''}
+          onChange={handleDateChange}
+          style={{ marginLeft: '1rem' }}
           />
 
           <div className="filter-options">
