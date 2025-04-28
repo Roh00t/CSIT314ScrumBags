@@ -240,7 +240,12 @@ export default class UserAccount {
             .set({ isSuspended: true })
             .where(eq(userAccountsTable.id, userID))
     }
-
+    public async unsuspendUserAccount(userID: number): Promise<void> {
+        await this.db
+          .update(userAccountsTable)
+          .set({ isSuspended: false })
+          .where(eq(userAccountsTable.id, userID))
+      }
     /**
      * Search user accounts
      */

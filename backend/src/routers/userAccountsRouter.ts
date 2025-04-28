@@ -143,7 +143,19 @@ userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
         })
     }
 })
-
+userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
+    try {
+      const { id } = req.body
+      await new SuspendUserAccountController().unsuspendUserAccount(id)
+      res.status(StatusCodes.OK).json({
+        message: "User account of ID '" + id + "' has been unsuspended"
+      })
+    } catch (err) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: (err as Error).message
+      })
+    }
+  })
 userAccountsRouter.get('/search', async (req, res): Promise<void> => {
     try {
         const search = req.query.search as string | undefined

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../../css/UserAdmin/UserAdminUserAccountManagement.css'
+import '../../css/UserAdmin/UserAdminUserAccountManagement.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
@@ -16,10 +16,7 @@ interface UserAccountResponse {
 const UserAdminUserAccountManagement: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
 
-  // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  // For Update User Account
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingUser, setEditingUser] = useState<{
     id: number | null;
@@ -39,34 +36,56 @@ const UserAdminUserAccountManagement: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>('');
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/user-accounts', {
-          withCredentials: true,
-        });
-
-        const data: UserAccountResponse[] = response.data;
-        console.log(data);
-
-        if (Array.isArray(data)) {
-          setUsers(data);
-        } else {
-          console.error('Unexpected server response:', data);
-          setError('Unexpected server response.');
-        }
-      } catch (err) {
-        console.error('Failed to fetch users:', err);
-        setError('Could not load users. Please try again later.');
+  // Fetch users
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/user-accounts', {
+        withCredentials: true,
+      });
+      const data: UserAccountResponse[] = response.data;
+      if (Array.isArray(data)) {
+        setUsers(data);
+      } else {
+        console.error('Unexpected server response:', data);
+        setError('Unexpected server response.');
       }
-    };
+    } catch (err) {
+      console.error('Failed to fetch users:', err);
+      setError('Could not load users. Please try again later.');
+    }
+  };
 
+  useEffect(() => {
     fetchUsers();
   }, []);
 
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Toggle Suspend/Unsuspend
+  const handleToggleSuspendUser = async (userId: number) => {
+    try {
+      const user = filteredUsers.find(u => u.id === userId);
+      if (!user) return;
+
+      const confirmText = user.isSuspended
+        ? `Are you sure you want to un-suspend ${user.username}?`
+        : `Are you sure you want to suspend ${user.username}?`;
+
+      if (!window.confirm(confirmText)) return;
+
+      await axios.post(`http://localhost:3000/api/user-accounts/${user.isSuspended ? 'unsuspend' : 'suspend'}`, {
+        id: userId,
+      }, { withCredentials: true });
+
+      alert(`User ${user.username} is now ${user.isSuspended ? 'Active' : 'Suspended'}.`);
+      await fetchUsers();
+    } catch (error) {
+      console.error('Failed to toggle suspension:', error);
+      alert('Action failed!');
+    }
+  };
 
   return (
     <div className="user-account-page">
@@ -114,15 +133,13 @@ const UserAdminUserAccountManagement: React.FC = () => {
           </thead>
           <tbody>
             {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
-                <tr key={user.id}>
+              filteredUsers.map((user, index) => (
+                <tr key={index}>
                   <td>{user.id}</td>
                   <td>{user.username}</td>
                   <td>{user.userProfile}</td>
-                  <td>
-                    <span className={user.isSuspended ? 'status-suspended' : 'status-active'}>
-                      {user.isSuspended ? 'Suspended' : 'Active'}
-                    </span>
+                  <td style={{ color: user.isSuspended ? 'red' : 'green', fontWeight: 'bold' }}>
+                    {user.isSuspended ? 'Suspended' : 'Active'}
                   </td>
                   <td>
                     <div className="action-buttons">
@@ -142,7 +159,12 @@ const UserAdminUserAccountManagement: React.FC = () => {
                       >
                         Edit
                       </button>
-                      <button className="delete-btn"><Link to="/">Delete</Link></button>
+                      <button
+                        className={user.isSuspended ? "unsuspend-btn" : "suspend-btn"}
+                        onClick={() => user.id !== null && handleToggleSuspendUser(user.id)}
+                      >
+                        {user.isSuspended ? 'Unsuspend' : 'Suspend'}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -178,21 +200,24 @@ const UserAdminUserAccountManagement: React.FC = () => {
                 type="text"
                 value={editingUser.username}
                 onChange={e => setEditingUser({ ...editingUser, username: e.target.value })}
-                required />
+                required
+              />
 
               <label>Password:</label>
               <input
                 type="password"
                 value={editingUser.password}
                 onChange={e => setEditingUser({ ...editingUser, password: e.target.value })}
-                required />
+                required
+              />
 
               <label>Confirm Password:</label>
               <input
                 type="password"
                 value={editingUser.confirmPassword}
                 onChange={e => setEditingUser({ ...editingUser, confirmPassword: e.target.value })}
-                required />
+                required
+              />
 
               <div className="modal-btn-group">
                 <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
@@ -205,7 +230,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
                     }
 
                     try {
-                      const response = await axios.post(
+                       await axios.post(
                         `http://localhost:3000/api/user-accounts/update`,
                         {
                           userId: editingUser.id,
@@ -216,14 +241,8 @@ const UserAdminUserAccountManagement: React.FC = () => {
                         { withCredentials: true }
                       );
 
-                      console.log('User updated:', response.data);
                       alert('User updated successfully');
-
-                      const refreshed = await axios.get('http://localhost:3000/api/user-accounts', {
-                        withCredentials: true,
-                      });
-
-                      setUsers(refreshed.data);
+                      await fetchUsers();
                       setShowEditModal(false);
                     } catch (error) {
                       console.error('Failed to update user:', error);

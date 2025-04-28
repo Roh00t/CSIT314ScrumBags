@@ -86,6 +86,9 @@ export class SuspendUserAccountController {
     public async suspendUserAccount(userID: number) {
         await this.userAccount.suspendUserAccount(userID)
     }
+    public async unsuspendUserAccount(userID: number) {
+        await this.userAccount.unsuspendUserAccount(userID);
+      }
 }
 
 export class SearchUserAccountController {
