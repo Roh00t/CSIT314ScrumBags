@@ -4,35 +4,42 @@ import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
 
+// Updated interface to match the actual response structure
 interface ServicesResponse {
   id: number;
+  category: string;
   label: string;
+}
+
+interface newServiceCategory {
+  serviceName: string;
 }
 
 const ViewServiceCategories: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-  const [services, setServices] = useState<ServicesResponse[]>([]);
+  const [services, setServices] = useState<string[]>([]);  // Change to array of strings
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>('');
+  // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  // For Delete Modal
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedService, setSelectedService] = useState<ServicesResponse | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+    // For Delete Modal
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedService, setSelectedService] = useState<ServicesResponse | null>(null);
+  const [newServiceCategory, setNewServiceCategory] = useState<{ serviceName: string }>({
+    serviceName: ''
+  });
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/services/categories', {
+        const response = await axios.get('http://localhost:3000/api/Services/categories', {
           withCredentials: true,
         });
-  
-        // backend returns ["Home", "Office", ...] → wrap into { label }
-        const data = response.data.map((label: string, index: number) => ({
-          id: index + 1,   // assign fake ID if you need it
-          label: label,
-        }));
-  
+
+        const data: string[] = response.data;  // Change to array of strings
+        console.log("Fetched services:", data);
+
         if (Array.isArray(data)) {
           setServices(data);
         } else {
@@ -44,10 +51,10 @@ const ViewServiceCategories: React.FC = () => {
         setError('Could not load services. Please try again later.');
       }
     };
-  
+
     fetchServices();
   }, []);
-
+  // 🛑 Delete function
   const handleDelete = async () => {
     if (!selectedService) return;
     try {
@@ -64,8 +71,9 @@ const ViewServiceCategories: React.FC = () => {
   };
 
   const filteredServices = services.filter((service) =>
-    service.label?.toLowerCase().includes(search.toLowerCase())
+    service.toLowerCase().includes(search.toLowerCase())
   );
+
 
   return (
     <div className="user-account-page">
@@ -79,10 +87,57 @@ const ViewServiceCategories: React.FC = () => {
           <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
         </h2>
       </div>
-
+      {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
-      {/* Delete Modal */}
+      {/* Modal for creating new category */}
+      {showPopup && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Create New Service Category</h2>
+            <label>Category Name:</label>
+            <input
+              id="categoryInput"
+              type="text"
+              placeholder="e.g. Floor cleaning"
+              value={newServiceCategory.serviceName}
+              onChange={(e) => setNewServiceCategory({ ...newServiceCategory, serviceName: e.target.value })}
+            />
+            <div className="modal-buttons">
+              <button onClick={() => setShowPopup(false)}>Cancel</button>
+              <button onClick={async () => {
+                try {
+                  const response = await fetch('http://localhost:3000/api/services/categories', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      category: newServiceCategory.serviceName
+                    }),
+                    credentials: 'include',
+                  });
+
+                  if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to create service category');
+                  }
+
+                  setShowPopup(false);
+                  setNewServiceCategory({ serviceName: '' });
+                  window.location.reload(); // Or re-fetch services instead of reloading
+                } catch (error) {
+                  console.error('Error creating service category:', error);
+                  alert('Failed to create service category.');
+                }
+              }}>
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 🛑 Delete Modal */}
       {showDeleteModal && selectedService && (
         <div className="modal-overlay">
           <div className="modal">
@@ -94,7 +149,6 @@ const ViewServiceCategories: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Services Section */}
       <div className="account-container">
         <h2>List of Service Categories</h2>
@@ -106,6 +160,7 @@ const ViewServiceCategories: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Category</button>
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -119,21 +174,21 @@ const ViewServiceCategories: React.FC = () => {
           </thead>
           <tbody>
             {filteredServices.length > 0 ? (
-              filteredServices.map((service) => (
-                <tr key={service.id}>
-                  <td>{service.label}</td>
+              filteredServices.map((service, index) => (
+                <tr key={index}>
+                  <td>{service}</td>  {/* Displaying category directly */}
                   <td>
                     <div className="action-buttons">
                       <button className="edit-btn">Edit</button>
                       <button
-                      className="delete-btn"
-                      onClick={() => {
-                        setSelectedService(service); // service includes {id, label}
-                        setShowDeleteModal(true);
-                      }}
-                    >
-                      Delete
-                    </button>
+                        className="delete-btn"
+                        onClick={() => {
+                          setSelectedService(service);
+                          setShowDeleteModal(true);
+                        }}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>
