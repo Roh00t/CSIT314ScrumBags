@@ -30,6 +30,9 @@ export type ServiceData = {
     label: string
     category: string
 }
+export type AllServices = {
+    serviceName: string
+}
 
 export type CleanerServicesData = {
     cleanerID: number

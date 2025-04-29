@@ -159,13 +159,13 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
  * Gets all the service 'types' as per aloy request 
  * change the name ltr..
  */
-servicesRouter.get('/nofilter', async (req, res): Promise<void> => {
+servicesRouter.get('/:id/all', async (req, res): Promise<void> => {
     try {
-        const servicesProvided =
+        const { id } = req.params
+        const allServices =
             await new ViewAllServicesProvidedController()
-                .viewAllServicesProvided()
-
-        res.status(StatusCodes.OK).json(servicesProvided)
+                .viewAllServicesProvided(Number(id))
+        res.status(StatusCodes.OK).json(allServices)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message

@@ -1,4 +1,4 @@
-import { ServiceProvidedData, ServiceHistory } from '../shared/dataClasses'
+import { ServiceProvidedData, ServiceHistory, AllServices } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { ServiceCategoryNotFoundError } from '../shared/exceptions'
@@ -53,22 +53,16 @@ export class Service {
     }
     
     public async viewAllServicesProvided(
-    ): Promise<ServiceProvidedData[]> {
-        const servicesProvidedByCleaners = await this.db
+        userID: number
+    ): Promise<AllServices[]> {
+        const allServicesProvided = await this.db
             .select({
-                serviceName: servicesProvidedTable.serviceName,
-            })
+                serviceid: servicesProvidedTable.id,
+                serviceName: servicesProvidedTable.serviceName})
             .from(servicesProvidedTable)
-            .leftJoin(userAccountsTable, eq(
-                servicesProvidedTable.cleanerID,
-                userAccountsTable.id
-            ))
-
-        return servicesProvidedByCleaners.map(sp => {
-            return {
-                serviceName: sp.serviceName,
-            } as ServiceProvidedData
-        })
+        return allServicesProvided.map(sp => ({
+            serviceName: sp.serviceName,
+        }));
     }
 
     public async updateServiceCategory(
