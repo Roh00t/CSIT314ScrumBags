@@ -7,8 +7,7 @@ import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
-import { and, eq, gt, lt } from 'drizzle-orm'
-
+import { and, eq, gt, lt, ilike } from 'drizzle-orm'
 export class Service {
     private db: DrizzleClient
 
@@ -104,7 +103,7 @@ export class Service {
         const [result] = await this.db
             .select()
             .from(serviceCategoriesTable)
-            .where(eq(serviceCategoriesTable.label, category))
+            .where(ilike(serviceCategoriesTable.label, `%${category}%`))
         if (!result) {
             throw new ServiceCategoryNotFoundError("Service Category Not Found")
         }

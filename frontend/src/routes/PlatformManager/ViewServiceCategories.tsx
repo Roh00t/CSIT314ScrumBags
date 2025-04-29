@@ -11,9 +11,9 @@ interface ServicesResponse {
   label: string;
 }
 
-interface newServiceCategory {
-  serviceName: string;
-}
+// interface newServiceCategory {
+//   serviceName: string;
+// }
 
 const ViewServiceCategories: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
@@ -70,9 +70,38 @@ const ViewServiceCategories: React.FC = () => {
     }
   };
 
-  const filteredServices = services.filter((service) =>
-    service.toLowerCase().includes(search.toLowerCase())
-  );
+  const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (search.trim() === '') {
+        // If search is empty, fetch all categories
+        try {
+          const response = await axios.get('http://localhost:3000/api/services/categories', {
+            withCredentials: true,
+          });
+          setServices(response.data);
+          setError('');
+        } catch (err) {
+          console.error('Failed to reload categories:', err);
+          setError('Could not reload service categories.');
+        }
+        return;
+      }
+  
+      try {
+        const response = await axios.get(`http://localhost:3000/api/services/categories/search?search=${search}`, {
+          withCredentials: true,
+        });
+  
+        // API returns a string (not array), so wrap it in an array
+        setServices([response.data]);
+        setError('');
+      } catch (err) {
+        console.error('Search failed:', err);
+        setServices([]);  // Clear table
+        setError('Search failed. Try again.');
+      }
+    }
+  };
 
 
   return (
@@ -153,13 +182,14 @@ const ViewServiceCategories: React.FC = () => {
       <div className="account-container">
         <h2>List of Service Categories</h2>
         <div className="top-row">
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search by category name"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search by category name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleSearch}
+        />
           <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Category</button>
         </div>
 
@@ -173,8 +203,8 @@ const ViewServiceCategories: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredServices.length > 0 ? (
-              filteredServices.map((service, index) => (
+          {services.length > 0 ? (
+            services.map((service, index) => (
                 <tr key={index}>
                   <td>{service}</td>  {/* Displaying category directly */}
                   <td>
