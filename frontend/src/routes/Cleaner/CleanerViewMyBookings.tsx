@@ -3,6 +3,7 @@ import '../../css/Cleaner/CleanerViewMyBookings.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
+import axios from 'axios';
 
 interface UserAccountResponse {
   id: number;
@@ -11,9 +12,10 @@ interface UserAccountResponse {
 }
 
 interface History {
+  bookingId: number;
   cleanerName: string | null;
   typeOfService: string | null;
-  price: string | null;
+  homeowner: string | null;
   date: Date;
   status: string;
 }
@@ -21,13 +23,93 @@ interface History {
 const CleanerViewMyBookings: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
-  const [services, setServices] = useState<string[]>([]);
+  const [services, setServices] = useState<{ serviceName: string }[]>([]);
   const [serviceName, setServiceName] = useState('');
+  const [homeowner, sethomeowner] = useState('');
+  const [bookingId, setbookingId] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [history, setHistory] = useState<History[]>([]);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<'All' | 'Pending' | 'Confirmed' | 'Cancelled'>('All');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.post(`http://localhost:3000/api/services/${sessionUser.id}`, {
+          serviceName: ''
+        });
+        setServices(response.data);
+        console.log(response.data); // Log services returned from the API
+      } catch (error) {
+        console.error('Error fetching cleaner services:', error);
+      }
+    };
+    fetchServices();
+  }, [sessionUser.id]);
+
+  // Fetch service history for the logged-in cleaner
+  const fetchServiceHist = async (statusFilter?: string) => {
+    try {
+      // Make the request with session cookie handling
+      const response = await axios.post(
+        'http://localhost:3000/api/cleaners/servicehistory',
+        {
+          cleanerId: sessionUser.id,
+          bookingid:bookingId,
+          cleanerName: search,
+          service: serviceName,
+          homeOwnerName: homeowner,
+          fromDate: fromDate ? formatDate(fromDate) : null,
+          toDate: toDate ? formatDate(toDate) : null,
+          status: statusFilter ?? null,
+        },
+        {
+          withCredentials: true, // Ensure session cookies are included with the request
+        }
+      );
+
+      // Log the response to see its structure
+      console.log('Service History Response:', response.data);
+
+      // Assuming the array is inside the 'data' property of the response
+      if (Array.isArray(response.data)) {
+        const formatted: History[] = response.data.map((item: any) => ({
+          bookingId: item.bookingid,
+          cleanerName: item.cleanerName,
+          typeOfService: item.serviceName,
+          homeowner: item.homeOwnerName,
+          date: item.date,
+          status: item.status,
+        }));
+
+        setHistory(formatted); // Update the history state
+      } else if (Array.isArray(response.data.data)) {
+        // Handle case where the array is inside response.data.data
+        const formatted: History[] = response.data.data.map((item: any) => ({
+          bookingId: item.bookingid,
+          cleanerName: item.cleanerName,
+          typeOfService: item.serviceName,
+          homeowner: item.homeOwnerName,
+          price: item.price,
+          date: item.date,
+          status: item.status,
+        }));
+
+        setHistory(formatted); // Update the history state
+      } else {
+        setHistory([]);
+        console.error('Failed to fetch service history: response data is not an array');
+      }
+    } catch (error) {
+      console.error('Error fetching service history:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchServiceHist();
+  }, [sessionUser.id]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return null;
@@ -35,71 +117,12 @@ const CleanerViewMyBookings: React.FC = () => {
     return `${month}/${day}/${year}`;
   };
 
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/api/services/nofilter');
-        if (!response.ok) {
-          throw new Error('Failed to fetch services');
-        }
-        const data = await response.json();
-        setServices(data);
-      } catch (error) {
-        console.error('Error fetching services:', error);
-      }
-    };
-    fetchServices();
-  }, []);
-
-  const fetchServiceHist = async (statusFilter?: string) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/homeowner/servicehistory', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          cleanerName: search,
-          service: serviceName,
-          fromDate: fromDate ? formatDate(fromDate) : null,
-          toDate: toDate ? formatDate(toDate) : null,
-          status: statusFilter ?? null, // <<==== Add status filter into request body
-        }),
-      });
-  
-      if (!response.ok) {
-        setHistory([]);
-        throw new Error('Failed to fetch service history');
-      }
-  
-      const json = await response.json();
-      const formatted: History[] = json.data.map((item: any) => ({
-        cleanerName: item.cleanerName,
-        typeOfService: item.serviceName,
-        price: item.price,
-        date: item.date,
-        status: item.status,
-      }));
-  
-      setHistory(formatted);
-    } catch (error) {
-      console.error('Error fetching services:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchServiceHist();
-  }, []);
-
   const filteredHistory = filterStatus === 'All'
     ? history
-    : history.filter(item => item.status.toLowerCase() === filterStatus.toLowerCase());
+    : history.filter(item => item.status?.toLowerCase() === filterStatus.toLowerCase());
 
   const countStatus = (status: 'Pending' | 'Confirmed' | 'Cancelled') =>
-    history.filter(item => item.status.toLowerCase() === status.toLowerCase()).length;
+    history.filter(item => item.status?.toLowerCase() === status.toLowerCase()).length;
 
   return (
     <div className="view-mybooking-container">
@@ -143,8 +166,8 @@ const CleanerViewMyBookings: React.FC = () => {
             >
               <option value="">Select Service</option>
               {services.map((service, index) => (
-                <option key={index} value={service}>
-                  {service}
+                <option key={index} value={service.serviceName}>
+                  {service.serviceName}
                 </option>
               ))}
             </select>
@@ -192,11 +215,11 @@ const CleanerViewMyBookings: React.FC = () => {
               ) : (
                 filteredHistory.map((service, index) => (
                   <tr key={index}>
-                    <td>{service.cleanerName}</td>
+                    <td>{service.bookingId}</td>
                     <td>{service.typeOfService}</td>
                     <td>{service.status}</td>
                     <td>{new Date(service.date).toLocaleDateString('en-GB')}</td>
-                    <td>${service.price}</td>
+                    <td>{service.homeowner}</td>
                   </tr>
                 ))
               )}

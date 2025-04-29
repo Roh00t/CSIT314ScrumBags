@@ -6,12 +6,13 @@ import { Router } from "express"
 
 const cleanersRouter = Router()
 
-cleanersRouter.get(
+cleanersRouter.post(
     '/serviceHistory',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
         const cleanerID = (req.session.user as UserAccountData).id
-        const { service, startDate, endDate } = req.body
+        const { service, startDate, endDate } = req.body // Extract parameters from the request body
+
         try {
             const serviceHistory = await new ViewCleanerServiceHistoryController()
                 .viewCleanerServiceHistory(
@@ -31,6 +32,33 @@ cleanersRouter.get(
         }
     }
 )
+
+
+// cleanersRouter.get(
+//     '/serviceHistory',
+//     requireAuthMiddleware,
+//     async (req, res): Promise<void> => {
+//         const cleanerID = (req.session.user as UserAccountData).id
+//         const { service, startDate, endDate } = req.body
+//         try {
+//             const serviceHistory = await new ViewCleanerServiceHistoryController()
+//                 .viewCleanerServiceHistory(
+//                     cleanerID,
+//                     service,
+//                     startDate ? new Date(startDate) : null,
+//                     endDate ? new Date(endDate) : null
+//                 )
+//             res.status(StatusCodes.OK).json({
+//                 message: "Service history retrieved successfully",
+//                 data: serviceHistory
+//             })
+//         } catch (error: any) {
+//             res.status(StatusCodes.BAD_REQUEST).json({
+//                 error: error.message || "Failed to retrieve service history"
+//             })
+//         }
+//     }
+// )
 cleanersRouter.get(
     '/unique',
     requireAuthMiddleware,

@@ -3,6 +3,7 @@ import '../../css/HomeOwner/HomeOwnerViewHistory.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
+import axios from 'axios';
 
 interface UserAccountResponse {
   id: number;
@@ -21,7 +22,7 @@ interface History {
 const HomeOwnerViewHistory: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
-  const [services, setServices] = useState<string[]>([]); // State for services options (corrected to ServiceProvided[])
+  const [services, setServices] = useState<{ serviceName: string }[]>([]);
   const [serviceName, setServiceName] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -42,17 +43,13 @@ const HomeOwnerViewHistory: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/services/uniqueservices');
-        if (!response.ok) {
-          throw new Error('Failed to fetch services');
-        }
-        const data = await response.json();
-        setServices(data); // Set the unique services to the state
+        const response = await axios.get('http://localhost:3000/api/services/');
+        setServices(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching services:', error);
       }
     };
-
     fetchServices();
   }, []);
 
@@ -119,23 +116,18 @@ const HomeOwnerViewHistory: React.FC = () => {
           <h1>View History</h1>
 
           <div className="top-bar">
-            <select
+          <select
               value={serviceName}
               onChange={(e) => setServiceName(e.target.value)}
             >
               <option value="">Select Service</option>
               {services.map((service, index) => (
-                <option key={index} value={service}>
-                  {service}
+                <option key={index} value={service.serviceName}>
+                  {service.serviceName}
                 </option>
               ))}
             </select>
 
-            {/* <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            /> */}
 
             <div className="date-range">
               <label>From:</label>
