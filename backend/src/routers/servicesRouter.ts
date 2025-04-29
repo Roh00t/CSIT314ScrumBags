@@ -7,6 +7,7 @@ import {
     DeleteServiceCategoryController,
     SearchServiceCategoryController,
     UpdateServiceCategoryController,
+    ViewAllServicesProvidedController,
     ViewServiceCategoriesController,
     ViewServicesProvidedController,
     ViewUniqueServicesProvided
@@ -154,7 +155,24 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * Gets all the service 'types' as per aloy request 
+ * change the name ltr..
+ */
+servicesRouter.get('/:id/nofilter', async (req, res): Promise<void> => {
+    try {
+        const { id } = req.params
+        const servicesProvided =
+            await new ViewAllServicesProvidedController()
+                .viewAllServicesProvided(Number(id))
 
+        res.status(StatusCodes.OK).json(servicesProvided)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
 
 /**
  * Cleaners can add the types of services they provide

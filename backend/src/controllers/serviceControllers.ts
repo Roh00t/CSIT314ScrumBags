@@ -92,6 +92,22 @@ export class ViewServicesProvidedController {
     }
 }
 
+/**
+ * Gets all the service 'types' provided by a cleaner (by their userID)
+ */
+export class ViewAllServicesProvidedController {
+    private service: Service
+
+    constructor() {
+        this.service = new Service()
+    }
+
+    public async viewAllServicesProvided(
+        userID: number
+    ): Promise<ServiceProvidedData[]> {
+        return await this.service.viewAllServicesProvided()
+    }
+}
 export class ViewUniqueServicesProvided {
     private service: Service
 

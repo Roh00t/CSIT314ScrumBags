@@ -51,6 +51,25 @@ export class Service {
             } as ServiceProvidedData
         })
     }
+    
+    public async viewAllServicesProvided(
+    ): Promise<ServiceProvidedData[]> {
+        const servicesProvidedByCleaners = await this.db
+            .select({
+                serviceName: servicesProvidedTable.serviceName,
+            })
+            .from(servicesProvidedTable)
+            .leftJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
+
+        return servicesProvidedByCleaners.map(sp => {
+            return {
+                serviceName: sp.serviceName,
+            } as ServiceProvidedData
+        })
+    }
 
     public async updateServiceCategory(
         category: string,
