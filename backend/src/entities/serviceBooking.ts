@@ -6,7 +6,7 @@ import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { and, eq, gte, lt } from 'drizzle-orm'
+import { and, eq, gte, ilike, lt } from 'drizzle-orm'
 
 export class ServiceBooking {
     private db: DrizzleClient
@@ -154,7 +154,6 @@ export class ServiceBooking {
 
     public async viewCleanerServiceHistory(
         cleanerID: number,
-        service: string | null,
         startDate: Date | null,
         endDate: Date | null
     ): Promise<CleanerServiceBookingData[]> {
@@ -163,9 +162,7 @@ export class ServiceBooking {
             eq(servicesProvidedTable.cleanerID, cleanerID),
             eq(serviceBookingsTable.status, BookingStatus.Confirmed)
         ]
-        if (service) {
-            conditions.push(eq(servicesProvidedTable.serviceName, service))
-        }
+
         if (startDate && endDate) {
             conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
             conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
@@ -190,6 +187,52 @@ export class ServiceBooking {
         return queryResult.map(qr => {
             return {
                 bookingid: qr.service_bookings.id,
+                status: qr.service_bookings.status,
+                serviceName: qr.services_provided?.serviceName,
+                date: qr.service_bookings.startTimestamp,
+                homeOwnerName: qr.user_accounts?.username
+            } as CleanerServiceBookingData
+        })
+    }
+
+    public async searchCleanerServiceHistory(
+        cleanerID: number,
+        service: string,
+        startDate: Date | null,
+        endDate: Date | null
+    ): Promise<CleanerServiceBookingData[]> {
+
+        const conditions = [
+            eq(servicesProvidedTable.cleanerID, cleanerID),
+            eq(serviceBookingsTable.status, BookingStatus.Confirmed),
+            ilike(servicesProvidedTable.serviceName, `%${service}%`)
+        ]
+
+        if (startDate && endDate) {
+            conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
+            conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+        }
+
+        const queryResult = await this.db.select()
+            .from(serviceBookingsTable)
+            .leftJoin(
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+            )
+            .leftJoin(
+                userAccountsTable,
+                eq(serviceBookingsTable.homeownerID, userAccountsTable.id)
+            )
+            .leftJoin(
+                serviceCategoriesTable,
+                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+            )
+            .where(and(...conditions))
+
+        return queryResult.map(qr => {
+            return {
+                bookingid: qr.service_bookings.id,
+                status: qr.service_bookings.status,
                 serviceName: qr.services_provided?.serviceName,
                 date: qr.service_bookings.startTimestamp,
                 homeOwnerName: qr.user_accounts?.username

@@ -59,7 +59,7 @@ export class Service {
             } as ServiceProvidedData
         })
     }
-    
+
     public async viewAllServicesProvided(
     ): Promise<AllServices[]> {
         const allServicesProvided = await this.db
@@ -90,23 +90,20 @@ export class Service {
     public async deleteServiceCategory(
         category: string
     ): Promise<void> {
-        const arrayWhereLabelEqualsToCategory = await this.db.select().from(
-            serviceCategoriesTable
-        ).where(
-            eq(serviceCategoriesTable.label,
-                category))
+        const arrayWhereLabelEqualsToCategory = await this.db
+            .select()
+            .from(serviceCategoriesTable)
+            .where(eq(serviceCategoriesTable.label, category))
 
         if (arrayWhereLabelEqualsToCategory.length === 0) {
             throw new ServiceCategoryNotFoundError("Service Category Not Found")
         }
 
-        await this.db.delete(
-            serviceCategoriesTable
-        ).where(
-            eq(serviceCategoriesTable.label,
-                category))
+        await this.db
+            .delete(serviceCategoriesTable)
+            .where(eq(serviceCategoriesTable.label, category))
     }
-    
+
     public async searchServiceCategory(
         category: string
     ): Promise<string> {
@@ -114,6 +111,7 @@ export class Service {
             .select()
             .from(serviceCategoriesTable)
             .where(ilike(serviceCategoriesTable.label, `%${category}%`))
+
         if (!result) {
             throw new ServiceCategoryNotFoundError("Service Category Not Found")
         }

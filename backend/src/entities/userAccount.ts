@@ -10,8 +10,9 @@ import { and, eq, ilike } from 'drizzle-orm'
 import {
     CleanerAlreadyShortlistedError,
     UserAccountSuspendedError,
+    UserAccountNotFoundError,
     InvalidCredentialsError,
-    UserAccountNotFoundError
+    UserProfileSuspendedError
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
 
@@ -62,7 +63,8 @@ export default class UserAccount {
                 username: userAccountsTable.username,
                 password: userAccountsTable.password,
                 isSuspended: userAccountsTable.isSuspended,
-                userProfileLabel: userProfilesTable.label
+                userProfileLabel: userProfilesTable.label,
+                profileIsSuspended: userProfilesTable.isSuspended
             })
             .from(userAccountsTable)
             .leftJoin(
@@ -94,6 +96,12 @@ export default class UserAccount {
             )
         }
 
+        if (retrievedUser.profileIsSuspended) {
+            throw new UserProfileSuspendedError(
+                'User profile ' + retrievedUser.userProfileLabel + ' is suspended'
+            )
+        }
+
         return {
             id: retrievedUser.id,
             username: retrievedUser.username,
@@ -102,7 +110,7 @@ export default class UserAccount {
     }
 
     /**
-     * View user account & Search through user account
+     * View all user accounts
      */
     public async viewUserAccounts(): Promise<UserAccountData[]> {
         const query = await this.db
@@ -218,6 +226,30 @@ export default class UserAccount {
         return cleanerNames
     }
 
+    public async searchShortlist(
+        homeownerID: number,
+        search: string
+    ): Promise<string[]> {
+        const shortlistedCleaners = await this.db
+            .select({ cleanerName: userAccountsTable.username })
+            .from(shortlistedCleanersTable)
+            .leftJoin(servicesProvidedTable, eq(
+                shortlistedCleanersTable.cleanerID,
+                servicesProvidedTable.cleanerID
+            ))
+            .leftJoin(userAccountsTable, eq(
+                shortlistedCleanersTable.cleanerID,
+                userAccountsTable.id
+            ))
+            .where(and(
+                eq(shortlistedCleanersTable.homeownerID, homeownerID),
+                ilike(userAccountsTable.username, `%${search}%`),
+            ))
+            .groupBy(userAccountsTable.username)
+
+        return shortlistedCleaners.map(cl => cl.cleanerName || "Unknown Cleaner")
+    }
+
     /**
      * Update user account
      */
@@ -251,12 +283,14 @@ export default class UserAccount {
             .set({ isSuspended: true })
             .where(eq(userAccountsTable.id, userID))
     }
+
     public async unsuspendUserAccount(userID: number): Promise<void> {
         await this.db
-          .update(userAccountsTable)
-          .set({ isSuspended: false })
-          .where(eq(userAccountsTable.id, userID))
-      }
+            .update(userAccountsTable)
+            .set({ isSuspended: false })
+            .where(eq(userAccountsTable.id, userID))
+    }
+
     /**
      * Search user accounts
      */

@@ -80,12 +80,12 @@ servicesRouter.delete('/categories', async (req, res): Promise<void> => {
         await new DeleteServiceCategoryController().deleteServiceCategory(category)
         res.status(StatusCodes.OK).send()
     } catch (err) {
-        if (err instanceof ServiceCategoryNotFoundError){
+        if (err instanceof ServiceCategoryNotFoundError) {
             res.status(StatusCodes.NOT_FOUND).json({
                 message: (err as Error).message
             })
         }
-        else{
+        else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
             })
@@ -101,20 +101,21 @@ servicesRouter.delete('/categories', async (req, res): Promise<void> => {
         await new DeleteServiceCategoryController().deleteServiceCategory(category)
         res.status(StatusCodes.OK).send()
     } catch (err) {
-        if (err instanceof ServiceCategoryNotFoundError){
+        if (err instanceof ServiceCategoryNotFoundError) {
             res.status(StatusCodes.NOT_FOUND).json({
                 message: (err as Error).message
             })
         }
-        else{
+        else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
             })
         }
     }
 })
+
 /**
- * search service "categories"
+ * Search service "categories"
  */
 servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
     try {
@@ -124,9 +125,11 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
                 .json({ message: 'Search query is required' })
             return
         }
-        const searchedcategory = await new SearchServiceCategoryController().searchServiceCategory(search)
-        res.status(StatusCodes.OK).json(searchedcategory)
+        const searchedcategory =
+            await new SearchServiceCategoryController()
+                .searchServiceCategory(search)
 
+        res.status(StatusCodes.OK).json(searchedcategory)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
@@ -136,7 +139,6 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
 
 /**
  * Gets all the services
- * change the name ltr..
  */
 servicesRouter.get('/', async (req, res): Promise<void> => {
     try {
@@ -159,7 +161,7 @@ servicesRouter.post('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
         const { serviceName } = req.body
-        
+
         const servicesProvided =
             await new ViewServicesProvidedController()
                 .viewServicesProvided(Number(id), serviceName)
@@ -217,7 +219,5 @@ servicesRouter.post(
         }
     }
 )
-
-// servicesRouter.get('/history', )
 
 export default servicesRouter

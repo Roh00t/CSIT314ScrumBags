@@ -15,8 +15,9 @@ export class ViewCleanersController {
         return await this.userAccount.viewCleaners(cleanerName)
     }
 }
+
 export class ViewCleanerServiceHistoryController {
-    private serviceBooking : ServiceBooking
+    private serviceBooking: ServiceBooking
 
     constructor() {
         this.serviceBooking = new ServiceBooking()
@@ -24,10 +25,26 @@ export class ViewCleanerServiceHistoryController {
 
     public async viewCleanerServiceHistory(
         cleanerID: number,
-        service: string | null,
-        startDate: Date  | null,
+        startDate: Date | null,
         endDate: Date | null
-    ): Promise<CleanerServiceBookingData[]>{
-        return await this.serviceBooking.viewCleanerServiceHistory(cleanerID, service, startDate, endDate)
+    ): Promise<CleanerServiceBookingData[]> {
+        return await this.serviceBooking.viewCleanerServiceHistory(cleanerID, startDate, endDate)
+    }
+}
+
+export class SearchCleanerServiceHistoryController {
+    private serviceBooking: ServiceBooking
+
+    constructor() {
+        this.serviceBooking = new ServiceBooking()
+    }
+
+    public async searchCleanerServiceHistory(
+        cleanerID: number,
+        service: string,
+        startDate: Date | null,
+        endDate: Date | null
+    ): Promise<CleanerServiceBookingData[]> {
+        return await this.serviceBooking.searchCleanerServiceHistory(cleanerID, service, startDate, endDate)
     }
 }

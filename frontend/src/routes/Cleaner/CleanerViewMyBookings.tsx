@@ -57,9 +57,8 @@ const CleanerViewMyBookings: React.FC = () => {
         'http://localhost:3000/api/cleaners/servicehistory',
         {
           cleanerId: sessionUser.id,
-          bookingid:bookingId,
-          cleanerName: search,
-          service: serviceName,
+          bookingid: bookingId,
+          service: search,
           homeOwnerName: homeowner,
           fromDate: fromDate ? formatDate(fromDate) : null,
           toDate: toDate ? formatDate(toDate) : null,
