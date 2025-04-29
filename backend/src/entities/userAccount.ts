@@ -262,7 +262,7 @@ export default class UserAccount {
                 userAccountsTable.userProfileId,
                 userProfilesTable.id
             ))
-            .where(eq(userAccountsTable.username, search))
+            .where(ilike(userAccountsTable.username, `%${search}%`))
             .limit(1)
 
         if (!res) {

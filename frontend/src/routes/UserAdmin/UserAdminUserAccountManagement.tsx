@@ -59,14 +59,12 @@ const UserAdminUserAccountManagement: React.FC = () => {
     fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(search.toLowerCase())
-  );
+
 
   // Toggle Suspend/Unsuspend
   const handleToggleSuspendUser = async (userId: number) => {
     try {
-      const user = filteredUsers.find(u => u.id === userId);
+      const user = users.find(u => u.id === userId);
       if (!user) return;
 
       const confirmText = user.isSuspended
@@ -107,13 +105,34 @@ const UserAdminUserAccountManagement: React.FC = () => {
       <div className="account-container">
         <h2>User Accounts</h2>
         <div className="top-row">
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search by username"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search by username"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={async (e) => {
+            if (e.key === 'Enter') {
+              if (!search.trim()) {
+                fetchUsers(); // fallback to full list
+                return;
+              }
+              try {
+                const res = await axios.get(`http://localhost:3000/api/user-accounts/search?search=${search}`, {
+                  withCredentials: true
+                });
+                setUsers([res.data]); // API returns 1 object, wrap it in array
+              } catch (err: any) {
+                if (err.response?.status === 404) {
+                  setUsers([]); // user not found
+                } else {
+                  console.error('Search failed:', err);
+                  setError('Search failed. Try again.');
+                }
+              }
+            }
+          }}
+        />
           <button className="create-btn">
             <Link to="/create" className="create-btn">Create Account</Link>
           </button>
@@ -132,8 +151,8 @@ const UserAdminUserAccountManagement: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user, index) => (
+            {users.length > 0 ? (
+              users.map((user, index) => (
                 <tr key={index}>
                   <td>{user.id}</td>
                   <td>{user.username}</td>
