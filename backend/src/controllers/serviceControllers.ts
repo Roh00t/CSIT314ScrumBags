@@ -103,7 +103,6 @@ export class ViewAllServicesProvidedController {
     }
 
     public async viewAllServicesProvided(
-        userID: number
     ): Promise<ServiceProvidedData[]> {
         return await this.service.viewAllServicesProvided()
     }
