@@ -36,7 +36,7 @@ const CleanerViewServicesRoute: React.FC = () => {
     description: '',
     price: '',
   });
-  
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Fetch available services
@@ -58,7 +58,16 @@ const CleanerViewServicesRoute: React.FC = () => {
   // Fetch current services
   const fetchServices = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`);
+      const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          serviceName: search,
+        }),
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch services');
       }
@@ -79,7 +88,7 @@ const CleanerViewServicesRoute: React.FC = () => {
 
   useEffect(() => {
     fetchServices();
-  }, [sessionUser.id]);
+  }, [sessionUser.id]); // Only on mount or user ID change
 
   const handleCreateService = async () => {
     try {
@@ -166,7 +175,7 @@ const CleanerViewServicesRoute: React.FC = () => {
               id="serviceInput"
               type="number"
               placeholder="e.g 20"
-               min="0"
+              min="0"
               value={newService.price}
               onChange={(e) => setNewService({ ...newService, price: e.target.value })}
             />
@@ -190,7 +199,11 @@ const CleanerViewServicesRoute: React.FC = () => {
               placeholder="🔍 Search...."
               value={search}
               onChange={e => setSearch(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') fetchServices();
+              }}
             />
+            <button className="search-btn" onClick={fetchServices}>Search</button>
             <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Services</button>
           </div>
 
@@ -203,22 +216,19 @@ const CleanerViewServicesRoute: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {services
-                .filter(service => service.type.toLowerCase().includes(search.toLowerCase()))
-                .map((service, index) => (
-                  <tr key={service.id || index}>
-                    <td>{service.type}</td>
-                    <td>${service.price}</td>
+              {services.map((service, index) => (
+                <tr key={service.id || index}>
+                  <td>{service.type}</td>
+                  <td>${service.price}</td>
+                  <td>
                     <div className="action-buttons">
                       <button className="view-btn">View</button>
-                      <button
-                        className="edit-btn">
-                        Edit
-                      </button>
+                      <button className="edit-btn">Edit</button>
                       <button className="delete-btn">Delete</button>
                     </div>
-                  </tr>
-                ))}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
