@@ -196,7 +196,10 @@ export default class UserAccount {
             .values({ homeownerID, cleanerID })
     }
 
-    public async viewShortlist(homeownerID: number): Promise<string[]> {
+    public async viewShortlist(
+        homeownerID: number
+
+    ): Promise<string[]> {
         const shortlistedCleaners = await this.db
             .select({ cleanerID: shortlistedCleanersTable.cleanerID })
             .from(shortlistedCleanersTable)

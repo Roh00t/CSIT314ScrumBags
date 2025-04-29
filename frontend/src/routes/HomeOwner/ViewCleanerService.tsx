@@ -10,24 +10,47 @@ const ViewCleanerService: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+  const [cleanerName, setCleaner] = useState('')
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('http://localhost:3000/api/user-accounts/cleaners', {
-          withCredentials: true,
-        });
 
-        const data = response.data;
-        console.log(data);
-        setUsers(data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to fetch users:', err);
-        setError('Could not load users. Please try again later.');
-        setLoading(false);
+
+    const fetchUsers = async () => {
+      // try {
+      //   const response = await axios.get('http://localhost:3000/api/user-accounts/cleaners', {
+      //     withCredentials: true,
+      //   });
+
+      //   const data = response.data;
+      //   console.log(data);
+      //   setUsers(data);
+      //   setLoading(false);
+      // } catch (err) {
+      //   console.error('Failed to fetch users:', err);
+      //   setError('Could not load users. Please try again later.');
+      //   setLoading(false);
+      // }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/user-accounts/cleaners', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cleanerName: search,
+          }),
+        })
+        const json = await response.json();
+
+        setUsers(json)
+        setLoading(false)
+      } catch (error) {
+        console.error('Could not load users, Please try again later.')
+        setError('Could not load users. Please try again later.')
       }
     };
 

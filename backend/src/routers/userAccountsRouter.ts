@@ -101,7 +101,7 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     }
 })
 
-userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
+userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
     const { cleanerName } = req.body
 
     try {
