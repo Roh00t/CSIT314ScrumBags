@@ -158,9 +158,11 @@ servicesRouter.get('/', async (req, res): Promise<void> => {
 servicesRouter.get('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
+        const { serviceName } = req.body
+        
         const servicesProvided =
             await new ViewServicesProvidedController()
-                .viewServicesProvided(Number(id))
+                .viewServicesProvided(Number(id), serviceName)
 
         res.status(StatusCodes.OK).json(servicesProvided)
     } catch (err) {

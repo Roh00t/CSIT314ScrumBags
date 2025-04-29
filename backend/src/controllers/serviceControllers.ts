@@ -86,9 +86,10 @@ export class ViewServicesProvidedController {
     }
 
     public async viewServicesProvided(
-        userID: number
+        userID: number,
+        serviceName: string | null
     ): Promise<ServiceProvidedData[]> {
-        return await this.service.viewServicesProvided(userID)
+        return await this.service.viewServicesProvided(userID, serviceName)
     }
 }
 

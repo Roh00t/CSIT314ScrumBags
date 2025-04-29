@@ -27,8 +27,17 @@ export class Service {
     }
 
     public async viewServicesProvided(
-        userID: number
+        userID: number,
+        serviceName: string | null
     ): Promise<ServiceProvidedData[]> {
+        const conditions = [
+            eq(userAccountsTable.id, userID)
+        ];
+
+        if (serviceName) {
+            conditions.push(eq(servicesProvidedTable.serviceName, serviceName));
+        }
+
         const servicesProvidedByCleaner = await this.db
             .select({
                 serviceName: servicesProvidedTable.serviceName,
@@ -40,7 +49,7 @@ export class Service {
                 servicesProvidedTable.cleanerID,
                 userAccountsTable.id
             ))
-            .where(eq(userAccountsTable.id, userID))
+            .where(and(...conditions))
 
         return servicesProvidedByCleaner.map(sp => {
             return {
@@ -120,8 +129,6 @@ export class Service {
 
         return uniqueServices.map((service) => service.serviceName);
     }
-
-
 
     public async createServiceProvided(
         cleanerID: number,
