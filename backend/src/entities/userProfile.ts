@@ -3,7 +3,7 @@ import { UserProfileNotFoundError } from '../shared/exceptions'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
-
+import { ilike } from 'drizzle-orm';
 export class UserProfile {
     private db: DrizzleClient
 
@@ -79,7 +79,7 @@ export class UserProfile {
         const [profile] = await this.db
             .select()
             .from(userProfilesTable)
-            .where(eq(userProfilesTable.label, search))
+            .where(ilike(userProfilesTable.label, `%${search}%`)) // partial + case-insensitive
             .limit(1)
 
         if (!profile) {

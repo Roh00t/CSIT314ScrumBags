@@ -11,6 +11,7 @@ interface Role {
 
 const ViewUserRoles: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
+  const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
   // Logout Modal State
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   // For Update User Profile
@@ -22,9 +23,10 @@ const ViewUserRoles: React.FC = () => {
     currentProfile: '',
     updatedProfile: ''
   });
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [, setRoles] = useState<Role[]>([]);
   const [error, setError] = useState<string>('');
   const [search, setSearch] = useState<string>(''); // Search state
+
   const handleToggleSuspendProfile = async (profileName: string, isSuspended: boolean) => {
     try {
       const confirmText = isSuspended
@@ -61,10 +63,10 @@ const ViewUserRoles: React.FC = () => {
         const response = await axios.get('http://localhost:3000/api/user-profiles/', {
           withCredentials: true,
         });
-    
+  
         const data: Role[] = response.data;
         if (Array.isArray(data)) {
-          setRoles(data);
+          setFilteredRoles(data); // set this instead of `roles`
         } else {
           console.error('Unexpected server response:', data);
           setError('Unexpected server response.');
@@ -74,14 +76,34 @@ const ViewUserRoles: React.FC = () => {
         setError('Could not load roles. Please try again later.');
       }
     };
-
+  
     fetchRoles();
   }, []);
 
   // Filter roles based on search
-  const filteredRoles = roles.filter(role =>
-    role.name.toLowerCase().includes(search.toLowerCase())
-  );
+
+  const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/user-profiles/search?search=${search}`, {
+          withCredentials: true,
+        });
+  
+        // If your endpoint returns a single role object
+        const data = response.data;
+        const results = Array.isArray(data) ? data : [data]; // Normalize to array
+        const mappedResults = results.map(r => ({
+          name: r.label,  // map label to name
+          isSuspended: r.isSuspended
+        }));
+        setFilteredRoles(mappedResults);
+      } catch (err) {
+        console.error('Search failed:', err);
+        setFilteredRoles([]); // Clear results if not found
+        setError('Search failed. Try again.');
+      }
+    }
+  };
 
   return (
     <div className="user-account-page">
@@ -103,13 +125,34 @@ const ViewUserRoles: React.FC = () => {
       <div className="account-container">
         <h2>User Profiles</h2>
         <div className="top-row">
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search by profiles"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search by profiles"
+          value={search}
+          onChange={async (e) => {
+            const value = e.target.value;
+            setSearch(value);
+          
+            if (value === '') {
+              try {
+                const response = await axios.get('http://localhost:3000/api/user-profiles/', {
+                  withCredentials: true,
+                });
+                const data: Role[] = response.data;
+                setFilteredRoles(data.map(r => ({
+                  name: r.name,  // map label to name if needed
+                  isSuspended: r.isSuspended
+                })));
+                setError('');
+              } catch (err) {
+                console.error('Failed to reload roles:', err);
+                setError('Failed to reload roles.');
+              }
+            }
+          }}
+          onKeyDown={handleSearch}
+        />
           <button className="create-btn"><Link to="/create-profile" className="create-btn">Create New Profile</Link></button>
         </div>
 
@@ -124,8 +167,8 @@ const ViewUserRoles: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRoles.length > 0 ? (
-              filteredRoles.map((role, index) => (
+          {filteredRoles.length > 0 ? (
+            filteredRoles.map((role, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{role.name}</td>
