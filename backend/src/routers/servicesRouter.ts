@@ -60,7 +60,7 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
 /**
  * update service 'categories'
  */
-servicesRouter.patch('/categories', async (req, res): Promise<void> => {
+servicesRouter.put('/categories', async (req, res): Promise<void> => {
     try {
         const { category, newCategory } = req.body
         await new UpdateServiceCategoryController().updateServiceCategory(category, newCategory)
