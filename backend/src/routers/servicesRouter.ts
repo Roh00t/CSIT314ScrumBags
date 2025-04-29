@@ -155,7 +155,7 @@ servicesRouter.get('/', async (req, res): Promise<void> => {
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
-servicesRouter.get('/:id', async (req, res): Promise<void> => {
+servicesRouter.post('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
         const { serviceName } = req.body
