@@ -40,7 +40,7 @@ const CleanerViewMyBookings: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/services/uniqueservices');
+        const response = await fetch('http://localhost:3000/api/services/nofilter');
         if (!response.ok) {
           throw new Error('Failed to fetch services');
         }
