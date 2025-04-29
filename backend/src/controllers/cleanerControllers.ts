@@ -9,8 +9,10 @@ export class ViewCleanersController {
         this.userAccount = new UserAccount()
     }
 
-    public async viewCleaners(): Promise<CleanerServicesData[]> {
-        return await this.userAccount.viewCleaners()
+    public async viewCleaners(
+        cleanerName: string | null
+    ): Promise<CleanerServicesData[]> {
+        return await this.userAccount.viewCleaners(cleanerName)
     }
 }
 export class ViewCleanerServiceHistoryController {

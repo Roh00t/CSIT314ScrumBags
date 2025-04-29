@@ -101,10 +101,12 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     }
 })
 
-userAccountsRouter.get('/cleaners', async (_, res): Promise<void> => {
+userAccountsRouter.get('/cleaners', async (req, res): Promise<void> => {
+    const { cleanerName } = req.body
+
     try {
         const allAvailableCleaners =
-            await new ViewCleanersController().viewCleaners()
+            await new ViewCleanersController().viewCleaners(cleanerName)
         res.status(StatusCodes.OK).json(allAvailableCleaners)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

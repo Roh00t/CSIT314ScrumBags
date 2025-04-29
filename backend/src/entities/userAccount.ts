@@ -131,7 +131,17 @@ export default class UserAccount {
     // This async Function only retrieves Cleaner names under the assumption that
     // There will be another page to show the Services provided by the Cleaner.
     // 15042025 2257 Hours
-    public async viewCleaners(): Promise<CleanerServicesData[]> {
+    public async viewCleaners(
+        cleanerName: string | null
+    ): Promise<CleanerServicesData[]> {
+        const conditions = [
+            eq(userProfilesTable.label, 'cleaner')
+        ]
+
+        if (cleanerName) {
+            conditions.push(eq(userAccountsTable.username, cleanerName))
+        }
+
         const queryForCleaners = await this.db
             .select({
                 cleanerID: userAccountsTable.id,
@@ -152,9 +162,7 @@ export default class UserAccount {
                 userAccountsTable.userProfileId,
                 userProfilesTable.id
             ))
-            .where(eq(
-                userProfilesTable.label, 'cleaner'
-            ))
+            .where(and(...conditions))
 
         return queryForCleaners.map(query => {
             return {
