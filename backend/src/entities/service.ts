@@ -106,6 +106,7 @@ export class Service {
             eq(serviceCategoriesTable.label,
                 category))
     }
+    
     public async searchServiceCategory(
         category: string
     ): Promise<string> {
