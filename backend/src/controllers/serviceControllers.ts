@@ -103,22 +103,12 @@ export class ViewAllServicesProvidedController {
     }
 
     public async viewAllServicesProvided(
-        userID: number
     ): Promise<AllServices[]> {
-        return await this.service.viewAllServicesProvided(userID)
+        return await this.service.viewAllServicesProvided()
     }
 }
-export class ViewUniqueServicesProvided {
-    private service: Service
 
-    constructor() {
-        this.service = new Service()
-    }
 
-    public async viewUniqueServicesProvided(): Promise<string[]> {
-        return await this.service.viewUniqueServicesProvided()
-    }
-}
 
 /**
  * Cleaners can add the types of services they provide

@@ -53,17 +53,18 @@ export class Service {
     }
     
     public async viewAllServicesProvided(
-        userID: number
     ): Promise<AllServices[]> {
         const allServicesProvided = await this.db
             .select({
                 serviceid: servicesProvidedTable.id,
-                serviceName: servicesProvidedTable.serviceName})
+                serviceName: servicesProvidedTable.serviceName
+            })
             .from(servicesProvidedTable)
         return allServicesProvided.map(sp => ({
             serviceName: sp.serviceName,
         }));
     }
+
 
     public async updateServiceCategory(
         category: string,

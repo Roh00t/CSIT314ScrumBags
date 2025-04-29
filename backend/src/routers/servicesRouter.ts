@@ -10,7 +10,6 @@ import {
     ViewAllServicesProvidedController,
     ViewServiceCategoriesController,
     ViewServicesProvidedController,
-    ViewUniqueServicesProvided
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
 import {
@@ -135,7 +134,23 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * Gets all the services
+ * change the name ltr..
+ */
+servicesRouter.get('/', async (req, res): Promise<void> => {
+    try {
 
+        const allServices =
+            await new ViewAllServicesProvidedController()
+                .viewAllServicesProvided()
+        res.status(StatusCodes.OK).json(allServices)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
 
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)
@@ -148,24 +163,6 @@ servicesRouter.get('/:id', async (req, res): Promise<void> => {
                 .viewServicesProvided(Number(id))
 
         res.status(StatusCodes.OK).json(servicesProvided)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
-})
-
-/**
- * Gets all the service 'types' as per aloy request 
- * change the name ltr..
- */
-servicesRouter.get('/:id/all', async (req, res): Promise<void> => {
-    try {
-        const { id } = req.params
-        const allServices =
-            await new ViewAllServicesProvidedController()
-                .viewAllServicesProvided(Number(id))
-        res.status(StatusCodes.OK).json(allServices)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message
