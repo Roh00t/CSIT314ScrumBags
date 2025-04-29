@@ -143,7 +143,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
                   </td>
                   <td>
                     <div className="action-buttons">
-                      <button className="view-btn"><Link to="/">View</Link></button>
+                      <button className="view-btn"><Link to="/">👁️</Link></button>
                       <button
                         className="edit-btn"
                         onClick={() => {
@@ -157,13 +157,13 @@ const UserAdminUserAccountManagement: React.FC = () => {
                           setShowEditModal(true);
                         }}
                       >
-                        Edit
+                        📝
                       </button>
                       <button
                         className={user.isSuspended ? "unsuspend-btn" : "suspend-btn"}
                         onClick={() => user.id !== null && handleToggleSuspendUser(user.id)}
                       >
-                        {user.isSuspended ? 'Unsuspend' : 'Suspend'}
+                        {user.isSuspended ? '🚫' : '🗑️'}
                       </button>
                     </div>
                   </td>
