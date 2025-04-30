@@ -14,7 +14,8 @@ import {
     UserAccountSuspendedError,
     InvalidCredentialsError,
     UserAccountNotFoundError,
-    UserProfileSuspendedError
+    UserProfileSuspendedError,
+    SearchUserAccountNoResultError
 } from '../shared/exceptions'
 
 const userAccountsRouter = Router()
@@ -221,9 +222,15 @@ userAccountsRouter.get('/search', async (req, res): Promise<void> => {
             await new SearchUserAccountController().searchUserAccount(search)
         res.status(StatusCodes.OK).json(foundUserAccounts)
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+        if (err instanceof SearchUserAccountNoResultError) {
+            res.status(StatusCodes.NO_CONTENT).json({
+                message: (err as Error).message
+            })
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
     }
 })
 

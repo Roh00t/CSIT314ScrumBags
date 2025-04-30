@@ -12,7 +12,8 @@ import {
     UserAccountSuspendedError,
     UserAccountNotFoundError,
     InvalidCredentialsError,
-    UserProfileSuspendedError
+    UserProfileSuspendedError,
+    SearchUserAccountNoResultError
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
 
@@ -57,9 +58,7 @@ export default class UserAccount {
             .limit(1)
 
         if (!retrievedUser) {
-            throw new UserAccountNotFoundError(
-                "Couldn't find user of username: " + username
-            )
+            throw new UserAccountNotFoundError(username)
         }
 
         const areCredentialsVerified = await bcrypt.compare(
@@ -67,21 +66,15 @@ export default class UserAccount {
             retrievedUser.password
         )
         if (!areCredentialsVerified) {
-            throw new InvalidCredentialsError(
-                'Invalid credentials entered for user of username: ' + username
-            )
+            throw new InvalidCredentialsError(username)
         }
 
         if (retrievedUser.isSuspended) {
-            throw new UserAccountSuspendedError(
-                'User account ' + retrievedUser.username + ' is suspended'
-            )
+            throw new UserAccountSuspendedError(retrievedUser.username)
         }
 
-        if (retrievedUser.profileIsSuspended) {
-            throw new UserProfileSuspendedError(
-                'User profile ' + retrievedUser.userProfileLabel + ' is suspended'
-            )
+        if (retrievedUser.profileIsSuspended && retrievedUser.userProfileLabel) {
+            throw new UserProfileSuspendedError(retrievedUser.userProfileLabel)
         }
 
         return {
@@ -200,82 +193,6 @@ export default class UserAccount {
     }
 
     /**
-     * US-26: As a homeowner, I want to save the cleaners into my short list 
-     *        so that I can have an easier time for future reference
-     */
-    public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
-        const result = await this.db
-            .select()
-            .from(shortlistedCleanersTable)
-            .where(and(
-                eq(shortlistedCleanersTable.homeownerID, homeownerID),
-                eq(shortlistedCleanersTable.cleanerID, cleanerID)
-            ))
-        if (result.length > 0) {
-            throw new CleanerAlreadyShortlistedError(
-                "Already shortlisted cleaner of ID " + cleanerID
-            )
-        }
-
-        await this.db
-            .insert(shortlistedCleanersTable)
-            .values({ homeownerID, cleanerID })
-    }
-
-    /**
-     * US-28: As a homeowner, I want to view my shortlist so that I 
-     *        can have an easy time looking for a cleaner or service
-     */
-    public async viewShortlist(
-        homeownerID: number
-    ): Promise<string[]> {
-        const shortlistedCleaners = await this.db
-            .select({ cleanerID: shortlistedCleanersTable.cleanerID })
-            .from(shortlistedCleanersTable)
-            .where(eq(shortlistedCleanersTable.homeownerID, homeownerID))
-
-        // Retrieve cleaner names based on the cleanerIDs from shortlistedCleaners
-        const cleanerNames = await Promise.all(shortlistedCleaners.map(async (entry) => {
-            const [cleaner] = await this.db
-                .select({ cleanerName: userAccountsTable.username })
-                .from(userAccountsTable)
-                .where(eq(userAccountsTable.id, entry.cleanerID))
-
-            return cleaner?.cleanerName || "Unknown Cleaner"
-        }));
-
-        return cleanerNames
-    }
-
-    /**
-     * US-27: As a homeowner, I want to search through my shortlist so that 
-     *        I can find a specific cleaner or service I want
-     */
-    public async searchShortlist(
-        homeownerID: number,
-        search: string
-    ): Promise<string[]> {
-        const shortlistedCleaners = await this.db
-            .select({ cleanerName: userAccountsTable.username })
-            .from(shortlistedCleanersTable)
-            .leftJoin(servicesProvidedTable, eq(
-                shortlistedCleanersTable.cleanerID,
-                servicesProvidedTable.cleanerID
-            ))
-            .leftJoin(userAccountsTable, eq(
-                shortlistedCleanersTable.cleanerID,
-                userAccountsTable.id
-            ))
-            .where(and(
-                eq(shortlistedCleanersTable.homeownerID, homeownerID),
-                ilike(userAccountsTable.username, `%${search}%`),
-            ))
-            .groupBy(userAccountsTable.username)
-
-        return shortlistedCleaners.map(cl => cl.cleanerName || "Unknown Cleaner")
-    }
-
-    /**
      * US-3: As a user admin, I want to update user accounts 
      *       so that I can keep user information accurate
      */
@@ -342,7 +259,7 @@ export default class UserAccount {
             .limit(1)
 
         if (!res) {
-            throw new UserAccountNotFoundError("This user account doesn't exist")
+            throw new SearchUserAccountNoResultError(search)
         }
 
         return {

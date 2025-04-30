@@ -20,16 +20,19 @@ export type ServiceBookingReportData = {
     price: number
     date: Date
 }
+
 export type CleanerServiceBookingData = {
     bookingid: number
     serviceName: string
     date: Date
     homeOwnerName: string
 }
+
 export type ServiceData = {
     label: string
     category: string
 }
+
 export type AllServices = {
     serviceName: string
 }

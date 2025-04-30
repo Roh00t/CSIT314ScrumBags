@@ -1,23 +1,25 @@
 import { ServiceHistory } from "../shared/dataClasses"
 import UserAccount from "../entities/userAccount"
-import { Service } from "../entities/service"
+import { ServiceCategory } from "../entities/serviceCategory"
+import { ShortlistedCleaner } from "../entities/shortlistedCleaner"
+import { ServiceBooking } from "../entities/serviceBooking"
 
 /**
  * US-26: As a homeowner, I want to save the cleaners into my short list 
  *        so that I can have an easier time for future reference
  */
 export class AddToShortlistController {
-    private userAccount: UserAccount
+    private shortlistedCleaner: ShortlistedCleaner
 
     constructor() {
-        this.userAccount = new UserAccount()
+        this.shortlistedCleaner = new ShortlistedCleaner()
     }
 
     public async addToShortlist(
         homeownerID: number,
         cleanerID: number
     ): Promise<void> {
-        return await this.userAccount.addToShortlist(homeownerID, cleanerID)
+        return await this.shortlistedCleaner.addToShortlist(homeownerID, cleanerID)
     }
 }
 
@@ -26,14 +28,14 @@ export class AddToShortlistController {
  *        can have an easy time looking for a cleaner or service
  */
 export class ViewShortlistController {
-    private userAccount: UserAccount
+    private shortlistedCleaner: ShortlistedCleaner
 
     constructor() {
-        this.userAccount = new UserAccount()
+        this.shortlistedCleaner = new ShortlistedCleaner()
     }
 
     public async viewShortlist(homeownerID: number): Promise<string[]> {
-        return await this.userAccount.viewShortlist(homeownerID)
+        return await this.shortlistedCleaner.viewShortlist(homeownerID)
     }
 }
 
@@ -42,17 +44,17 @@ export class ViewShortlistController {
  *        I can find a specific cleaner or service I want
  */
 export class SearchShortlistController {
-    private userAccount: UserAccount
+    private shortlistedCleaner: ShortlistedCleaner
 
     constructor() {
-        this.userAccount = new UserAccount()
+        this.shortlistedCleaner = new ShortlistedCleaner()
     }
 
     public async searchShortlist(
         homeownerID: number,
         search: string
     ): Promise<string[]> {
-        return await this.userAccount.searchShortlist(homeownerID, search)
+        return await this.shortlistedCleaner.searchShortlist(homeownerID, search)
     }
 }
 
@@ -62,10 +64,10 @@ export class SearchShortlistController {
  *        so that I can keep track of my previous expenses and bookings
  */
 export class ViewServiceHistoryController {
-    private service: Service
+    private serviceBooking: ServiceBooking
 
     constructor() {
-        this.service = new Service()
+        this.serviceBooking = new ServiceBooking()
     }
 
     public async viewServiceHistory(
@@ -75,22 +77,22 @@ export class ViewServiceHistoryController {
         fromDate: Date | string | null,
         toDate: Date | string | null
     ): Promise<ServiceHistory[]> {
-        return await this.service.viewServiceHistory(
+        return await this.serviceBooking.viewServiceHistory(
             userID, cleanerName, service, fromDate, toDate
         )
     }
 }
 
 export class ViewAllServiceHistoryController {
-    private service: Service
+    private serviceBooking: ServiceBooking
 
     constructor() {
-        this.service = new Service()
+        this.serviceBooking = new ServiceBooking()
     }
 
     public async viewAllServiceHistory(
         userID: number
     ): Promise<ServiceHistory[]> {
-        return await this.service.viewAllServiceHistory(userID)
+        return await this.serviceBooking.viewAllServiceHistory(userID)
     }
 }

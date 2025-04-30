@@ -1,3 +1,4 @@
+import { ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { requireAuthMiddleware } from '../shared/middleware'
 import { UserAccountData } from '../shared/dataClasses'
 import { StatusCodes } from 'http-status-codes'
@@ -12,10 +13,6 @@ import {
     ViewServicesProvidedController,
 } from '../controllers/serviceControllers'
 import { Router } from 'express'
-import {
-    ServiceCategoryNotFoundError,
-    ServiceAlreadyProvidedError
-} from '../shared/exceptions'
 
 const servicesRouter = Router()
 
@@ -198,11 +195,11 @@ servicesRouter.post(
             )
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
-            if (err instanceof ServiceAlreadyProvidedError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    message: (err as Error).message
-                })
-            } else if (err instanceof ServiceCategoryNotFoundError) {
+            // if (err instanceof ServiceAl) {
+            //     res.status(StatusCodes.CONFLICT).json({
+            //         message: (err as Error).message
+            //     })
+            if (err instanceof ServiceCategoryNotFoundError) {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     message: (err as Error).message
                 })

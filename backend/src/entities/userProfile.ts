@@ -1,5 +1,5 @@
 import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles'
-import { UserProfileNotFoundError } from '../shared/exceptions'
+import { SearchUserProfileNoResultError } from '../shared/exceptions'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { ilike } from 'drizzle-orm'
@@ -13,7 +13,8 @@ export class UserProfile {
     }
 
     /**
-     * Create new user profile 
+     * US-8: As a user admin, I want to create new user 
+     *       profiles so that I can map them to user accounts
      */
     public async createNewUserProfile(profileName: string): Promise<boolean> {
         try {
@@ -92,7 +93,7 @@ export class UserProfile {
             .limit(1)
 
         if (!profile) {
-            throw new UserProfileNotFoundError("User profile doesn't exist")
+            throw new SearchUserProfileNoResultError(search)
         }
         return profile
     }

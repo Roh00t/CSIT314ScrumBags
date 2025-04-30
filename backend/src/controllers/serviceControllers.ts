@@ -1,19 +1,20 @@
 import { AllServices, ServiceProvidedData } from '../shared/dataClasses'
-import { Service } from '../entities/service'
+import { ServiceProvided } from '../entities/serviceProvided'
+import { ServiceCategory } from '../entities/serviceCategory'
 
 /**
  * US-33: As a Platform Manager, I want to create service categories, 
  *        to display more services which fit the requirements of our customers
  */
 export class CreateServiceCategoryController {
-    private service: Service
+    private serviceCategory: ServiceCategory
 
     constructor() {
-        this.service = new Service()
+        this.serviceCategory = new ServiceCategory()
     }
 
     public async createServiceCategory(categoryLabel: string): Promise<void> {
-        return await this.service.createServiceCategory(categoryLabel)
+        return await this.serviceCategory.createServiceCategory(categoryLabel)
     }
 }
 
@@ -24,14 +25,14 @@ export class CreateServiceCategoryController {
  * View all service 'categories' that exist
  */
 export class ViewServiceCategoriesController {
-    private service: Service
+    private serviceCategory: ServiceCategory
 
     constructor() {
-        this.service = new Service()
+        this.serviceCategory = new ServiceCategory()
     }
 
     public async viewServiceCategories(): Promise<string[]> {
-        return await this.service.viewServiceCategories()
+        return await this.serviceCategory.viewServiceCategories()
     }
 }
 
@@ -40,14 +41,17 @@ export class ViewServiceCategoriesController {
  *        so that I can keep the available services accurate and up to date
  */
 export class UpdateServiceCategoryController {
-    private service: Service
+    private serviceCategory: ServiceCategory
 
     constructor() {
-        this.service = new Service()
+        this.serviceCategory = new ServiceCategory()
     }
 
-    public async updateServiceCategory(category: string, newCategory: string): Promise<void> {
-        await this.service.updateServiceCategory(category, newCategory)
+    public async updateServiceCategory(
+        category: string,
+        newCategory: string
+    ): Promise<void> {
+        await this.serviceCategory.updateServiceCategory(category, newCategory)
     }
 }
 
@@ -56,14 +60,14 @@ export class UpdateServiceCategoryController {
  *        categories to remove services no longer provided 
  */
 export class DeleteServiceCategoryController {
-    private service: Service
+    private serviceCategory: ServiceCategory
 
     constructor() {
-        this.service = new Service()
+        this.serviceCategory = new ServiceCategory()
     }
 
     public async deleteServiceCategory(category: string): Promise<void> {
-        await this.service.deleteServiceCategory(category)
+        await this.serviceCategory.deleteServiceCategory(category)
     }
 }
 
@@ -72,14 +76,14 @@ export class DeleteServiceCategoryController {
  *        that I can quickly find and manage specific types of services 
  */
 export class SearchServiceCategoryController {
-    private service: Service
+    private serviceCategory: ServiceCategory
 
     constructor() {
-        this.service = new Service()
+        this.serviceCategory = new ServiceCategory()
     }
 
     public async searchServiceCategory(category: string): Promise<string> {
-        return await this.service.searchServiceCategory(category)
+        return await this.serviceCategory.searchServiceCategory(category)
     }
 }
 
@@ -90,17 +94,17 @@ export class SearchServiceCategoryController {
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
 export class ViewServicesProvidedController {
-    private service: Service
+    private serviceProvided: ServiceProvided
 
     constructor() {
-        this.service = new Service()
+        this.serviceProvided = new ServiceProvided()
     }
 
     public async viewServicesProvided(
         userID: number,
         serviceName: string | null
     ): Promise<ServiceProvidedData[]> {
-        return await this.service.viewServicesProvided(userID, serviceName)
+        return await this.serviceProvided.viewServicesProvided(userID, serviceName)
     }
 }
 
@@ -108,15 +112,15 @@ export class ViewServicesProvidedController {
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
 export class ViewAllServicesProvidedController {
-    private service: Service
+    private serviceProvided: ServiceProvided
 
     constructor() {
-        this.service = new Service()
+        this.serviceProvided = new ServiceProvided()
     }
 
     public async viewAllServicesProvided(
     ): Promise<AllServices[]> {
-        return await this.service.viewAllServicesProvided()
+        return await this.serviceProvided.viewAllServicesProvided()
     }
 }
 
@@ -125,10 +129,10 @@ export class ViewAllServicesProvidedController {
  *        that homeowners can view my services provided 
  */
 export class CreateServiceProvidedController {
-    private service: Service
+    private serviceProvided: ServiceProvided
 
     constructor() {
-        this.service = new Service()
+        this.serviceProvided = new ServiceProvided()
     }
 
     public async createServiceProvided(
@@ -138,7 +142,7 @@ export class CreateServiceProvidedController {
         description: string,
         price: number
     ): Promise<void> {
-        await this.service.createServiceProvided(
+        await this.serviceProvided.createServiceProvided(
             cleanerID,
             serviceName,
             serviceCategory,

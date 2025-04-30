@@ -3,12 +3,13 @@ import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
 import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { and, eq, gte, ilike, lt } from 'drizzle-orm'
+import { and, eq, gt, gte, ilike, lt } from 'drizzle-orm'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import {
     CleanerServiceBookingData,
-    ServiceBookingReportData
+    ServiceBookingReportData,
+    ServiceHistory
 } from '../shared/dataClasses'
 
 export class ServiceBooking {
@@ -262,5 +263,120 @@ export class ServiceBooking {
                 homeOwnerName: qr.user_accounts?.username
             } as CleanerServiceBookingData
         })
+    }
+
+    public async viewAllServiceHistory(
+        userID: number
+    ): Promise<ServiceHistory[]> {
+        const results = await this.db
+            .select({
+                cleanerName: userAccountsTable.username,
+                serviceName: servicesProvidedTable.serviceName,
+                date: serviceBookingsTable.startTimestamp,
+                price: servicesProvidedTable.price,
+                status: serviceBookingsTable.status
+            })
+            .from(serviceBookingsTable)
+            .leftJoin(
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+            )
+            .leftJoin(
+                userAccountsTable,
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+            )
+            .where(eq(serviceBookingsTable.homeownerID, userID))
+
+        return results.map(res => {
+            return {
+                cleanerName: res.cleanerName,
+                serviceName: res.serviceName,
+                date: res.date,
+                price: res.price,
+                status: res.status
+            } as ServiceHistory
+        })
+    }
+
+    /**
+     * US-32: As a homeowner, I want to view the history of the 
+     *        cleaner services used, filtered by services, date period 
+     *        so that I can keep track of my previous expenses and bookings
+     * 
+     * View & Search (by username) Service History filtered by service and date 
+     */
+    public async viewServiceHistory(
+        userID: number,
+        cleanerName: string | null,
+        service: string | null,
+        fromDate: Date | string | null,
+        toDate: Date | string | null
+    ): Promise<ServiceHistory[]> {
+
+        const conditions = [
+            eq(serviceBookingsTable.homeownerID, userID),
+            eq(serviceBookingsTable.status, BookingStatus.Confirmed)
+        ];
+
+        if (service) {
+            conditions.push(eq(servicesProvidedTable.serviceName, service));
+        }
+
+        if (fromDate) {
+            const normalizedFromDate = typeof fromDate === 'string' ? new Date(fromDate) : fromDate;
+            const startOfFromDay = new Date(normalizedFromDate.setHours(0, 0, 0, 0));
+
+            conditions.push(
+                gt(serviceBookingsTable.startTimestamp, startOfFromDay)
+            );
+        }
+
+        if (toDate) {
+            const normalizedToDate = typeof toDate === 'string' ? new Date(toDate) : toDate;
+            const startOfToDay = new Date(normalizedToDate.setHours(0, 0, 0, 0));
+            const endOfToDay = new Date(startOfToDay);
+            endOfToDay.setDate(endOfToDay.getDate() + 1);
+
+            conditions.push(
+                lt(serviceBookingsTable.startTimestamp, endOfToDay)
+            );
+        }
+
+        if (cleanerName) {
+            conditions.push(eq(userAccountsTable.username, cleanerName));
+        }
+
+        const results = await this.db
+            .select({
+                cleanerName: userAccountsTable.username,
+                serviceName: servicesProvidedTable.serviceName,
+                date: serviceBookingsTable.startTimestamp,
+                price: servicesProvidedTable.price,
+                status: serviceBookingsTable.status
+            })
+            .from(serviceBookingsTable)
+            .leftJoin(
+                servicesProvidedTable,
+                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+            )
+            .leftJoin(
+                userAccountsTable,
+                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+            )
+            .where(and(...conditions));
+
+        // Handle no results
+        if (results.length === 0) {
+            throw new Error("No service history found for the given criteria.");
+        }
+
+        // Map and return results
+        return results.map(res => ({
+            cleanerName: res.cleanerName,
+            serviceName: res.serviceName,
+            date: new Date(res.date),
+            price: res.price,
+            status: res.status
+        }));
     }
 }
