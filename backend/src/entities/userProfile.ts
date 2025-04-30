@@ -28,13 +28,14 @@ export class UserProfile {
     }
 
     /**
-     * View user profile 
+     * US-9: As a user admin, I want to view user profiles 
+     *       so that I can access profile information
      */
     public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
         const result = await this.db
             .select({ label: userProfilesTable.label, isSuspended: userProfilesTable.isSuspended })
             .from(userProfilesTable)
-    
+
         return result.map(profile => ({
             name: profile.label,
             isSuspended: profile.isSuspended
@@ -42,7 +43,8 @@ export class UserProfile {
     }
 
     /**
-     *  Update user profiles
+     * US-10: As a user admin, I want to update user profiles 
+     *        so that I can keep profile information up to date
      */
     public async updateUserProfile(
         oldProfileName: string,

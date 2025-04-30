@@ -16,8 +16,10 @@ export class CreateServiceCategoryController {
     }
 }
 
-
 /**
+ * US-34: As a Platform Manager, I want to view current service 
+ *        categories to see the current services provided
+ * 
  * View all service 'categories' that exist
  */
 export class ViewServiceCategoriesController {
@@ -75,7 +77,11 @@ export class SearchServiceCategoryController {
         return await this.service.searchServiceCategory(category)
     }
 }
+
 /**
+ * US-14: As a cleaner, I want to view my service 
+ *        so that I can check on my services provided
+ * 
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
 export class ViewServicesProvidedController {
@@ -108,8 +114,6 @@ export class ViewAllServicesProvidedController {
         return await this.service.viewAllServicesProvided()
     }
 }
-
-
 
 /**
  * Cleaners can add the types of services they provide

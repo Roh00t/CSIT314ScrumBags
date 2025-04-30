@@ -46,6 +46,10 @@ homeownerRouter.post(
     }
 )
 
+/**
+ * US-28: As a homeowner, I want to view my shortlist so that I 
+ *        can have an easy time looking for a cleaner or service
+ */
 homeownerRouter.get(
     '/shortlist',
     requireAuthMiddleware,
@@ -63,7 +67,7 @@ homeownerRouter.get(
                     message: "Shortlist retrieved successfully",
                     data: searchedShortlistedCleaners
                 })
-            } else {
+            } else { // US-28
                 const shortlistedCleaners =
                     await new ViewShortlistController()
                         .viewShortlist(homeownerID)
@@ -82,6 +86,11 @@ homeownerRouter.get(
     }
 )
 
+/**
+ * US-32: As a homeowner, I want to view the history of the 
+ *        cleaner services used, filtered by services, date period 
+ *        so that I can keep track of my previous expenses and bookings
+ */
 homeownerRouter.post(
     '/servicehistory',
     requireAuthMiddleware,

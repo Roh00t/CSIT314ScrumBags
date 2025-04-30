@@ -11,7 +11,8 @@ import { Router } from 'express'
 const userProfilesRouter = Router()
 
 /**
- * Create user profile
+ * US-8: As a user admin, I want to create new user 
+ *       profiles so that I can map them to user accounts
  */
 userProfilesRouter.post('/', async (req, res): Promise<void> => {
     try {
@@ -29,6 +30,10 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * US-9: As a user admin, I want to view user profiles 
+ *       so that I can access profile information
+ */
 userProfilesRouter.get('/', async (_, res): Promise<void> => {
     try {
         const profiles =
@@ -41,6 +46,10 @@ userProfilesRouter.get('/', async (_, res): Promise<void> => {
     }
 })
 
+/**
+ * US-10: As a user admin, I want to update user profiles 
+ *        so that I can keep profile information up to date
+ */
 userProfilesRouter.put('/update', async (req, res): Promise<void> => {
     try {
         const { oldProfileName, newProfileName } = req.body

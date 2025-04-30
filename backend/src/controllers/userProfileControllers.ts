@@ -13,6 +13,10 @@ export class CreateNewUserProfileController {
     }
 }
 
+/**
+ * US-9: As a user admin, I want to view user profiles 
+ *       so that I can access profile information
+ */
 export class ViewUserProfilesController {
     private userProfile: UserProfile
 

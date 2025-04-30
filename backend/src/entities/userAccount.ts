@@ -24,33 +24,12 @@ export default class UserAccount {
     }
 
     /**
-     * Create new user account
-     * @param password The ENCODED password
-     */
-    public async createNewUserAccount(
-        createAs: string,
-        username: string,
-        password: string
-    ): Promise<boolean> {
-        const [userProfile] = await this.db
-            .select()
-            .from(userProfilesTable)
-            .where(eq(userProfilesTable.label, createAs))
-
-        if (!userProfile) {
-            return false
-        }
-
-        await this.db.insert(userAccountsTable).values({
-            username: username,
-            password: password,
-            userProfileId: userProfile.id
-        })
-        return true
-    }
-
-    /**
-     * Login user account
+     * US-6: As a user admin, I want to log in so that I can access my admin features
+     * US-18: As a cleaner, I want to log in so that I can manage my services
+     * US-19: As a homeowner, I want to log in so that I can manage my short list
+     * US-41: As a Platform Manager, I want to log in to the 
+     *        system so that I can manage platform operations
+     * 
      * @param password The PLAINTEXT password (not encoded)
      */
     public async login(
@@ -110,8 +89,37 @@ export default class UserAccount {
     }
 
     /**
-     * View all user accounts
+     * US-1: As a user admin, I want to create a user 
+     *       account so that new users can join the platform
+     * 
+     * @param password The ENCODED password
      */
+    public async createNewUserAccount(
+        createAs: string,
+        username: string,
+        password: string
+    ): Promise<boolean> {
+        const [userProfile] = await this.db
+            .select()
+            .from(userProfilesTable)
+            .where(eq(userProfilesTable.label, createAs))
+
+        if (!userProfile) {
+            return false
+        }
+
+        await this.db.insert(userAccountsTable).values({
+            username: username,
+            password: password,
+            userProfileId: userProfile.id
+        })
+        return true
+    }
+
+    /**
+    * US-2: As a user admin, I want to view user accounts 
+    *       so that I can see user information
+    */
     public async viewUserAccounts(): Promise<UserAccountData[]> {
         const query = await this.db
             .select({
@@ -136,9 +144,15 @@ export default class UserAccount {
         })
     }
 
-    // This async Function only retrieves Cleaner names under the assumption that
-    // There will be another page to show the Services provided by the Cleaner.
-    // 15042025 2257 Hours
+
+    /**
+     * US-25: As a homeowner, I want to view cleaners 
+     *        so that I can see their services provided
+     * 
+     * This async Function only retrieves Cleaner names under the assumption that
+     * There will be another page to show the Services provided by the Cleaner.
+     * 15042025 2257 Hours
+     */
     public async viewCleaners(
         cleanerName: string | null
     ): Promise<CleanerServicesData[]> {
@@ -204,9 +218,12 @@ export default class UserAccount {
             .values({ homeownerID, cleanerID })
     }
 
+    /**
+     * US-28: As a homeowner, I want to view my shortlist so that I 
+     *        can have an easy time looking for a cleaner or service
+     */
     public async viewShortlist(
         homeownerID: number
-
     ): Promise<string[]> {
         const shortlistedCleaners = await this.db
             .select({ cleanerID: shortlistedCleanersTable.cleanerID })
@@ -251,7 +268,8 @@ export default class UserAccount {
     }
 
     /**
-     * Update user account
+     * US-3: As a user admin, I want to update user accounts 
+     *       so that I can keep user information accurate
      */
     public async updateUserAccount(
         userID: number,

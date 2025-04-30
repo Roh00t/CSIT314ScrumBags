@@ -1,12 +1,15 @@
-import { CleanerServiceBookingData, ServiceBookingReportData } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
 import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
+import { and, eq, gte, ilike, lt } from 'drizzle-orm'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { and, eq, gte, ilike, lt } from 'drizzle-orm'
+import {
+    CleanerServiceBookingData,
+    ServiceBookingReportData
+} from '../shared/dataClasses'
 
 export class ServiceBooking {
     private db: DrizzleClient
@@ -15,6 +18,10 @@ export class ServiceBooking {
         this.db = drizzle(process.env.DATABASE_URL!)
     }
 
+    /**
+     * US-38: As a Platform Manager, I want to generate daily reports so 
+     *        that I can view the daily statistics of cleaners and services
+     */
     public async generateDailyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {

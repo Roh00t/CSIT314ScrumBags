@@ -15,6 +15,10 @@ declare module 'express-session' {
     }
 }
 
+/**
+ * US-38: As a Platform Manager, I want to generate daily reports so 
+ *        that I can view the daily statistics of cleaners and services
+ */
 platformManagerRouter.post('/daily', async (req, res): Promise<void> => {
     try {
         const { chosenDate } = req.body

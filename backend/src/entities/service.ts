@@ -8,6 +8,7 @@ import { userAccountsTable } from '../db/schema/userAccounts'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
 import { and, eq, gt, lt, ilike } from 'drizzle-orm'
+
 export class Service {
     private db: DrizzleClient
 
@@ -15,17 +16,33 @@ export class Service {
         this.db = drizzle(process.env.DATABASE_URL!)
     }
 
+    /**
+     * US-33: As a Platform Manager, I want to create service categories, 
+     *        to display more services which fit the requirements of our customers
+     */
     public async createServiceCategory(
         categoryLabel: string
     ): Promise<void> {
         await this.db.insert(serviceCategoriesTable).values({ label: categoryLabel })
     }
 
+    /**
+     * US-34: As a Platform Manager, I want to view current service 
+     *        categories to see the current services provided
+     * 
+     * View all service 'categories' that exist
+     */
     public async viewServiceCategories(): Promise<string[]> {
         const allServiceCategories = await this.db.select().from(serviceCategoriesTable)
         return allServiceCategories.map(sc => sc.label)
     }
 
+    /**
+     * US-14: As a cleaner, I want to view my service 
+     *        so that I can check on my services provided
+     * 
+     * Gets all the service 'types' provided by a cleaner (by their userID)
+     */
     public async viewServicesProvided(
         userID: number,
         serviceName: string | null
@@ -129,6 +146,10 @@ export class Service {
         return uniqueServices.map((service) => service.serviceName);
     }
 
+    /**
+     * US-13: As a cleaner, I want to create my service so 
+     *        that homeowners can view my services provided 
+     */
     public async createServiceProvided(
         cleanerID: number,
         serviceName: string,
@@ -208,7 +229,11 @@ export class Service {
     }
 
     /**
-     * View & Search (by username) Service History filtered by service and date
+     * US-32: As a homeowner, I want to view the history of the 
+     *        cleaner services used, filtered by services, date period 
+     *        so that I can keep track of my previous expenses and bookings
+     * 
+     * View & Search (by username) Service History filtered by service and date 
      */
     public async viewServiceHistory(
         userID: number,

@@ -17,6 +17,10 @@ export class AddToShortlistController {
     }
 }
 
+/**
+ * US-28: As a homeowner, I want to view my shortlist so that I 
+ *        can have an easy time looking for a cleaner or service
+ */
 export class ViewShortlistController {
     private userAccount: UserAccount
 
@@ -44,11 +48,16 @@ export class SearchShortlistController {
     }
 }
 
+/**
+ * US-32: As a homeowner, I want to view the history of the 
+ *        cleaner services used, filtered by services, date period 
+ *        so that I can keep track of my previous expenses and bookings
+ */
 export class ViewServiceHistoryController {
-    private Service: Service
+    private service: Service
 
     constructor() {
-        this.Service = new Service()
+        this.service = new Service()
     }
 
     public async viewServiceHistory(
@@ -58,22 +67,22 @@ export class ViewServiceHistoryController {
         fromDate: Date | string | null,
         toDate: Date | string | null
     ): Promise<ServiceHistory[]> {
-        return await this.Service.viewServiceHistory(
+        return await this.service.viewServiceHistory(
             userID, cleanerName, service, fromDate, toDate
         )
     }
 }
 
 export class ViewAllServiceHistoryController {
-    private Service: Service
+    private service: Service
 
     constructor() {
-        this.Service = new Service()
+        this.service = new Service()
     }
 
     public async viewAllServiceHistory(
         userID: number
     ): Promise<ServiceHistory[]> {
-        return await this.Service.viewAllServiceHistory(userID)
+        return await this.service.viewAllServiceHistory(userID)
     }
 }

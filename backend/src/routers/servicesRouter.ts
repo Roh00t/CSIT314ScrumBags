@@ -26,7 +26,8 @@ declare module 'express-session' {
 }
 
 /**
- * Create new service 'categories'
+ * US-33: As a Platform Manager, I want to create service categories, 
+ *        to display more services which fit the requirements of our customers
  */
 servicesRouter.post('/categories', async (req, res): Promise<void> => {
     try {
@@ -40,9 +41,10 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
     }
 })
 
-
-
 /**
+ * US-34: As a Platform Manager, I want to view current service 
+ *        categories to see the current services provided
+ * 
  * View all service 'categories' that exist
  */
 servicesRouter.get('/categories', async (_, res): Promise<void> => {
@@ -50,6 +52,7 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
         const allServiceCategories =
             await new ViewServiceCategoriesController()
                 .viewServiceCategories()
+
         res.status(StatusCodes.OK).json(allServiceCategories)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -57,8 +60,9 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
         })
     }
 })
+
 /**
- * update service 'categories'
+ * Update service 'categories'
  */
 servicesRouter.put('/categories', async (req, res): Promise<void> => {
     try {
@@ -71,29 +75,9 @@ servicesRouter.put('/categories', async (req, res): Promise<void> => {
         })
     }
 })
+
 /**
- * delete service 'categories'
- */
-servicesRouter.delete('/categories', async (req, res): Promise<void> => {
-    try {
-        const { category } = req.body
-        await new DeleteServiceCategoryController().deleteServiceCategory(category)
-        res.status(StatusCodes.OK).send()
-    } catch (err) {
-        if (err instanceof ServiceCategoryNotFoundError) {
-            res.status(StatusCodes.NOT_FOUND).json({
-                message: (err as Error).message
-            })
-        }
-        else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
-    }
-})
-/**
- * delete service 'categories'
+ * Delete service 'categories'
  */
 servicesRouter.delete('/categories', async (req, res): Promise<void> => {
     try {
@@ -140,12 +124,12 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
 /**
  * Gets all the services
  */
-servicesRouter.get('/', async (req, res): Promise<void> => {
+servicesRouter.get('/', async (_, res): Promise<void> => {
     try {
-
         const allServices =
             await new ViewAllServicesProvidedController()
                 .viewAllServicesProvided()
+
         res.status(StatusCodes.OK).json(allServices)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -155,6 +139,9 @@ servicesRouter.get('/', async (req, res): Promise<void> => {
 })
 
 /**
+ * US-14: As a cleaner, I want to view my service 
+ *        so that I can check on my services provided
+ * 
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
 servicesRouter.post('/:id', async (req, res): Promise<void> => {
@@ -175,7 +162,8 @@ servicesRouter.post('/:id', async (req, res): Promise<void> => {
 })
 
 /**
- * Cleaners can add the types of services they provide
+ * US-13: As a cleaner, I want to create my service so 
+ *        that homeowners can view my services provided 
  */
 servicesRouter.post(
     '/me',

@@ -3,18 +3,13 @@ import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
 
-export class ViewUserAccountsController {
-    private userAccount: UserAccount
-
-    constructor() {
-        this.userAccount = new UserAccount()
-    }
-
-    public async viewUserAccounts(): Promise<UserAccountData[]> {
-        return await this.userAccount.viewUserAccounts()
-    }
-}
-
+/**
+ * US-6: As a user admin, I want to log in so that I can access my admin features
+ * US-18: As a cleaner, I want to log in so that I can manage my services
+ * US-19: As a homeowner, I want to log in so that I can manage my short list
+ * US-41: As a Platform Manager, I want to log in to the 
+ *        system so that I can manage platform operations
+ */
 export class LoginController {
     private userAccount: UserAccount
 
@@ -30,6 +25,9 @@ export class LoginController {
     }
 }
 
+/**
+ * US-1 
+ */
 export class CreateNewUserAccountController {
     private userAccount: UserAccount
 
@@ -38,6 +36,10 @@ export class CreateNewUserAccountController {
     }
 
     /**
+     * 
+     * US-1: As a user admin, I want to create a user 
+     *       account so that new users can join the platform
+     * 
      * @param password The PLAINTEXT password (not encoded)
      */
     public async createNewUserAccount(
@@ -51,6 +53,21 @@ export class CreateNewUserAccountController {
             username,
             hashedPassword
         )
+    }
+}
+
+/**
+ * US-2: As a user admin, I want to view user accounts so that I can see user information
+ */
+export class ViewUserAccountsController {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async viewUserAccounts(): Promise<UserAccountData[]> {
+        return await this.userAccount.viewUserAccounts()
     }
 }
 
@@ -88,7 +105,7 @@ export class SuspendUserAccountController {
     }
     public async unsuspendUserAccount(userID: number) {
         await this.userAccount.unsuspendUserAccount(userID);
-      }
+    }
 }
 
 export class SearchUserAccountController {

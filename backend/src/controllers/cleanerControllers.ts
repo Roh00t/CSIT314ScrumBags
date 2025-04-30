@@ -2,6 +2,10 @@ import { CleanerServicesData, CleanerServiceBookingData } from '../shared/dataCl
 import UserAccount from '../entities/userAccount'
 import { ServiceBooking } from '../entities/serviceBooking'
 
+/**
+ * US-25: As a homeowner, I want to view cleaners 
+ *        so that I can see their services provided
+ */
 export class ViewCleanersController {
     private userAccount: UserAccount
 
