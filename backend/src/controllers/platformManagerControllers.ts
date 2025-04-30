@@ -25,6 +25,19 @@ export class GenerateWeeklyReportController {
     public async generateWeeklyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
-        return await this.serviceBooking.generateDailyReport(startDate)
+        return await this.serviceBooking.generateWeeklyReport(startDate)
+    }
+}
+export class GenerateMonthlyReportController {
+    private serviceBooking: ServiceBooking
+
+    constructor() {
+        this.serviceBooking = new ServiceBooking()
+    }
+
+    public async generateMonthlyReport(
+        startDate: Date
+    ): Promise<ServiceBookingReportData[]> {
+        return await this.serviceBooking.generateMonthlyReport(startDate)
     }
 }

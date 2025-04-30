@@ -3,7 +3,7 @@ import { UserProfileNotFoundError } from '../shared/exceptions'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { eq } from 'drizzle-orm'
-
+import { ilike } from 'drizzle-orm';
 export class UserProfile {
     private db: DrizzleClient
 
@@ -30,11 +30,15 @@ export class UserProfile {
     /**
      * View user profile 
      */
-    public async viewUserProfiles(): Promise<string[]> {
+    public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
         const result = await this.db
-            .select({ label: userProfilesTable.label })
+            .select({ label: userProfilesTable.label, isSuspended: userProfilesTable.isSuspended })
             .from(userProfilesTable)
-        return result.map(res => res.label)
+    
+        return result.map(profile => ({
+            name: profile.label,
+            isSuspended: profile.isSuspended
+        }))
     }
 
     /**
@@ -59,7 +63,15 @@ export class UserProfile {
             .set({ isSuspended: true })
             .where(eq(userProfilesTable.label, profileName))
     }
-
+    /**
+     * Unsuspend user profile 
+     */
+    public async unsuspendUserProfile(profileName: string): Promise<void> {
+        await this.db
+            .update(userProfilesTable)
+            .set({ isSuspended: false })
+            .where(eq(userProfilesTable.label, profileName))
+    }
     /**
      * Search user profiles
      */
@@ -67,7 +79,7 @@ export class UserProfile {
         const [profile] = await this.db
             .select()
             .from(userProfilesTable)
-            .where(eq(userProfilesTable.label, search))
+            .where(ilike(userProfilesTable.label, `%${search}%`)) // partial + case-insensitive
             .limit(1)
 
         if (!profile) {

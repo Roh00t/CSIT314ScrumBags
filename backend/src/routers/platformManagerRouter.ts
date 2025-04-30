@@ -1,7 +1,8 @@
 import { UserAccountData } from '../shared/dataClasses'
 import {
     GenerateWeeklyReportController,
-    GenerateDailyReportController
+    GenerateDailyReportController,
+    GenerateMonthlyReportController
 } from '../controllers/platformManagerControllers'
 import { StatusCodes } from 'http-status-codes'
 import { Router } from 'express'
@@ -16,11 +17,15 @@ declare module 'express-session' {
 
 platformManagerRouter.post('/daily', async (req, res): Promise<void> => {
     try {
-        const { chosenDate } = req.body;
-        const myDate = new Date(Date.parse(chosenDate));
+        const { chosenDate } = req.body
+        const normalizedDate = new Date(chosenDate)
+        normalizedDate.setHours(0, 0, 0, 0)
+
         const dailyReport =
-            await new GenerateDailyReportController().generateDailyReport(myDate);
-        res.status(StatusCodes.OK).json(dailyReport);
+            await new GenerateDailyReportController()
+                .generateDailyReport(normalizedDate)
+
+        res.status(StatusCodes.OK).json(dailyReport)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message,
@@ -30,11 +35,15 @@ platformManagerRouter.post('/daily', async (req, res): Promise<void> => {
 
 platformManagerRouter.post('/weekly', async (req, res): Promise<void> => {
     try {
-        const { chosenDate } = req.body;
-        const myDate = new Date(Date.parse(chosenDate));
-        const dailyReport =
-            await new GenerateWeeklyReportController().generateWeeklyReport(myDate);
-        res.status(StatusCodes.OK).json(dailyReport);
+        const { chosenDate } = req.body
+        const normalizedDate = new Date(chosenDate)
+        normalizedDate.setHours(0, 0, 0, 0)
+
+        const weeklyReport =
+            await new GenerateWeeklyReportController()
+                .generateWeeklyReport(normalizedDate)
+
+        res.status(StatusCodes.OK).json(weeklyReport)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message,
@@ -42,18 +51,22 @@ platformManagerRouter.post('/weekly', async (req, res): Promise<void> => {
     }
 })
 
-// platformManagerRouter.post('/monthly', async (req, res): Promise<void> => {
-//     try {
-//         const { chosenDate } = req.body;
-//         const myDate = new Date(Date.parse(chosenDate));
-//         const dailyReport =
-//             await new GenerateDailyReportController().generateDailyReport(myDate);
-//         res.status(StatusCodes.OK).json(dailyReport);
-//     } catch (err) {
-//         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-//             message: (err as Error).message,
-//         });
-//     }
-// })
+platformManagerRouter.post('/monthly', async (req, res): Promise<void> => {
+    try {
+        const { chosenDate } = req.body
+        const normalizedDate = new Date(chosenDate)
+        normalizedDate.setHours(0, 0, 0, 0)
+
+        const monthlyReport =
+            await new GenerateMonthlyReportController()
+                .generateMonthlyReport(normalizedDate)
+
+        res.status(StatusCodes.OK).json(monthlyReport)
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message,
+        });
+    }
+})
 
 export default platformManagerRouter

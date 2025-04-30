@@ -3,17 +3,18 @@ import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { UserAccountData } from '../shared/dataClasses'
 import {
     CreateNewUserAccountController,
+    SuspendUserAccountController,
     UpdateUserAccountController,
+    SearchUserAccountController,
     ViewUserAccountsController,
     LoginController,
-    SuspendUserAccountController,
-    SearchUserAccountController,
 } from '../controllers/userAccountControllers'
 import { Router } from 'express'
 import {
     UserAccountSuspendedError,
     InvalidCredentialsError,
-    UserAccountNotFoundError
+    UserAccountNotFoundError,
+    UserProfileSuspendedError
 } from '../shared/exceptions'
 
 const userAccountsRouter = Router()
@@ -80,7 +81,10 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
             res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
         } else if (err instanceof InvalidCredentialsError) {
             res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message })
-        } else if (err instanceof UserAccountSuspendedError) {
+        } else if (
+            err instanceof UserAccountSuspendedError ||
+            err instanceof UserProfileSuspendedError
+        ) {
             res.status(StatusCodes.LOCKED).json({ message: err.message })
         } else {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -101,10 +105,12 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
     }
 })
 
-userAccountsRouter.get('/cleaners', async (_, res): Promise<void> => {
+userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
+    const { cleanerName } = req.body
+
     try {
         const allAvailableCleaners =
-            await new ViewCleanersController().viewCleaners()
+            await new ViewCleanersController().viewCleaners(cleanerName)
         res.status(StatusCodes.OK).json(allAvailableCleaners)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -136,6 +142,20 @@ userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
         await new SuspendUserAccountController().suspendUserAccount(id)
         res.status(StatusCodes.OK).json({
             message: "User account of ID '" + id + "' has been suspended"
+        })
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
+userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
+    try {
+        const { id } = req.body
+        await new SuspendUserAccountController().unsuspendUserAccount(id)
+        res.status(StatusCodes.OK).json({
+            message: "User account of ID '" + id + "' has been unsuspended"
         })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

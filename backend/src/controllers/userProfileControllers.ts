@@ -20,7 +20,7 @@ export class ViewUserProfilesController {
         this.userProfile = new UserProfile()
     }
 
-    public async viewUserProfiles(): Promise<string[]> {
+    public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
         return await this.userProfile.viewUserProfiles()
     }
 }
@@ -52,6 +52,9 @@ export class SuspendUserProfileController {
 
     public async updateUserProfile(profileName: string): Promise<void> {
         await this.userProfile.suspendUserProfile(profileName)
+    }
+    public async unsuspendProfile(profileName: string): Promise<void> {
+        await this.userProfile.unsuspendUserProfile(profileName)
     }
 }
 
