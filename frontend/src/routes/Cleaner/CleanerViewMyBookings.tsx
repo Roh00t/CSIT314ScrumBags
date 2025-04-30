@@ -58,7 +58,7 @@ const CleanerViewMyBookings: React.FC = () => {
         {
           cleanerId: sessionUser.id,
           bookingid: bookingId,
-          service: search,
+          service: serviceName,
           homeOwnerName: homeowner,
           fromDate: fromDate ? formatDate(fromDate) : null,
           toDate: toDate ? formatDate(toDate) : null,
