@@ -91,19 +91,24 @@ export class Service {
     }
 
 
+    /**
+     * US-35: As a Platform Manager, I want to update service categories 
+     *        so that I can keep the available services accurate and up to date
+     */
     public async updateServiceCategory(
         category: string,
         newCategory: string
     ): Promise<void> {
-        await this.db.update(
-            serviceCategoriesTable
-        ).set({
-            label: newCategory
-        }).where(
-            eq(serviceCategoriesTable.label,
-                category))
+        await this.db
+            .update(serviceCategoriesTable)
+            .set({ label: newCategory })
+            .where(eq(serviceCategoriesTable.label, category))
     }
 
+    /**
+     * US-36: As a Platform Manager, I want to delete service 
+     *        categories to remove services no longer provided 
+     */
     public async deleteServiceCategory(
         category: string
     ): Promise<void> {
@@ -121,6 +126,10 @@ export class Service {
             .where(eq(serviceCategoriesTable.label, category))
     }
 
+    /**
+     * US-37: As a Platform Manager, I want to search service categories so 
+     *        that I can quickly find and manage specific types of services 
+     */
     public async searchServiceCategory(
         category: string
     ): Promise<string> {

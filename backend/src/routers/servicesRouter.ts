@@ -62,12 +62,15 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
 })
 
 /**
- * Update service 'categories'
+ * US-35: As a Platform Manager, I want to update service categories 
+ *        so that I can keep the available services accurate and up to date
  */
 servicesRouter.put('/categories', async (req, res): Promise<void> => {
     try {
         const { category, newCategory } = req.body
-        await new UpdateServiceCategoryController().updateServiceCategory(category, newCategory)
+        await new UpdateServiceCategoryController().updateServiceCategory(
+            category, newCategory
+        )
         res.status(StatusCodes.OK).send()
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -77,7 +80,8 @@ servicesRouter.put('/categories', async (req, res): Promise<void> => {
 })
 
 /**
- * Delete service 'categories'
+ * US-36: As a Platform Manager, I want to delete service 
+ *        categories to remove services no longer provided 
  */
 servicesRouter.delete('/categories', async (req, res): Promise<void> => {
     try {
@@ -99,7 +103,8 @@ servicesRouter.delete('/categories', async (req, res): Promise<void> => {
 })
 
 /**
- * Search service "categories"
+ * US-37: As a Platform Manager, I want to search service categories so 
+ *        that I can quickly find and manage specific types of services 
  */
 servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
     try {
@@ -122,6 +127,8 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
 })
 
 /**
+ * TODO: What user story is this??
+ * 
  * Gets all the services
  */
 servicesRouter.get('/', async (_, res): Promise<void> => {

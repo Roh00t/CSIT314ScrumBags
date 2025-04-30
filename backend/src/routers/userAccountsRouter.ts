@@ -164,6 +164,10 @@ userAccountsRouter.post('/update', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * US-4: As a user admin, I want to suspend user accounts 
+ *       so that I can restrict access when needed
+ */
 userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
     try {
         const { id } = req.body
@@ -178,6 +182,9 @@ userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * TODO: Remove for final submission (??)
+ */
 userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
     try {
         const { id } = req.body
@@ -192,6 +199,10 @@ userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * US-5: As a user admin, I want to search for user 
+ *       accounts so that I can locate specific users
+ */
 userAccountsRouter.get('/search', async (req, res): Promise<void> => {
     try {
         const search = req.query.search as string | undefined

@@ -67,6 +67,10 @@ export class ServiceBooking {
         })
     }
 
+    /**
+     * US-39: As a Platform Manager, I want to generate weekly reports so 
+     *        that I can view the weekly statistics of cleaners and services
+     */
     public async generateWeeklyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
@@ -112,6 +116,10 @@ export class ServiceBooking {
         })
     }
 
+    /**
+     * US-40: As a Platform Manager, I want to generate monthly reports so 
+     *        that I can view the monthly statistics of cleaners and services
+     */
     public async generateMonthlyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
@@ -159,6 +167,11 @@ export class ServiceBooking {
         })
     }
 
+    /**
+     * US-23: As a cleaner, I want to view the history of my 
+     *        confirmed services, filtered by services, date period 
+     *        so that I can track my work and manage my schedule
+     */
     public async viewCleanerServiceHistory(
         cleanerID: number,
         startDate: Date | null,

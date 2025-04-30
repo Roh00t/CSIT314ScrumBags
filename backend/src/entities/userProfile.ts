@@ -14,9 +14,7 @@ export class UserProfile {
     /**
      * Create new user profile 
      */
-    public async createNewUserProfile(
-        profileName: string
-    ): Promise<boolean> {
+    public async createNewUserProfile(profileName: string): Promise<boolean> {
         try {
             await this.db
                 .insert(userProfilesTable)
@@ -33,7 +31,10 @@ export class UserProfile {
      */
     public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
         const result = await this.db
-            .select({ label: userProfilesTable.label, isSuspended: userProfilesTable.isSuspended })
+            .select({
+                label: userProfilesTable.label,
+                isSuspended: userProfilesTable.isSuspended
+            })
             .from(userProfilesTable)
 
         return result.map(profile => ({
@@ -57,7 +58,8 @@ export class UserProfile {
     }
 
     /**
-     * Suspend user profile 
+     * US-11: As a user admin, I want to suspend user profiles 
+     *        so that I can restrict user access if necessary
      */
     public async suspendUserProfile(profileName: string): Promise<void> {
         await this.db
@@ -65,7 +67,9 @@ export class UserProfile {
             .set({ isSuspended: true })
             .where(eq(userProfilesTable.label, profileName))
     }
+
     /**
+     * TODO: Remove this from submission (??)
      * Unsuspend user profile 
      */
     public async unsuspendUserProfile(profileName: string): Promise<void> {
@@ -74,8 +78,10 @@ export class UserProfile {
             .set({ isSuspended: false })
             .where(eq(userProfilesTable.label, profileName))
     }
+
     /**
-     * Search user profiles
+     * US-12: As a user admin, I want to search for user profiles 
+     *        so that I can find specific user profiles
      */
     public async searchUserProfile(search: string): Promise<UserProfilesSelect> {
         const [profile] = await this.db

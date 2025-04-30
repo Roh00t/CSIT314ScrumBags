@@ -37,6 +37,10 @@ platformManagerRouter.post('/daily', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * US-39: As a Platform Manager, I want to generate weekly reports so 
+ *        that I can view the weekly statistics of cleaners and services
+ */
 platformManagerRouter.post('/weekly', async (req, res): Promise<void> => {
     try {
         const { chosenDate } = req.body
@@ -55,6 +59,10 @@ platformManagerRouter.post('/weekly', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * US-40: As a Platform Manager, I want to generate monthly reports so 
+ *        that I can view the monthly statistics of cleaners and services
+ */
 platformManagerRouter.post('/monthly', async (req, res): Promise<void> => {
     try {
         const { chosenDate } = req.body

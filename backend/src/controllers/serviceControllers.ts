@@ -2,7 +2,8 @@ import { AllServices, ServiceProvidedData } from '../shared/dataClasses'
 import { Service } from '../entities/service'
 
 /**
- * Create new service 'categories'
+ * US-33: As a Platform Manager, I want to create service categories, 
+ *        to display more services which fit the requirements of our customers
  */
 export class CreateServiceCategoryController {
     private service: Service
@@ -35,7 +36,8 @@ export class ViewServiceCategoriesController {
 }
 
 /**
- * Update service 'categories'
+ * US-35: As a Platform Manager, I want to update service categories 
+ *        so that I can keep the available services accurate and up to date
  */
 export class UpdateServiceCategoryController {
     private service: Service
@@ -50,7 +52,8 @@ export class UpdateServiceCategoryController {
 }
 
 /**
- * Delete service 'categories'
+ * US-36: As a Platform Manager, I want to delete service 
+ *        categories to remove services no longer provided 
  */
 export class DeleteServiceCategoryController {
     private service: Service
@@ -63,8 +66,10 @@ export class DeleteServiceCategoryController {
         await this.service.deleteServiceCategory(category)
     }
 }
+
 /**
- * Search for service 'categories'
+ * US-37: As a Platform Manager, I want to search service categories so 
+ *        that I can quickly find and manage specific types of services 
  */
 export class SearchServiceCategoryController {
     private service: Service
@@ -116,7 +121,8 @@ export class ViewAllServicesProvidedController {
 }
 
 /**
- * Cleaners can add the types of services they provide
+ * US-13: As a cleaner, I want to create my service so 
+ *        that homeowners can view my services provided 
  */
 export class CreateServiceProvidedController {
     private service: Service

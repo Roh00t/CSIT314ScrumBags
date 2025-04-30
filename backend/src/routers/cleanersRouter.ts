@@ -1,15 +1,21 @@
-import { SearchCleanerServiceHistoryController, ViewCleanerServiceHistoryController } from "../controllers/cleanerControllers"
 import { requireAuthMiddleware } from "../shared/middleware"
 import { UserAccountData } from "../shared/dataClasses"
 import { StatusCodes } from "http-status-codes"
+import {
+    SearchCleanerServiceHistoryController,
+    ViewCleanerServiceHistoryController
+} from "../controllers/cleanerControllers"
 import { Router } from "express"
 
 const cleanersRouter = Router()
 
 /**
- * Conditionally calls the appropriate controller ('view' vs 'search') 
- * based on whether the 'service' field exists within the response body
+ * US-23: As a cleaner, I want to view the history of my 
+ *        confirmed services, filtered by services, date period 
+ *        so that I can track my work and manage my schedule
  * 
+ * Conditionally calls the appropriate controller ('view' vs 'search') 
+ * based on whether the 'service' field exists within the response body.
  * Still technically adheres to BCE, since it's separate 
  * controllers for separate use cases/stories
  */
@@ -35,7 +41,7 @@ cleanersRouter.post(
                     data: searchedServiceHistory
                 })
                 res.status(StatusCodes.OK).send()
-            } else {
+            } else { //======= US-23 ===========
                 const allServiceHistory = await new ViewCleanerServiceHistoryController()
                     .viewCleanerServiceHistory(
                         cleanerID,

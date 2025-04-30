@@ -29,6 +29,10 @@ export class ViewUserProfilesController {
     }
 }
 
+/**
+ * US-10: As a user admin, I want to update user profiles 
+ *        so that I can keep profile information up to date
+ */
 export class UpdateUserProfileController {
     private userProfile: UserProfile
 
@@ -47,6 +51,10 @@ export class UpdateUserProfileController {
     }
 }
 
+/**
+ * US-11: As a user admin, I want to suspend user profiles 
+ *        so that I can restrict user access if necessary
+ */
 export class SuspendUserProfileController {
     private userProfile: UserProfile
 
@@ -54,14 +62,19 @@ export class SuspendUserProfileController {
         this.userProfile = new UserProfile()
     }
 
-    public async updateUserProfile(profileName: string): Promise<void> {
+    public async suspendUserProfile(profileName: string): Promise<void> {
         await this.userProfile.suspendUserProfile(profileName)
     }
+
     public async unsuspendProfile(profileName: string): Promise<void> {
         await this.userProfile.unsuspendUserProfile(profileName)
     }
 }
 
+/**
+ * US-12: As a user admin, I want to search for user profiles 
+ *        so that I can find specific user profiles
+ */
 export class SearchUserProfileController {
     private userProfile: UserProfile
 

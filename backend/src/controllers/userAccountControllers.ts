@@ -71,6 +71,10 @@ export class ViewUserAccountsController {
     }
 }
 
+/**
+ * US-3: As a user admin, I want to update user accounts 
+ *       so that I can keep user information accurate
+ */
 export class UpdateUserAccountController {
     private userAccount: UserAccount
 
@@ -93,6 +97,10 @@ export class UpdateUserAccountController {
     }
 }
 
+/**
+ * US-4: As a user admin, I want to suspend user accounts 
+ *       so that I can restrict access when needed
+ */
 export class SuspendUserAccountController {
     private userAccount: UserAccount
 
@@ -103,11 +111,17 @@ export class SuspendUserAccountController {
     public async suspendUserAccount(userID: number) {
         await this.userAccount.suspendUserAccount(userID)
     }
+
+    // TODO: Remove this for submission (??)
     public async unsuspendUserAccount(userID: number) {
         await this.userAccount.unsuspendUserAccount(userID);
     }
 }
 
+/**
+ * US-5: As a user admin, I want to search for user 
+ *       accounts so that I can locate specific users
+ */
 export class SearchUserAccountController {
     private userAccount: UserAccount
 

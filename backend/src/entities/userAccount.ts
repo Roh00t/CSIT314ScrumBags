@@ -293,7 +293,8 @@ export default class UserAccount {
     }
 
     /**
-     * Suspend user account
+     * US-4: As a user admin, I want to suspend user accounts 
+     *       so that I can restrict access when needed
      */
     public async suspendUserAccount(userID: number): Promise<void> {
         await this.db
@@ -310,7 +311,8 @@ export default class UserAccount {
     }
 
     /**
-     * Search user accounts
+     * US-5: As a user admin, I want to search for user 
+     *       accounts so that I can locate specific users
      */
     public async searchUserAccount(search: string): Promise<UserAccountData> {
         const [res] = await this.db

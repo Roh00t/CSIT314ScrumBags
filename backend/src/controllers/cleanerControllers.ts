@@ -20,6 +20,11 @@ export class ViewCleanersController {
     }
 }
 
+/**
+ * US-23: As a cleaner, I want to view the history of my 
+ *        confirmed services, filtered by services, date period 
+ *        so that I can track my work and manage my schedule
+ */
 export class ViewCleanerServiceHistoryController {
     private serviceBooking: ServiceBooking
 
@@ -32,7 +37,9 @@ export class ViewCleanerServiceHistoryController {
         startDate: Date | null,
         endDate: Date | null
     ): Promise<CleanerServiceBookingData[]> {
-        return await this.serviceBooking.viewCleanerServiceHistory(cleanerID, startDate, endDate)
+        return await this.serviceBooking.viewCleanerServiceHistory(
+            cleanerID, startDate, endDate
+        )
     }
 }
 

@@ -65,10 +65,14 @@ userProfilesRouter.put('/update', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * US-11: As a user admin, I want to suspend user profiles 
+ *        so that I can restrict user access if necessary
+ */
 userProfilesRouter.post('/suspend', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body
-        await new SuspendUserProfileController().updateUserProfile(profileName)
+        await new SuspendUserProfileController().suspendUserProfile(profileName)
         res.status(StatusCodes.OK).json({ message: 'UserProfile suspended' })
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -77,6 +81,9 @@ userProfilesRouter.post('/suspend', async (req, res): Promise<void> => {
     }
 })
 
+/**
+ * TODO: Remove for final submission (??)
+ */
 userProfilesRouter.post('/unsuspend', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body;
@@ -89,6 +96,10 @@ userProfilesRouter.post('/unsuspend', async (req, res): Promise<void> => {
     }
 });
 
+/**
+ * US-12: As a user admin, I want to search for user profiles 
+ *        so that I can find specific user profiles
+ */
 userProfilesRouter.get('/search', async (req, res): Promise<void> => {
     try {
         const search = req.query.search as string | undefined
