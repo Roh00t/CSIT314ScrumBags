@@ -1,13 +1,12 @@
-import { ServiceProvidedData, ServiceHistory, AllServices } from '../shared/dataClasses'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
-import { ServiceCategoryNotFoundError } from '../shared/exceptions'
-import { serviceBookingsTable } from '../db/schema/serviceBookings'
-import { BookingStatus } from '../db/schema/bookingStatusEnum'
-import { userAccountsTable } from '../db/schema/userAccounts'
-import { and, eq, gt, lt, ilike } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
+import { eq, ilike } from 'drizzle-orm'
+import {
+    ServiceCategoryAlreadyExistsError,
+    ServiceCategoryNotFoundError
+} from '../shared/exceptions'
 
 export class ServiceCategory {
     private db: DrizzleClient
@@ -20,10 +19,18 @@ export class ServiceCategory {
      * US-33: As a Platform Manager, I want to create service categories, 
      *        to display more services which fit the requirements of our customers
      */
-    public async createServiceCategory(
-        categoryLabel: string
-    ): Promise<void> {
-        await this.db.insert(serviceCategoriesTable).values({ label: categoryLabel })
+    public async createServiceCategory(category: string): Promise<void> {
+        const [res] = await this.db
+            .select()
+            .from(serviceCategoriesTable)
+            .where(eq(serviceCategoriesTable.label, category))
+            .limit(1)
+
+        if (res) {
+            throw new ServiceCategoryAlreadyExistsError(category)
+        }
+
+        await this.db.insert(serviceCategoriesTable).values({ label: category })
     }
 
     /**
@@ -98,12 +105,8 @@ export class ServiceCategory {
             .from(servicesProvidedTable)
             .groupBy(servicesProvidedTable.serviceName)
 
-        return uniqueServices.map((service) => service.serviceName);
+        return uniqueServices.map(service => service.serviceName)
     }
-
-
-
-
 }
 
 

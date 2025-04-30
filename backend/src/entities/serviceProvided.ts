@@ -34,24 +34,6 @@ export class ServiceProvided {
             throw new ServiceCategoryNotFoundError(serviceCategory)
         }
 
-        // TODO: Clarify what are the rules of what can or cannot be duplicated
-        // const serviceProvidedEntries = await this.db
-        //     .select()
-        //     .from(servicesProvidedTable)
-        //     .where(
-        //         and(
-        //             eq(servicesProvidedTable.cleanerID, cleanerID),
-        //             eq(servicesProvidedTable.serviceName, serviceName),
-        //             eq(servicesProvidedTable.serviceCategoryID, serviceCategoryEntry.id)
-        //         )
-        //     )
-        //
-        // if (serviceProvidedEntries.length > 0) {
-        //     throw new ServiceAlreadyProvidedError(
-        //         "Cleaner of ID " + cleanerID + " already provides service '" + serviceName + "'"
-        //     )
-        // }
-
         await this.db.insert(servicesProvidedTable).values({
             cleanerID: cleanerID,
             serviceCategoryID: serviceCategoryEntry.id,

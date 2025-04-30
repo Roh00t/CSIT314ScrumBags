@@ -1,6 +1,12 @@
-import { CleanerServicesData, CleanerServiceBookingData } from '../shared/dataClasses'
-import UserAccount from '../entities/userAccount'
+import { ServiceProvided } from '../entities/serviceProvided'
 import { ServiceBooking } from '../entities/serviceBooking'
+import UserAccount from '../entities/userAccount'
+import {
+    AllServices,
+    CleanerServiceBookingData,
+    CleanerServicesData,
+    ServiceProvidedData
+} from '../shared/dataClasses'
 
 /**
  * US-25: As a homeowner, I want to view cleaners 
@@ -63,5 +69,71 @@ export class SearchCleanerServiceHistoryController {
         return await this.serviceBooking.searchCleanerServiceHistory(
             cleanerID, service, startDate, endDate
         )
+    }
+}
+
+/**
+ * US-14: As a cleaner, I want to view my service 
+ *        so that I can check on my services provided
+ * 
+ * Gets all the service 'types' provided by a cleaner (by their userID)
+ */
+export class ViewServicesProvidedController {
+    private serviceProvided: ServiceProvided
+
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async viewServicesProvided(
+        userID: number,
+        serviceName: string | null
+    ): Promise<ServiceProvidedData[]> {
+        return await this.serviceProvided.viewServicesProvided(userID, serviceName)
+    }
+}
+
+
+/**
+ * US-13: As a cleaner, I want to create my service so 
+ *        that homeowners can view my services provided 
+ */
+export class CreateServiceProvidedController {
+    private serviceProvided: ServiceProvided
+
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async createServiceProvided(
+        cleanerID: number,
+        serviceName: string,
+        serviceCategory: string,
+        description: string,
+        price: number
+    ): Promise<void> {
+        await this.serviceProvided.createServiceProvided(
+            cleanerID,
+            serviceName,
+            serviceCategory,
+            description,
+            price
+        )
+    }
+}
+
+/**
+ * Gets all the service 'types' provided by a cleaner (by their userID)
+ */
+export class ViewAllServicesProvidedController {
+    private serviceProvided: ServiceProvided
+
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async viewAllServicesProvided(
+    ): Promise<AllServices[]> {
+        return await this.serviceProvided.viewAllServicesProvided()
     }
 }

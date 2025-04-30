@@ -1,4 +1,5 @@
 import { ViewCleanersController } from '../controllers/cleanerControllers'
+import { LoginController } from '../controllers/sharedControllers'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { UserAccountData } from '../shared/dataClasses'
 import {
@@ -7,15 +8,14 @@ import {
     UpdateUserAccountController,
     SearchUserAccountController,
     ViewUserAccountsController,
-    LoginController,
-} from '../controllers/userAccountControllers'
+} from '../controllers/userAdminControllers'
 import { Router } from 'express'
 import {
-    UserAccountSuspendedError,
-    InvalidCredentialsError,
-    UserAccountNotFoundError,
+    SearchUserAccountNoResultError,
     UserProfileSuspendedError,
-    SearchUserAccountNoResultError
+    UserAccountSuspendedError,
+    UserAccountNotFoundError,
+    InvalidCredentialsError,
 } from '../shared/exceptions'
 
 const userAccountsRouter = Router()

@@ -1,11 +1,11 @@
 import { StatusCodes } from 'http-status-codes'
 import {
     CreateNewUserProfileController,
-    SearchUserProfileController,
     SuspendUserProfileController,
     UpdateUserProfileController,
+    SearchUserProfileController,
     ViewUserProfilesController
-} from '../controllers/userProfileControllers'
+} from '../controllers/userAdminControllers'
 import { Router } from 'express'
 
 const userProfilesRouter = Router()

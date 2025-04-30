@@ -1,17 +1,19 @@
-import { ServiceCategoryNotFoundError } from '../shared/exceptions'
+import { ServiceCategoryAlreadyExistsError, ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { requireAuthMiddleware } from '../shared/middleware'
 import { UserAccountData } from '../shared/dataClasses'
-import { StatusCodes } from 'http-status-codes'
 import {
     CreateServiceCategoryController,
-    CreateServiceProvidedController,
     DeleteServiceCategoryController,
     SearchServiceCategoryController,
     UpdateServiceCategoryController,
-    ViewAllServicesProvidedController,
     ViewServiceCategoriesController,
-    ViewServicesProvidedController,
-} from '../controllers/serviceControllers'
+} from '../controllers/platformManagerControllers'
+import { StatusCodes } from 'http-status-codes'
+import {
+    ViewAllServicesProvidedController,
+    CreateServiceProvidedController,
+    ViewServicesProvidedController
+} from '../controllers/cleanerControllers'
 import { Router } from 'express'
 
 const servicesRouter = Router()
@@ -32,9 +34,15 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
         await new CreateServiceCategoryController().createServiceCategory(category)
         res.status(StatusCodes.OK).send()
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+        if (err instanceof ServiceCategoryAlreadyExistsError) {
+            res.status(StatusCodes.CONFLICT).json({
+                message: (err as Error).message
+            })
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
     }
 })
 
@@ -195,10 +203,6 @@ servicesRouter.post(
             )
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
-            // if (err instanceof ServiceAl) {
-            //     res.status(StatusCodes.CONFLICT).json({
-            //         message: (err as Error).message
-            //     })
             if (err instanceof ServiceCategoryNotFoundError) {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     message: (err as Error).message

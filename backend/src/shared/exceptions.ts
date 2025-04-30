@@ -40,6 +40,12 @@ export class ServiceCategoryNotFoundError extends Error {
     }
 }
 
+export class ServiceCategoryAlreadyExistsError extends Error {
+    constructor(serviceCategory: string) {
+        super(`Service category '${serviceCategory}' already exists`)
+    }
+}
+
 export class CleanerAlreadyShortlistedError extends Error {
     constructor(cleaner: string) {
         super(`You have already shortlisted the cleaner '${cleaner}'`)
