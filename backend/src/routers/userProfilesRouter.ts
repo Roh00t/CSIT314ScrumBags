@@ -1,3 +1,4 @@
+import { StatusCodes } from 'http-status-codes'
 import {
     CreateNewUserProfileController,
     SearchUserProfileController,
@@ -5,7 +6,6 @@ import {
     UpdateUserProfileController,
     ViewUserProfilesController
 } from '../controllers/userProfileControllers'
-import { StatusCodes } from 'http-status-codes'
 import { Router } from 'express'
 
 const userProfilesRouter = Router()
@@ -104,7 +104,9 @@ userProfilesRouter.get('/search', async (req, res): Promise<void> => {
     try {
         const search = req.query.search as string | undefined
         if (!search) {
-            res.status(StatusCodes.BAD_REQUEST).json({ message: 'Search query is required' })
+            res.status(StatusCodes.BAD_REQUEST).json({
+                message: 'Search query is required'
+            })
             return
         }
         const data = await new SearchUserProfileController().searchUserProfiles(search)

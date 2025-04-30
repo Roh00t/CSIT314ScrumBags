@@ -1,6 +1,10 @@
 import { UserProfilesSelect } from '../db/schema/userProfiles'
 import { UserProfile } from '../entities/userProfile'
 
+/**
+ * US-8: As a user admin, I want to create new user 
+ *       profiles so that I can map them to user accounts
+ */
 export class CreateNewUserProfileController {
     private userProfile: UserProfile
 

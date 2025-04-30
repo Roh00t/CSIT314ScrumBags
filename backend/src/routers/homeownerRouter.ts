@@ -20,8 +20,8 @@ declare module 'express-session' {
 }
 
 /**
- * US-24: As a homeowner, I want to add cleaners to my shortlist 
- *        so that i can consider rebooking the cleaner
+ * US-26: As a homeowner, I want to save the cleaners into my short list 
+ *        so that I can have an easier time for future reference
  */
 homeownerRouter.post(
     '/shortlist',

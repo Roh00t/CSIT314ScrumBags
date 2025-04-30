@@ -20,10 +20,13 @@ import {
 const userAccountsRouter = Router()
 
 /**
- * US-6: As a user admin, I want to log in so that I can access my admin features
- * US-18: As a cleaner, I want to log in so that I can manage my services
- * US-31: As a homeowner, I want to log in so that I can manage my short list
- * US-43: As a Platform Manager, I want to log in to the 
+ * US-6:  As a user admin, I want to log in so that I can access my admin features
+ * 
+ * US-19: As a cleaner, I want to log in so that I can manage my services
+ * 
+ * US-29: As a homeowner, I want to log in so that I can manage my short list
+ * 
+ * US-41: As a Platform Manager, I want to log in to the 
  *        system so that I can manage platform operations
  */
 userAccountsRouter.post('/login', async (req, res): Promise<void> => {
@@ -60,9 +63,12 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
 
 /**
  * US-7:  As a user admin, I want to log out so that I can securely end my session 
- * US-19: As a cleaner, I want to log out so that I can securely end my session
- * US-32: As a homeowner, I want to log out so that I can securely end my session
- * US-44: As a Platform Manager, I want to log out of the 
+ * 
+ * US-18: As a cleaner, I want to log out so that I can securely end my session
+ * 
+ * US-30: As a homeowner, I want to log out so that I can securely end my session
+ * 
+ * US-42: As a Platform Manager, I want to log out of the 
  *        system so that I can securely end my session
  */
 userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
