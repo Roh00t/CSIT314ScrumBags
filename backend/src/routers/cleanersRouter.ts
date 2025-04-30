@@ -10,6 +10,9 @@ import { Router } from "express"
 const cleanersRouter = Router()
 
 /**
+ * US-22: As a cleaner, I want to search the history of my confirmed services, 
+ *        filtered by services, date period, so that I can easily find past jobs
+ * 
  * US-23: As a cleaner, I want to view the history of my 
  *        confirmed services, filtered by services, date period 
  *        so that I can track my work and manage my schedule
@@ -27,7 +30,7 @@ cleanersRouter.post(
             const cleanerID = (req.session.user as UserAccountData).id
             const { service, startDate, endDate } = req.body
 
-            if (service && String(service).length > 0) {
+            if (service && String(service).length > 0) { //===== US-22 ======
                 const searchedServiceHistory =
                     await new SearchCleanerServiceHistoryController()
                         .searchCleanerServiceHistory(
@@ -41,7 +44,7 @@ cleanersRouter.post(
                     data: searchedServiceHistory
                 })
                 res.status(StatusCodes.OK).send()
-            } else { //======= US-23 ===========
+            } else { //====== US-23 ========
                 const allServiceHistory = await new ViewCleanerServiceHistoryController()
                     .viewCleanerServiceHistory(
                         cleanerID,

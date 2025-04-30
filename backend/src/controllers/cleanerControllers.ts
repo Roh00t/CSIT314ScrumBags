@@ -43,6 +43,10 @@ export class ViewCleanerServiceHistoryController {
     }
 }
 
+/**
+ * US-22: As a cleaner, I want to search the history of my confirmed services, 
+ *        filtered by services, date period, so that I can easily find past jobs
+ */
 export class SearchCleanerServiceHistoryController {
     private serviceBooking: ServiceBooking
 
@@ -56,6 +60,8 @@ export class SearchCleanerServiceHistoryController {
         startDate: Date | null,
         endDate: Date | null
     ): Promise<CleanerServiceBookingData[]> {
-        return await this.serviceBooking.searchCleanerServiceHistory(cleanerID, service, startDate, endDate)
+        return await this.serviceBooking.searchCleanerServiceHistory(
+            cleanerID, service, startDate, endDate
+        )
     }
 }

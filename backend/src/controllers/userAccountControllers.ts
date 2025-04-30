@@ -4,10 +4,10 @@ import { GLOBALS } from '../shared/constants'
 import bcrypt from 'bcrypt'
 
 /**
- * US-6: As a user admin, I want to log in so that I can access my admin features
+ * US-6:  As a user admin, I want to log in so that I can access my admin features
  * US-18: As a cleaner, I want to log in so that I can manage my services
- * US-19: As a homeowner, I want to log in so that I can manage my short list
- * US-41: As a Platform Manager, I want to log in to the 
+ * US-31: As a homeowner, I want to log in so that I can manage my short list
+ * US-43: As a Platform Manager, I want to log in to the 
  *        system so that I can manage platform operations
  */
 export class LoginController {
@@ -26,7 +26,8 @@ export class LoginController {
 }
 
 /**
- * US-1 
+ * US-1: As a user admin, I want to create a user account 
+ *       so that new users can join the platform 
  */
 export class CreateNewUserAccountController {
     private userAccount: UserAccount
@@ -36,10 +37,6 @@ export class CreateNewUserAccountController {
     }
 
     /**
-     * 
-     * US-1: As a user admin, I want to create a user 
-     *       account so that new users can join the platform
-     * 
      * @param password The PLAINTEXT password (not encoded)
      */
     public async createNewUserAccount(

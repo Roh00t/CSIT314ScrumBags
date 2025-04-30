@@ -215,6 +215,10 @@ export class ServiceBooking {
         })
     }
 
+    /**
+     * US-22: As a cleaner, I want to search the history of my confirmed services, 
+     *        filtered by services, date period, so that I can easily find past jobs
+     */
     public async searchCleanerServiceHistory(
         cleanerID: number,
         service: string,

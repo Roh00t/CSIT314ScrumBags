@@ -19,6 +19,10 @@ declare module 'express-session' {
     }
 }
 
+/**
+ * US-24: As a homeowner, I want to add cleaners to my shortlist 
+ *        so that i can consider rebooking the cleaner
+ */
 homeownerRouter.post(
     '/shortlist',
     requireAuthMiddleware,
@@ -47,6 +51,9 @@ homeownerRouter.post(
 )
 
 /**
+ * US-27: As a homeowner, I want to search through my shortlist so that 
+ *        I can find a specific cleaner or service I want
+ * 
  * US-28: As a homeowner, I want to view my shortlist so that I 
  *        can have an easy time looking for a cleaner or service
  */
@@ -58,7 +65,7 @@ homeownerRouter.get(
             const homeownerID = (req.session.user as UserAccountData).id
             const searchParam = req.query.search
 
-            if (searchParam && String(searchParam).length > 0) {
+            if (searchParam && String(searchParam).length > 0) { //===== US-27 ======
                 const searchedShortlistedCleaners =
                     await new SearchShortlistController()
                         .searchShortlist(homeownerID, String(searchParam))
@@ -67,7 +74,7 @@ homeownerRouter.get(
                     message: "Shortlist retrieved successfully",
                     data: searchedShortlistedCleaners
                 })
-            } else { // US-28
+            } else { //====== US-28 =======
                 const shortlistedCleaners =
                     await new ViewShortlistController()
                         .viewShortlist(homeownerID)
@@ -121,6 +128,11 @@ homeownerRouter.post(
     }
 )
 
+/**
+ * TODO
+ * 
+ * Alex | 2025-04-30: "This doesn't seem to be used, can we remove this + controller?"
+ */
 homeownerRouter.get(
     '/allservicehistory',
     requireAuthMiddleware,

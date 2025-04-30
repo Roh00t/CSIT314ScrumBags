@@ -26,8 +26,8 @@ export default class UserAccount {
     /**
      * US-6: As a user admin, I want to log in so that I can access my admin features
      * US-18: As a cleaner, I want to log in so that I can manage my services
-     * US-19: As a homeowner, I want to log in so that I can manage my short list
-     * US-41: As a Platform Manager, I want to log in to the 
+     * US-31: As a homeowner, I want to log in so that I can manage my short list
+     * US-43: As a Platform Manager, I want to log in to the 
      *        system so that I can manage platform operations
      * 
      * @param password The PLAINTEXT password (not encoded)
@@ -99,27 +99,27 @@ export default class UserAccount {
         username: string,
         password: string
     ): Promise<boolean> {
-        const [userProfile] = await this.db
+        const [userAcc] = await this.db
             .select()
             .from(userProfilesTable)
             .where(eq(userProfilesTable.label, createAs))
 
-        if (!userProfile) {
+        if (!userAcc) {
             return false
         }
 
         await this.db.insert(userAccountsTable).values({
             username: username,
             password: password,
-            userProfileId: userProfile.id
+            userProfileId: userAcc.id
         })
         return true
     }
 
     /**
-    * US-2: As a user admin, I want to view user accounts 
-    *       so that I can see user information
-    */
+     * US-2: As a user admin, I want to view user accounts 
+     *       so that I can see user information
+     */
     public async viewUserAccounts(): Promise<UserAccountData[]> {
         const query = await this.db
             .select({
@@ -197,7 +197,8 @@ export default class UserAccount {
     }
 
     /**
-     * Add to shortlist
+     * US-24: As a homeowner, I want to add cleaners to my shortlist 
+     *        so that i can consider rebooking the cleaner
      */
     public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
         const result = await this.db
@@ -243,6 +244,10 @@ export default class UserAccount {
         return cleanerNames
     }
 
+    /**
+     * US-27: As a homeowner, I want to search through my shortlist so that 
+     *        I can find a specific cleaner or service I want
+     */
     public async searchShortlist(
         homeownerID: number,
         search: string
@@ -303,6 +308,9 @@ export default class UserAccount {
             .where(eq(userAccountsTable.id, userID))
     }
 
+    /**
+     * TODO: Remove this for submission (??) 
+     */
     public async unsuspendUserAccount(userID: number): Promise<void> {
         await this.db
             .update(userAccountsTable)

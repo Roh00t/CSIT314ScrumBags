@@ -2,6 +2,10 @@ import { ServiceHistory } from "../shared/dataClasses"
 import UserAccount from "../entities/userAccount"
 import { Service } from "../entities/service"
 
+/**
+ * US-24: As a homeowner, I want to add cleaners to my shortlist 
+ *        so that i can consider rebooking the cleaner
+ */
 export class AddToShortlistController {
     private userAccount: UserAccount
 
@@ -33,6 +37,10 @@ export class ViewShortlistController {
     }
 }
 
+/**
+ * US-27: As a homeowner, I want to search through my shortlist so that 
+ *        I can find a specific cleaner or service I want
+ */
 export class SearchShortlistController {
     private userAccount: UserAccount
 

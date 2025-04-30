@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 
-export class Service {
+export class ServiceCategory {
     private db: DrizzleClient
 
     constructor() {
