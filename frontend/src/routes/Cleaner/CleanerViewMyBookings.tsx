@@ -111,9 +111,8 @@ const CleanerViewMyBookings: React.FC = () => {
   }, [sessionUser.id]);
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return null;
     const [year, month, day] = dateString.split('-');
-    return `${month}/${day}/${year}`;
+    return `${month}/${day}/${year}`; // MM/DD/YYYY
   };
 
   const filteredHistory = filterStatus === 'All'
