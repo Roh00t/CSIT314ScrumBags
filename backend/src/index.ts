@@ -5,6 +5,7 @@ import homeownerRouter from './routers/homeownerRouter'
 import cleanersRouter from './routers/cleanersRouter'
 import servicesRouter from './routers/servicesRouter'
 import connectPgSimple from 'connect-pg-simple'
+import { StatusCodes } from 'http-status-codes'
 import express, { urlencoded } from 'express'
 import session from 'express-session'
 import cors from 'cors'
@@ -42,6 +43,16 @@ app.use('/api/user-profiles/', userProfilesRouter)
 app.use('/api/homeowner/', homeownerRouter)
 app.use('/api/services/', servicesRouter)
 app.use('/api/cleaners/', cleanersRouter)
+
+app.get('/health', async (_, res): Promise<void> => {
+    try {
+        res.status(StatusCodes.OK).send()
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
 
 const APP_PORT = process.env.PORT || 3001
 const server = app.listen(APP_PORT, () => {
