@@ -11,6 +11,7 @@ interface UserAccountResponse {
   userProfile: string;
 }
 
+//testing
 interface History {
   bookingId: number;
   cleanerName: string | null;
@@ -58,7 +59,7 @@ const CleanerViewMyBookings: React.FC = () => {
         {
           cleanerId: sessionUser.id,
           bookingid: bookingId,
-          service: search,
+          service: serviceName || search,
           homeOwnerName: homeowner,
           fromDate: fromDate ? formatDate(fromDate) : null,
           toDate: toDate ? formatDate(toDate) : null,
@@ -111,9 +112,8 @@ const CleanerViewMyBookings: React.FC = () => {
   }, [sessionUser.id]);
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return null;
     const [year, month, day] = dateString.split('-');
-    return `${month}/${day}/${year}`;
+    return `${month}/${day}/${year}`; // MM/DD/YYYY
   };
 
   const filteredHistory = filterStatus === 'All'
