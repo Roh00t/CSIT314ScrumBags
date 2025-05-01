@@ -1,21 +1,20 @@
+import { ServiceCategoryAlreadyExistsError, ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { requireAuthMiddleware } from '../shared/middleware'
 import { UserAccountData } from '../shared/dataClasses'
-import { StatusCodes } from 'http-status-codes'
 import {
     CreateServiceCategoryController,
-    CreateServiceProvidedController,
     DeleteServiceCategoryController,
     SearchServiceCategoryController,
     UpdateServiceCategoryController,
-    ViewAllServicesProvidedController,
     ViewServiceCategoriesController,
-    ViewServicesProvidedController,
-} from '../controllers/serviceControllers'
-import { Router } from 'express'
+} from '../controllers/platformManagerControllers'
+import { StatusCodes } from 'http-status-codes'
 import {
-    ServiceCategoryNotFoundError,
-    ServiceAlreadyProvidedError
-} from '../shared/exceptions'
+    ViewAllServicesProvidedController,
+    CreateServiceProvidedController,
+    ViewServicesProvidedController
+} from '../controllers/cleanerControllers'
+import { Router } from 'express'
 
 const servicesRouter = Router()
 
@@ -26,7 +25,8 @@ declare module 'express-session' {
 }
 
 /**
- * Create new service 'categories'
+ * US-33: As a Platform Manager, I want to create service categories, 
+ *        to display more services which fit the requirements of our customers
  */
 servicesRouter.post('/categories', async (req, res): Promise<void> => {
     try {
@@ -34,15 +34,22 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
         await new CreateServiceCategoryController().createServiceCategory(category)
         res.status(StatusCodes.OK).send()
     } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+        if (err instanceof ServiceCategoryAlreadyExistsError) {
+            res.status(StatusCodes.CONFLICT).json({
+                message: (err as Error).message
+            })
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
     }
 })
 
-
-
 /**
+ * US-34: As a Platform Manager, I want to view current service 
+ *        categories to see the current services provided
+ * 
  * View all service 'categories' that exist
  */
 servicesRouter.get('/categories', async (_, res): Promise<void> => {
@@ -50,6 +57,7 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
         const allServiceCategories =
             await new ViewServiceCategoriesController()
                 .viewServiceCategories()
+
         res.status(StatusCodes.OK).json(allServiceCategories)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -57,13 +65,17 @@ servicesRouter.get('/categories', async (_, res): Promise<void> => {
         })
     }
 })
+
 /**
- * update service 'categories'
+ * US-35: As a Platform Manager, I want to update service categories 
+ *        so that I can keep the available services accurate and up to date
  */
 servicesRouter.put('/categories', async (req, res): Promise<void> => {
     try {
         const { category, newCategory } = req.body
-        await new UpdateServiceCategoryController().updateServiceCategory(category, newCategory)
+        await new UpdateServiceCategoryController().updateServiceCategory(
+            category, newCategory
+        )
         res.status(StatusCodes.OK).send()
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -71,29 +83,10 @@ servicesRouter.put('/categories', async (req, res): Promise<void> => {
         })
     }
 })
+
 /**
- * delete service 'categories'
- */
-servicesRouter.delete('/categories', async (req, res): Promise<void> => {
-    try {
-        const { category } = req.body
-        await new DeleteServiceCategoryController().deleteServiceCategory(category)
-        res.status(StatusCodes.OK).send()
-    } catch (err) {
-        if (err instanceof ServiceCategoryNotFoundError) {
-            res.status(StatusCodes.NOT_FOUND).json({
-                message: (err as Error).message
-            })
-        }
-        else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
-    }
-})
-/**
- * delete service 'categories'
+ * US-36: As a Platform Manager, I want to delete service 
+ *        categories to remove services no longer provided 
  */
 servicesRouter.delete('/categories', async (req, res): Promise<void> => {
     try {
@@ -115,7 +108,8 @@ servicesRouter.delete('/categories', async (req, res): Promise<void> => {
 })
 
 /**
- * Search service "categories"
+ * US-37: As a Platform Manager, I want to search service categories so 
+ *        that I can quickly find and manage specific types of services 
  */
 servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
     try {
@@ -138,14 +132,16 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
 })
 
 /**
+ * TODO: What user story is this??
+ * 
  * Gets all the services
  */
-servicesRouter.get('/', async (req, res): Promise<void> => {
+servicesRouter.get('/', async (_, res): Promise<void> => {
     try {
-
         const allServices =
             await new ViewAllServicesProvidedController()
                 .viewAllServicesProvided()
+
         res.status(StatusCodes.OK).json(allServices)
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -155,6 +151,9 @@ servicesRouter.get('/', async (req, res): Promise<void> => {
 })
 
 /**
+ * US-14: As a cleaner, I want to view my service 
+ *        so that I can check on my services provided
+ * 
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
 servicesRouter.post('/:id', async (req, res): Promise<void> => {
@@ -175,7 +174,8 @@ servicesRouter.post('/:id', async (req, res): Promise<void> => {
 })
 
 /**
- * Cleaners can add the types of services they provide
+ * US-13: As a cleaner, I want to create my service so 
+ *        that homeowners can view my services provided 
  */
 servicesRouter.post(
     '/me',
@@ -203,11 +203,7 @@ servicesRouter.post(
             )
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
-            if (err instanceof ServiceAlreadyProvidedError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    message: (err as Error).message
-                })
-            } else if (err instanceof ServiceCategoryNotFoundError) {
+            if (err instanceof ServiceCategoryNotFoundError) {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     message: (err as Error).message
                 })

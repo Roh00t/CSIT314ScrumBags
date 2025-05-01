@@ -12,7 +12,8 @@ import {
     UserAccountSuspendedError,
     UserAccountNotFoundError,
     InvalidCredentialsError,
-    UserProfileSuspendedError
+    UserProfileSuspendedError,
+    SearchUserAccountNoResultError
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
 
@@ -24,33 +25,15 @@ export default class UserAccount {
     }
 
     /**
-     * Create new user account
-     * @param password The ENCODED password
-     */
-    public async createNewUserAccount(
-        createAs: string,
-        username: string,
-        password: string
-    ): Promise<boolean> {
-        const [userProfile] = await this.db
-            .select()
-            .from(userProfilesTable)
-            .where(eq(userProfilesTable.label, createAs))
-
-        if (!userProfile) {
-            return false
-        }
-
-        await this.db.insert(userAccountsTable).values({
-            username: username,
-            password: password,
-            userProfileId: userProfile.id
-        })
-        return true
-    }
-
-    /**
-     * Login user account
+     * US-6:  As a user admin, I want to log in so that I can access my admin features
+     * 
+     * US-19: As a cleaner, I want to log in so that I can manage my services
+     * 
+     * US-29: As a homeowner, I want to log in so that I can manage my short list
+     * 
+     * US-41: As a Platform Manager, I want to log in to the 
+     *        system so that I can manage platform operations
+     * 
      * @param password The PLAINTEXT password (not encoded)
      */
     public async login(
@@ -75,9 +58,7 @@ export default class UserAccount {
             .limit(1)
 
         if (!retrievedUser) {
-            throw new UserAccountNotFoundError(
-                "Couldn't find user of username: " + username
-            )
+            throw new UserAccountNotFoundError(username)
         }
 
         const areCredentialsVerified = await bcrypt.compare(
@@ -85,21 +66,15 @@ export default class UserAccount {
             retrievedUser.password
         )
         if (!areCredentialsVerified) {
-            throw new InvalidCredentialsError(
-                'Invalid credentials entered for user of username: ' + username
-            )
+            throw new InvalidCredentialsError(username)
         }
 
         if (retrievedUser.isSuspended) {
-            throw new UserAccountSuspendedError(
-                'User account ' + retrievedUser.username + ' is suspended'
-            )
+            throw new UserAccountSuspendedError(retrievedUser.username)
         }
 
-        if (retrievedUser.profileIsSuspended) {
-            throw new UserProfileSuspendedError(
-                'User profile ' + retrievedUser.userProfileLabel + ' is suspended'
-            )
+        if (retrievedUser.profileIsSuspended && retrievedUser.userProfileLabel) {
+            throw new UserProfileSuspendedError(retrievedUser.userProfileLabel)
         }
 
         return {
@@ -110,7 +85,36 @@ export default class UserAccount {
     }
 
     /**
-     * View all user accounts
+     * US-1: As a user admin, I want to create a user 
+     *       account so that new users can join the platform
+     * 
+     * @param password The ENCODED password
+     */
+    public async createNewUserAccount(
+        createAs: string,
+        username: string,
+        password: string
+    ): Promise<boolean> {
+        const [userAcc] = await this.db
+            .select()
+            .from(userProfilesTable)
+            .where(eq(userProfilesTable.label, createAs))
+
+        if (!userAcc) {
+            return false
+        }
+
+        await this.db.insert(userAccountsTable).values({
+            username: username,
+            password: password,
+            userProfileId: userAcc.id
+        })
+        return true
+    }
+
+    /**
+     * US-2: As a user admin, I want to view user accounts 
+     *       so that I can see user information
      */
     public async viewUserAccounts(): Promise<UserAccountData[]> {
         const query = await this.db
@@ -136,9 +140,15 @@ export default class UserAccount {
         })
     }
 
-    // This async Function only retrieves Cleaner names under the assumption that
-    // There will be another page to show the Services provided by the Cleaner.
-    // 15042025 2257 Hours
+
+    /**
+     * US-25: As a homeowner, I want to view cleaners 
+     *        so that I can see their services provided
+     * 
+     * This async Function only retrieves Cleaner names under the assumption that
+     * There will be another page to show the Services provided by the Cleaner.
+     * 15042025 2257 Hours
+     */
     public async viewCleaners(
         cleanerName: string | null
     ): Promise<CleanerServicesData[]> {
@@ -183,75 +193,8 @@ export default class UserAccount {
     }
 
     /**
-     * Add to shortlist
-     */
-    public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
-        const result = await this.db
-            .select()
-            .from(shortlistedCleanersTable)
-            .where(and(
-                eq(shortlistedCleanersTable.homeownerID, homeownerID),
-                eq(shortlistedCleanersTable.cleanerID, cleanerID)
-            ))
-        if (result.length > 0) {
-            throw new CleanerAlreadyShortlistedError(
-                "Already shortlisted cleaner of ID " + cleanerID
-            )
-        }
-
-        await this.db
-            .insert(shortlistedCleanersTable)
-            .values({ homeownerID, cleanerID })
-    }
-
-    public async viewShortlist(
-        homeownerID: number
-
-    ): Promise<string[]> {
-        const shortlistedCleaners = await this.db
-            .select({ cleanerID: shortlistedCleanersTable.cleanerID })
-            .from(shortlistedCleanersTable)
-            .where(eq(shortlistedCleanersTable.homeownerID, homeownerID))
-
-        // Retrieve cleaner names based on the cleanerIDs from shortlistedCleaners
-        const cleanerNames = await Promise.all(shortlistedCleaners.map(async (entry) => {
-            const [cleaner] = await this.db
-                .select({ cleanerName: userAccountsTable.username })
-                .from(userAccountsTable)
-                .where(eq(userAccountsTable.id, entry.cleanerID))
-
-            return cleaner?.cleanerName || "Unknown Cleaner"
-        }));
-
-        return cleanerNames
-    }
-
-    public async searchShortlist(
-        homeownerID: number,
-        search: string
-    ): Promise<string[]> {
-        const shortlistedCleaners = await this.db
-            .select({ cleanerName: userAccountsTable.username })
-            .from(shortlistedCleanersTable)
-            .leftJoin(servicesProvidedTable, eq(
-                shortlistedCleanersTable.cleanerID,
-                servicesProvidedTable.cleanerID
-            ))
-            .leftJoin(userAccountsTable, eq(
-                shortlistedCleanersTable.cleanerID,
-                userAccountsTable.id
-            ))
-            .where(and(
-                eq(shortlistedCleanersTable.homeownerID, homeownerID),
-                ilike(userAccountsTable.username, `%${search}%`),
-            ))
-            .groupBy(userAccountsTable.username)
-
-        return shortlistedCleaners.map(cl => cl.cleanerName || "Unknown Cleaner")
-    }
-
-    /**
-     * Update user account
+     * US-3: As a user admin, I want to update user accounts 
+     *       so that I can keep user information accurate
      */
     public async updateUserAccount(
         userID: number,
@@ -275,7 +218,8 @@ export default class UserAccount {
     }
 
     /**
-     * Suspend user account
+     * US-4: As a user admin, I want to suspend user accounts 
+     *       so that I can restrict access when needed
      */
     public async suspendUserAccount(userID: number): Promise<void> {
         await this.db
@@ -284,6 +228,9 @@ export default class UserAccount {
             .where(eq(userAccountsTable.id, userID))
     }
 
+    /**
+     * TODO: Remove this for submission (??) 
+     */
     public async unsuspendUserAccount(userID: number): Promise<void> {
         await this.db
             .update(userAccountsTable)
@@ -292,7 +239,8 @@ export default class UserAccount {
     }
 
     /**
-     * Search user accounts
+     * US-5: As a user admin, I want to search for user 
+     *       accounts so that I can locate specific users
      */
     public async searchUserAccount(search: string): Promise<UserAccountData> {
         const [res] = await this.db
@@ -311,7 +259,7 @@ export default class UserAccount {
             .limit(1)
 
         if (!res) {
-            throw new UserAccountNotFoundError("This user account doesn't exist")
+            throw new SearchUserAccountNoResultError(search)
         }
 
         return {
