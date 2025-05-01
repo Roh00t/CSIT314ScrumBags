@@ -3,10 +3,11 @@ import { UserAccountData } from "../shared/dataClasses"
 import { StatusCodes } from "http-status-codes"
 import {
     ViewAllServiceHistoryController,
-    ViewServiceHistoryController,
+    ViewHomeownerServiceHistoryController,
     AddToShortlistController,
     ViewShortlistController,
-    SearchShortlistController
+    SearchShortlistController,
+    SearchHomeownerServiceHistoryController
 } from "../controllers/homeownerControllers"
 import { Router } from "express"
 import { CleanerAlreadyShortlistedError } from "../shared/exceptions"
@@ -97,6 +98,10 @@ homeownerRouter.get(
  * US-32: As a homeowner, I want to view the history of the 
  *        cleaner services used, filtered by services, date period 
  *        so that I can keep track of my previous expenses and bookings
+ * 
+ * US-31: As a homeowner, I want to search the history of the cleaner 
+ *        services used, filtered by services, date period so that I 
+ *        can easily find past services for reference and rebooking
  */
 homeownerRouter.post(
     '/servicehistory',
@@ -106,20 +111,27 @@ homeownerRouter.post(
             const homeownerID = (req.session.user as UserAccountData).id
             const { cleanerName, service, fromDate, toDate } = req.body
 
-            const serviceHistory =
-                await new ViewServiceHistoryController()
-                    .viewServiceHistory(
-                        homeownerID,
-                        cleanerName,
-                        service,
-                        fromDate,
-                        toDate
-                    )
-
-            res.status(StatusCodes.OK).json({
-                message: "Service history retrieved successfully",
-                data: serviceHistory
-            })
+            if (cleanerName && String(cleanerName).length > 0) { //===== US-31 ======
+                const serviceHistory =
+                    await new SearchHomeownerServiceHistoryController()
+                        .searchHomeownerServiceHistory(
+                            homeownerID, cleanerName, service, fromDate, toDate
+                        )
+                res.status(StatusCodes.OK).json({
+                    message: "Service history retrieved successfully",
+                    data: serviceHistory
+                })
+            } else { //========== US-32 ==========
+                const serviceHistory =
+                    await new ViewHomeownerServiceHistoryController()
+                        .viewHomeownerServiceHistory(
+                            homeownerID, service, fromDate, toDate
+                        )
+                res.status(StatusCodes.OK).json({
+                    message: "Service history retrieved successfully",
+                    data: serviceHistory
+                })
+            }
         } catch (error: any) {
             res.status(StatusCodes.BAD_REQUEST).json({
                 error: error.message || "Failed to retrieve service history"

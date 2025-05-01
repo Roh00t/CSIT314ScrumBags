@@ -140,7 +140,6 @@ export default class UserAccount {
         })
     }
 
-
     /**
      * US-25: As a homeowner, I want to view cleaners 
      *        so that I can see their services provided
@@ -149,15 +148,54 @@ export default class UserAccount {
      * There will be another page to show the Services provided by the Cleaner.
      * 15042025 2257 Hours
      */
-    public async viewCleaners(
-        cleanerName: string | null
-    ): Promise<CleanerServicesData[]> {
+    public async viewCleaners(): Promise<CleanerServicesData[]> {
         const conditions = [
             eq(userProfilesTable.label, 'cleaner')
         ]
 
-        if (cleanerName) {
-            conditions.push(eq(userAccountsTable.username, cleanerName))
+        const queryForCleaners = await this.db
+            .select({
+                cleanerID: userAccountsTable.id,
+                cleaner: userAccountsTable.username,
+                serviceCategory: serviceCategoriesTable.label,
+                price: servicesProvidedTable.price
+            })
+            .from(servicesProvidedTable)
+            .innerJoin(serviceCategoriesTable, eq(
+                servicesProvidedTable.serviceCategoryID,
+                serviceCategoriesTable.id
+            ))
+            .innerJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
+            .innerJoin(userProfilesTable, eq(
+                userAccountsTable.userProfileId,
+                userProfilesTable.id
+            ))
+            .where(and(...conditions))
+
+        return queryForCleaners.map(query => {
+            return {
+                cleanerID: query.cleanerID,
+                cleaner: query.cleaner,
+                service: query.serviceCategory,
+                price: Number(query.price)
+            } as CleanerServicesData
+        })
+    }
+
+    /**
+     * US-24: As a homeowner, I want to search for cleaners so 
+     *        that I can find a potential cleaner for my home
+     */
+    public async searchCleaners(cleaner: string): Promise<CleanerServicesData[]> {
+        const conditions = [
+            eq(userProfilesTable.label, 'cleaner')
+        ]
+
+        if (cleaner) {
+            conditions.push(eq(userAccountsTable.username, cleaner))
         }
 
         const queryForCleaners = await this.db
