@@ -49,16 +49,41 @@ export class ServiceProvided {
      * 
      * Gets all the service 'types' provided by a cleaner (by their userID)
      */
-    public async viewServicesProvided(
+    public async viewServicesProvided(userID: number): Promise<ServiceProvidedData[]> {
+        const servicesProvidedByCleaner = await this.db
+            .select({
+                serviceName: servicesProvidedTable.serviceName,
+                description: servicesProvidedTable.description,
+                price: servicesProvidedTable.price
+            })
+            .from(servicesProvidedTable)
+            .leftJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
+            .where(eq(userAccountsTable.id, userID))
+
+        return servicesProvidedByCleaner.map(sp => {
+            return {
+                serviceName: sp.serviceName,
+                description: sp.description,
+                price: Number(sp.price)
+            } as ServiceProvidedData
+        })
+    }
+
+    /**
+     * US-17: As a cleaner, I want to search my service so 
+     *        that I can look up a specific service I provide
+     */
+    public async searchServicesProvided(
         userID: number,
-        serviceName: string | null
+        serviceName: string
     ): Promise<ServiceProvidedData[]> {
-        const conditions = [
-            eq(userAccountsTable.id, userID)
-        ];
+        const conditions = [eq(userAccountsTable.id, userID)]
 
         if (serviceName) {
-            conditions.push(eq(servicesProvidedTable.serviceName, serviceName));
+            conditions.push(eq(servicesProvidedTable.serviceName, serviceName))
         }
 
         const servicesProvidedByCleaner = await this.db

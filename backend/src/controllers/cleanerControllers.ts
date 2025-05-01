@@ -19,10 +19,24 @@ export class ViewCleanersController {
         this.userAccount = new UserAccount()
     }
 
-    public async viewCleaners(
-        cleanerName: string | null
-    ): Promise<CleanerServicesData[]> {
-        return await this.userAccount.viewCleaners(cleanerName)
+    public async viewCleaners(): Promise<CleanerServicesData[]> {
+        return await this.userAccount.viewCleaners()
+    }
+}
+
+/**
+ * US-24: As a homeowner, I want to search for cleaners so 
+ *        that I can find a potential cleaner for my home
+ */
+export class SearchCleanersControllers {
+    private userAccount: UserAccount
+
+    constructor() {
+        this.userAccount = new UserAccount()
+    }
+
+    public async searchCleaners(cleaner: string): Promise<CleanerServicesData[]> {
+        return await this.userAccount.searchCleaners(cleaner)
     }
 }
 
@@ -86,13 +100,30 @@ export class ViewServicesProvidedController {
     }
 
     public async viewServicesProvided(
-        userID: number,
-        serviceName: string | null
+        cleanerID: number
     ): Promise<ServiceProvidedData[]> {
-        return await this.serviceProvided.viewServicesProvided(userID, serviceName)
+        return await this.serviceProvided.viewServicesProvided(cleanerID)
     }
 }
 
+/**
+ * US-17: As a cleaner, I want to search my service so 
+ *        that I can look up a specific service I provide
+ */
+export class SearchServicesProvidedController {
+    private serviceProvided: ServiceProvided
+
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async searchServicesProvided(
+        cleanerID: number,
+        serviceName: string
+    ): Promise<ServiceProvidedData[]> {
+        return await this.serviceProvided.searchServicesProvided(cleanerID, serviceName)
+    }
+}
 
 /**
  * US-13: As a cleaner, I want to create my service so 
