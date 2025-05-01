@@ -40,7 +40,7 @@ cleanersRouter.post(
                             endDate ? new Date(endDate) : null
                         )
                 res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully",
+                    message: "Service history retrieved successfully 1",
                     data: searchedServiceHistory
                 })
                 res.status(StatusCodes.OK).send()
@@ -52,7 +52,7 @@ cleanersRouter.post(
                         endDate ? new Date(endDate) : null
                     )
                 res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully",
+                    message: "Service history retrieved successfully 2",
                     data: allServiceHistory
                 })
             }
