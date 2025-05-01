@@ -93,7 +93,6 @@ export class ViewServicesProvidedController {
     }
 }
 
-
 /**
  * US-13: As a cleaner, I want to create my service so 
  *        that homeowners can view my services provided 
