@@ -1,4 +1,3 @@
-import { ServiceCategoryAlreadyExistsError, ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { requireAuthMiddleware } from '../shared/middleware'
 import { UserAccountData } from '../shared/dataClasses'
 import {
@@ -12,9 +11,14 @@ import { StatusCodes } from 'http-status-codes'
 import {
     ViewAllServicesProvidedController,
     CreateServiceProvidedController,
-    ViewServicesProvidedController
+    ViewServicesProvidedController,
+    SearchServicesProvidedController
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
+import {
+    ServiceCategoryAlreadyExistsError,
+    ServiceCategoryNotFoundError
+} from '../shared/exceptions'
 
 const servicesRouter = Router()
 
@@ -154,18 +158,32 @@ servicesRouter.get('/', async (_, res): Promise<void> => {
  * US-14: As a cleaner, I want to view my service 
  *        so that I can check on my services provided
  * 
- * Gets all the service 'types' provided by a cleaner (by their userID)
+ * US-17: As a cleaner, I want to search my service so 
+ *        that I can look up a specific service I provide
+ * 
+ * Gets all the service 'types' provided by a cleaner (by their userID).
+ * 
+ * Conditionally checks the "serviceName" field within request body. 
+ * If it exists, it will invoke the controller to search services provided
  */
 servicesRouter.post('/:id', async (req, res): Promise<void> => {
     try {
         const { id } = req.params
         const { serviceName } = req.body
 
-        const servicesProvided =
-            await new ViewServicesProvidedController()
-                .viewServicesProvided(Number(id), serviceName)
+        if (serviceName && String(serviceName).length > 0) { //==== US-17 =====
+            const servicesProvided =
+                await new SearchServicesProvidedController()
+                    .searchServicesProvided(Number(id), serviceName)
 
-        res.status(StatusCodes.OK).json(servicesProvided)
+            res.status(StatusCodes.OK).json(servicesProvided)
+        } else { //========== US-14 =======
+            const servicesProvided =
+                await new ViewServicesProvidedController()
+                    .viewServicesProvided(Number(id))
+
+            res.status(StatusCodes.OK).json(servicesProvided)
+        }
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message

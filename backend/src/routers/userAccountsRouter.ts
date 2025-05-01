@@ -1,4 +1,4 @@
-import { ViewCleanersController } from '../controllers/cleanerControllers'
+import { SearchCleanersControllers, ViewCleanersController } from '../controllers/cleanerControllers'
 import { LoginController } from '../controllers/sharedControllers'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { UserAccountData } from '../shared/dataClasses'
@@ -133,16 +133,25 @@ userAccountsRouter.get('/', async (_, res): Promise<void> => {
 })
 
 /**
+ * US-24: As a homeowner, I want to search for cleaners so 
+ *        that I can find a potential cleaner for my home
+ * 
  * US-25: As a homeowner, I want to view cleaners 
  *        so that I can see their services provided
  */
 userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
-    const { cleanerName } = req.body
-
     try {
-        const allAvailableCleaners =
-            await new ViewCleanersController().viewCleaners(cleanerName)
-        res.status(StatusCodes.OK).json(allAvailableCleaners)
+        const { cleanerName } = req.body
+
+        if (cleanerName && String(cleanerName).length > 0) { //==== US-24 ====
+            const searchedCleaners =
+                await new SearchCleanersControllers()
+                    .searchCleaners(cleanerName)
+            res.status(StatusCodes.OK).json(searchedCleaners)
+        } else { //======= US-25 ========
+            const allCleaners = await new ViewCleanersController().viewCleaners()
+            res.status(StatusCodes.OK).json(allCleaners)
+        }
     } catch (err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             message: (err as Error).message

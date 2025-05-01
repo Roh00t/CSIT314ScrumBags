@@ -1,8 +1,6 @@
-import { ServiceHistory } from "../shared/dataClasses"
-import UserAccount from "../entities/userAccount"
-import { ServiceCategory } from "../entities/serviceCategory"
 import { ShortlistedCleaner } from "../entities/shortlistedCleaner"
 import { ServiceBooking } from "../entities/serviceBooking"
+import { ServiceHistory } from "../shared/dataClasses"
 
 /**
  * US-26: As a homeowner, I want to save the cleaners into my short list 
@@ -63,21 +61,45 @@ export class SearchShortlistController {
  *        cleaner services used, filtered by services, date period 
  *        so that I can keep track of my previous expenses and bookings
  */
-export class ViewServiceHistoryController {
+export class ViewHomeownerServiceHistoryController {
     private serviceBooking: ServiceBooking
 
     constructor() {
         this.serviceBooking = new ServiceBooking()
     }
 
-    public async viewServiceHistory(
+    public async viewHomeownerServiceHistory(
         userID: number,
-        cleanerName: string | null,
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
     ): Promise<ServiceHistory[]> {
-        return await this.serviceBooking.viewServiceHistory(
+        return await this.serviceBooking.viewHomeownerServiceHistory(
+            userID, service, fromDate, toDate
+        )
+    }
+}
+
+/**
+ * US-31: As a homeowner, I want to search the history of the cleaner 
+ *        services used, filtered by services, date period so that I 
+ *        can easily find past services for reference and rebooking
+ */
+export class SearchHomeownerServiceHistoryController {
+    private serviceBooking: ServiceBooking
+
+    constructor() {
+        this.serviceBooking = new ServiceBooking()
+    }
+
+    public async searchHomeownerServiceHistory(
+        userID: number,
+        cleanerName: string,
+        service: string | null,
+        fromDate: Date | string | null,
+        toDate: Date | string | null
+    ): Promise<ServiceHistory[]> {
+        return await this.serviceBooking.searchHomeownerServiceHistory(
             userID, cleanerName, service, fromDate, toDate
         )
     }
