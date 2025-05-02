@@ -1,4 +1,3 @@
-import { SearchCleanersControllers, ViewCleanersController } from '../controllers/cleanerControllers'
 import { LoginController } from '../controllers/sharedControllers'
 import { ReasonPhrases, StatusCodes } from 'http-status-codes'
 import { UserAccountData } from '../shared/dataClasses'
@@ -9,7 +8,12 @@ import {
     SearchUserAccountController,
     ViewUserAccountsController,
 } from '../controllers/userAdminControllers'
+import {
+    SearchCleanersController,
+    ViewCleanersController
+} from '../controllers/cleanerControllers'
 import { Router } from 'express'
+
 import {
     SearchUserAccountNoResultError,
     UserProfileSuspendedError,
@@ -118,17 +122,12 @@ userAccountsRouter.post('/create', async (req, res): Promise<void> => {
  */
 userAccountsRouter.get('/', async (_, res): Promise<void> => {
     try {
-        const userAccountData =
-            await new ViewUserAccountsController().viewUserAccounts()
+        const userAccountData = await new ViewUserAccountsController().viewUserAccounts()
         res.status(StatusCodes.OK).json(userAccountData)
     } catch (err) {
-        if (err instanceof UserAccountNotFoundError) {
-            res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
-        } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: ReasonPhrases.INTERNAL_SERVER_ERROR
-            })
-        }
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: ReasonPhrases.INTERNAL_SERVER_ERROR
+        })
     }
 })
 
@@ -145,7 +144,7 @@ userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
 
         if (cleanerName && String(cleanerName).length > 0) { //==== US-24 ====
             const searchedCleaners =
-                await new SearchCleanersControllers()
+                await new SearchCleanersController()
                     .searchCleaners(cleanerName)
             res.status(StatusCodes.OK).json(searchedCleaners)
         } else { //======= US-25 ========

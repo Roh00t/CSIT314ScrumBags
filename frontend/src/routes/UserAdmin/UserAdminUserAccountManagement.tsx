@@ -57,7 +57,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
 
   const confirmSuspendAction = async () => {
     if (!confirmSuspendModal.user?.id) return;
-  
+
     try {
       await axios.post(
         `http://localhost:3000/api/user-accounts/${newStatus === 'Active' ? 'unsuspend' : 'suspend'}`,
@@ -176,29 +176,29 @@ const UserAdminUserAccountManagement: React.FC = () => {
 
         {/* Suspend Modal */}
         {confirmSuspendModal.show && confirmSuspendModal.user && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <h2>
-        Are you sure you want to {newStatus === 'Active' ? 'unsuspend' : 'suspend'} user account
-        <br />"<b>{confirmSuspendModal.user.username}</b>"?
-      </h2>
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>
+                Are you sure you want to {newStatus === 'Active' ? 'unsuspend' : 'suspend'} user account
+                <br />"<b>{confirmSuspendModal.user.username}</b>"?
+              </h2>
 
-      <select
-        value={newStatus}
-        onChange={(e) => setNewStatus(e.target.value as 'Active' | 'Suspended')}
-        style={{ width: '100%', marginTop: '1rem' }}
-      >
-        <option value="Active">Active</option>
-        <option value="Suspended">Suspended</option>
-      </select>
+              <select
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value as 'Active' | 'Suspended')}
+                style={{ width: '100%', marginTop: '1rem' }}
+              >
+                <option value="Active">Active</option>
+                <option value="Suspended">Suspended</option>
+              </select>
 
-      <div className="modal-btn-group" style={{ marginTop: '1.5rem' }}>
-        <button onClick={() => setConfirmSuspendModal({ show: false, user: null })}>Cancel</button>
-        <button onClick={confirmSuspendAction} className="submit-btn">Update Status</button>
-      </div>
-    </div>
-  </div>
-)}
+              <div className="modal-btn-group" style={{ marginTop: '1.5rem' }}>
+                <button onClick={() => setConfirmSuspendModal({ show: false, user: null })}>Cancel</button>
+                <button onClick={confirmSuspendAction} className="submit-btn">Update Status</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Edit Modal remains unchanged */}
         {showEditModal && (

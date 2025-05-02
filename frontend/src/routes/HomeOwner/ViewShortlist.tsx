@@ -92,7 +92,7 @@ const ViewShortlist: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={3}>No users found</td>  {/* Message when no users are found */}
+                  <td colSpan={3}>Your shortlist is currently empty</td>  {/* Message when no users are found */}
                 </tr>
               )}
             </tbody>

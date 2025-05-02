@@ -6,7 +6,8 @@ import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
 
 interface Role {
-  name: string;
+  id: number;
+  label: string;
   isSuspended: boolean;
 }
 
@@ -43,7 +44,11 @@ const ViewUserRoles: React.FC = () => {
         const response = await axios.get(`http://localhost:3000/api/user-profiles/search?search=${search}`, { withCredentials: true });
         const data = response.data;
         const results = Array.isArray(data) ? data : [data];
-        const mappedResults = results.map((r: any) => ({ name: r.label, isSuspended: r.isSuspended }));
+        const mappedResults = results.map((r: any) => ({
+          id: r.id,
+          label: r.label,
+          isSuspended: r.isSuspended
+        }));
         setFilteredRoles(mappedResults);
       } catch (err) {
         console.error('Search failed:', err);
@@ -57,7 +62,7 @@ const ViewUserRoles: React.FC = () => {
     if (!selectedProfile) return;
     const url = `http://localhost:3000/api/user-profiles/${newStatus === 'Active' ? 'unsuspend' : 'suspend'}`;
     try {
-      await axios.post(url, { profileName: selectedProfile.name }, { withCredentials: true });
+      await axios.post(url, { profileName: selectedProfile.label }, { withCredentials: true });
       setShowSuspendModal(false);
       fetchRoles();
     } catch (error) {
@@ -113,8 +118,8 @@ const ViewUserRoles: React.FC = () => {
             {filteredRoles.length > 0 ? (
               filteredRoles.map((role, index) => (
                 <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{role.name}</td>
+                  <td>{role.id}</td>
+                  <td>{role.label}</td>
                   <td style={{ color: role.isSuspended ? 'red' : 'green', fontWeight: 'bold' }}>
                     {role.isSuspended ? 'Suspended' : 'Active'}
                   </td>
@@ -124,7 +129,7 @@ const ViewUserRoles: React.FC = () => {
                       <button
                         className="edit-btn"
                         onClick={() => {
-                          setEditingProfile({ currentProfile: role.name, updatedProfile: '' });
+                          setEditingProfile({ currentProfile: role.label, updatedProfile: '' });
                           setShowProfileEditModal(true);
                         }}
                       >Edit</button>
@@ -149,7 +154,7 @@ const ViewUserRoles: React.FC = () => {
         {showSuspendModal && selectedProfile && (
           <div className="modal-overlay">
             <div className="modal">
-              <h2>Are you sure you want to {newStatus === 'Active' ? 'unsuspend' : 'suspend'} user profile<br />"{selectedProfile.name}"?</h2>
+              <h2>Are you sure you want to {newStatus === 'Active' ? 'unsuspend' : 'suspend'} user profile<br />"{selectedProfile.label}"?</h2>
               <select value={newStatus} onChange={e => setNewStatus(e.target.value as 'Active' | 'Suspended')}>
                 <option value="Active">Active</option>
                 <option value="Suspended">Suspended</option>
