@@ -35,6 +35,11 @@ const CleanerViewMyBookings: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<'All' | 'Pending' | 'Confirmed' | 'Cancelled'>('All');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  const formatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split('-');
+    return `${month}/${day}/${year}`; // MM/DD/YYYY
+  };
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -61,8 +66,8 @@ const CleanerViewMyBookings: React.FC = () => {
           bookingid: bookingId,
           service: serviceName || search,
           homeOwnerName: homeowner,
-          fromDate: fromDate ? formatDate(fromDate) : null,
-          toDate: toDate ? formatDate(toDate) : null,
+          startDate: fromDate ? formatDate(fromDate) : null,
+          endDate: toDate ? formatDate(toDate) : null,
           status: statusFilter ?? null,
         },
         {
@@ -110,11 +115,6 @@ const CleanerViewMyBookings: React.FC = () => {
   useEffect(() => {
     fetchServiceHist();
   }, [sessionUser.id]);
-
-  const formatDate = (dateString: string) => {
-    const [year, month, day] = dateString.split('-');
-    return `${month}/${day}/${year}`; // MM/DD/YYYY
-  };
 
   const filteredHistory = filterStatus === 'All'
     ? history
