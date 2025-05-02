@@ -28,7 +28,7 @@ export class ViewCleanersController {
  * US-24: As a homeowner, I want to search for cleaners so 
  *        that I can find a potential cleaner for my home
  */
-export class SearchCleanersControllers {
+export class SearchCleanersController {
     private userAccount: UserAccount
 
     constructor() {

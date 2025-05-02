@@ -1,5 +1,4 @@
 import { CleanerServicesData, UserAccountData } from '../shared/dataClasses'
-import { shortlistedCleanersTable } from '../db/schema/shortlistedCleaners'
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { userProfilesTable } from '../db/schema/userProfiles'
@@ -8,12 +7,11 @@ import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { and, eq, ilike } from 'drizzle-orm'
 import {
-    CleanerAlreadyShortlistedError,
+    SearchUserAccountNoResultError,
+    UserProfileSuspendedError,
     UserAccountSuspendedError,
     UserAccountNotFoundError,
     InvalidCredentialsError,
-    UserProfileSuspendedError,
-    SearchUserAccountNoResultError
 } from '../shared/exceptions'
 import bcrypt from 'bcrypt'
 

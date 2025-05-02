@@ -10,9 +10,9 @@ import {
 import { StatusCodes } from 'http-status-codes'
 import {
     ViewAllServicesProvidedController,
+    SearchServicesProvidedController,
     CreateServiceProvidedController,
-    ViewServicesProvidedController,
-    SearchServicesProvidedController
+    ViewServicesProvidedController
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
 import {
@@ -36,7 +36,7 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
     try {
         const { category } = req.body
         await new CreateServiceCategoryController().createServiceCategory(category)
-        res.status(StatusCodes.OK).send()
+        res.status(StatusCodes.CREATED).send()
     } catch (err) {
         if (err instanceof ServiceCategoryAlreadyExistsError) {
             res.status(StatusCodes.CONFLICT).json({
@@ -222,7 +222,7 @@ servicesRouter.post(
             res.status(StatusCodes.CREATED).send()
         } catch (err) {
             if (err instanceof ServiceCategoryNotFoundError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
+                res.status(StatusCodes.NOT_FOUND).json({
                     message: (err as Error).message
                 })
             } else {

@@ -44,9 +44,7 @@ export class ShortlistedCleaner {
      * US-28: As a homeowner, I want to view my shortlist so that I 
      *        can have an easy time looking for a cleaner or service
      */
-    public async viewShortlist(
-        homeownerID: number
-    ): Promise<string[]> {
+    public async viewShortlist(homeownerID: number): Promise<string[]> {
         const shortlistedCleaners = await this.db
             .select({ cleanerID: shortlistedCleanersTable.cleanerID })
             .from(shortlistedCleanersTable)

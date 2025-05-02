@@ -1,4 +1,4 @@
-import '../../css/PlatformManager/platformManagerViewReport.css'
+import '../../css/PlatformManager/platformManagerViewReport.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import LogoutModal from '../../components/LogoutModal';
@@ -13,28 +13,17 @@ const PlatformManagerViewReports: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-  
-    if (filter === 'weekly') {
-      const [year, week] = value.split('-W');
-      const date = getDateOfISOWeek(Number(week), Number(year));
-      setSelectedDate(date.toISOString());
-    } else if (filter === 'monthly') {
-      const [year, month] = value.split('-');
-      const date = new Date(Number(year), Number(month) - 1, 1);
-      setSelectedDate(date.toISOString());
-    } else {
-      setSelectedDate(new Date(value).toISOString());
-    }
+    setSelectedDate(e.target.value);
   };
-  
+
   // Helper function to get Monday of ISO week
   function getDateOfISOWeek(week: number, year: number) {
     const simple = new Date(year, 0, 1 + (week - 1) * 7);
     const dow = simple.getDay();
     const ISOweekStart = simple;
-    if (dow <= 4) 
+    if (dow <= 4)
       ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
     else
       ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
@@ -68,16 +57,22 @@ const PlatformManagerViewReports: React.FC = () => {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const baseDate = selectedDate ? new Date(selectedDate) : new Date();
-        let chosenDate = baseDate.toISOString();
+        let chosenDate: string;
 
-        if (filter === 'weekly') {
-          const startOfWeek = new Date(baseDate);
-          startOfWeek.setDate(baseDate.getDate() - baseDate.getDay());
-          chosenDate = startOfWeek.toISOString();
-        } else if (filter === 'monthly') {
-          const startOfMonth = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
-          chosenDate = startOfMonth.toISOString();
+        if (!selectedDate) {
+          chosenDate = new Date().toISOString();
+        } else {
+          if (filter === 'weekly') {
+            const [year, week] = selectedDate.split('-W');
+            const date = getDateOfISOWeek(Number(week), Number(year));
+            chosenDate = date.toISOString();
+          } else if (filter === 'monthly') {
+            const [year, month] = selectedDate.split('-');
+            const date = new Date(Number(year), Number(month) - 1, 1);
+            chosenDate = date.toISOString();
+          } else {
+            chosenDate = new Date(selectedDate).toISOString();
+          }
         }
 
         const response = await axios.post(`http://localhost:3000/api/platform-manager/${filter}`, {
@@ -140,16 +135,37 @@ const PlatformManagerViewReports: React.FC = () => {
           />
 
           <input
-          type={getDateInputMode()}
-          value={selectedDate ? selectedDate.split('T')[0] : ''}
-          onChange={handleDateChange}
-          style={{ marginLeft: '1rem' }}
+            type={getDateInputMode()}
+            value={selectedDate}
+            onChange={handleDateChange}
+            style={{ marginLeft: '1rem' }}
           />
 
           <div className="filter-options">
-            <label><input type="radio" value="daily" checked={filter === 'daily'} onChange={() => setFilter('daily')} /> Daily</label>
-            <label><input type="radio" value="weekly" checked={filter === 'weekly'} onChange={() => setFilter('weekly')} /> Weekly</label>
-            <label><input type="radio" value="monthly" checked={filter === 'monthly'} onChange={() => setFilter('monthly')} /> Monthly</label>
+            <label>
+              <input
+                type="radio"
+                value="daily"
+                checked={filter === 'daily'}
+                onChange={() => setFilter('daily')}
+              /> Daily
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="weekly"
+                checked={filter === 'weekly'}
+                onChange={() => setFilter('weekly')}
+              /> Weekly
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="monthly"
+                checked={filter === 'monthly'}
+                onChange={() => setFilter('monthly')}
+              /> Monthly
+            </label>
           </div>
         </div>
 
@@ -180,7 +196,9 @@ const PlatformManagerViewReports: React.FC = () => {
           </tbody>
         </table>
 
-        <button className="download-btn" onClick={handleDownloadCSV} disabled={reportData.length === 0}>Download</button>
+        <button className="download-btn" onClick={handleDownloadCSV} disabled={reportData.length === 0}>
+          Download
+        </button>
       </div>
 
       <div className="footer">

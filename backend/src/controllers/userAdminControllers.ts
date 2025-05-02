@@ -138,7 +138,7 @@ export class ViewUserProfilesController {
         this.userProfile = new UserProfile()
     }
 
-    public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
+    public async viewUserProfiles(): Promise<UserProfilesSelect[]> {
         return await this.userProfile.viewUserProfiles()
     }
 }
