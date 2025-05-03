@@ -12,7 +12,9 @@ import {
     ViewAllServicesProvidedController,
     SearchServicesProvidedController,
     CreateServiceProvidedController,
-    ViewServicesProvidedController
+    ViewServicesProvidedController,
+    ViewNumberOfInterestedHomeownersController,
+    UpdateNumberOfInterestedHomeownersController
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
 import {
@@ -230,6 +232,56 @@ servicesRouter.post(
                     message: (err as Error).message
                 })
             }
+        }
+    }
+)
+
+/**
+ * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
+ *            my services, so that I can understand the demand of my services
+ */
+servicesRouter.get(
+    '/views',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        try {
+            const cleanerID = (req.session.user as UserAccountData).id
+
+            const noOfInterestedHomeowners =
+                await new ViewNumberOfInterestedHomeownersController()
+                    .viewNumberOfInterestedHomeowners(cleanerID)
+
+            res.status(StatusCodes.OK).json(noOfInterestedHomeowners)
+        } catch (err) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
+    }
+)
+
+/**
+ * US-20 (b): As a cleaner, I want to view the number of homeowners interested in 
+ *            my services, so that I can understand the demand of my services
+ */
+servicesRouter.post(
+    '/views',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        try {
+            const homeownerID = (req.session.user as UserAccountData).id
+            const { serviceProvidedID } = req.body
+
+            await new UpdateNumberOfInterestedHomeownersController()
+                .updateNumberOfInterestedHomeowners(
+                    homeownerID,
+                    serviceProvidedID,
+                    new Date()
+                )
+        } catch (err) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
         }
     }
 )

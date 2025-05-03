@@ -7,6 +7,7 @@ import {
     CleanerServicesData,
     ServiceProvidedData
 } from '../shared/dataClasses'
+import { ServiceView } from '../entities/serviceView'
 
 /**
  * US-25: As a homeowner, I want to view cleaners 
@@ -149,6 +150,46 @@ export class CreateServiceProvidedController {
             serviceCategory,
             description,
             price
+        )
+    }
+}
+
+/**
+ * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
+ *            my services, so that I can understand the demand of my services
+ */
+export class ViewNumberOfInterestedHomeownersController {
+    private serviceView: ServiceView
+
+    constructor() {
+        this.serviceView = new ServiceView()
+    }
+
+    async viewNumberOfInterestedHomeowners(cleanerID: number): Promise<number> {
+        return this.serviceView.viewNumberOfInterestedHomeowners(cleanerID)
+    }
+}
+
+/**
+ * US-20 (b): As a cleaner, I want to view the number of homeowners interested in 
+ *            my services, so that I can understand the demand of my services
+ */
+export class UpdateNumberOfInterestedHomeownersController {
+    private serviceView: ServiceView
+
+    constructor() {
+        this.serviceView = new ServiceView()
+    }
+
+    async updateNumberOfInterestedHomeowners(
+        homeownerID: number,
+        serviceProvidedID: number,
+        viewedAtTimestamp: Date
+    ): Promise<void> {
+        this.serviceView.updateNumberOfInterestedHomeowners(
+            homeownerID,
+            serviceProvidedID,
+            viewedAtTimestamp
         )
     }
 }

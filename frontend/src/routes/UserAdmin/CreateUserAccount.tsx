@@ -4,12 +4,16 @@ import { Link } from 'react-router-dom'
 import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/LogoutModal';
 
-
+interface UserProfile {
+  id: number
+  label: string
+  isSuspended: boolean
+}
 
 const CreateAccountPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-  const [role, setRole] = useState('')
-  const [roles, setRoles] = useState<string[]>([]); // Correct for array of strings
+  const [role, setRole] = useState<string>('')
+  const [roles, setRoles] = useState<UserProfile[]>([]); // Correct for array of strings
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -141,8 +145,8 @@ const CreateAccountPage: React.FC = () => {
                 <option disabled>Loading roles...</option>
               ) : (
                 roles.map(r => (
-                  <option key={r} value={r}>
-                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                  <option key={r.id} value={r.label}>
+                    {r.label.charAt(0).toUpperCase() + r.label.slice(1)}
                   </option>
                 ))
               )}

@@ -231,7 +231,7 @@ userAccountsRouter.get('/search', async (req, res): Promise<void> => {
         res.status(StatusCodes.OK).json(foundUserAccounts)
     } catch (err) {
         if (err instanceof SearchUserAccountNoResultError) {
-            res.status(StatusCodes.NO_CONTENT).json({
+            res.status(StatusCodes.NOT_FOUND).json({
                 message: (err as Error).message
             })
         } else {
