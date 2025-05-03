@@ -7,7 +7,8 @@ import {
     AddToShortlistController,
     ViewShortlistController,
     SearchShortlistController,
-    SearchHomeownerServiceHistoryController
+    SearchHomeownerServiceHistoryController,
+    CreateServiceBookingController
 } from "../controllers/homeownerControllers"
 import { Router } from "express"
 import { CleanerAlreadyShortlistedError } from "../shared/exceptions"
@@ -165,6 +166,23 @@ homeownerRouter.get(
                 error: error.message || "Failed to retrieve service history"
             })
         }
+    }
+)
+homeownerRouter.post(
+    '/createbooking',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+        try{
+            const homeownerID = req.session.user?.id as number
+            const {serviceProvidedID, startTimestamp} = req.body
+            const startDate = new Date(startTimestamp)
+            await new CreateServiceBookingController().createServiceBooking(homeownerID, serviceProvidedID, startDate)
+            res.status(StatusCodes.OK).send()
+        }catch (error: any) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                error: error.message || "Failed to retrieve service history"
+            })
+    }
     }
 )
 

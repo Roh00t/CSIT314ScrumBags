@@ -8,6 +8,7 @@ import {
     ServiceProvidedData
 } from '../shared/dataClasses'
 import { ServiceView } from '../entities/serviceView'
+import { ShortlistedCleaner } from '../entities/shortlistedCleaner'
 
 /**
  * US-25: As a homeowner, I want to view cleaners 
@@ -155,6 +156,40 @@ export class CreateServiceProvidedController {
 }
 
 /**
+ * US-15: As a cleaner, I want to update my service so  
+ *        that I can make changes to my service provided.
+ */
+export class UpdateServiceProvidedController{
+    private serviceProvided: ServiceProvided
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async updateServiceProvided(
+        serviceID: number,
+        serviceName: string,
+        description: string,
+        price: number
+    ): Promise<void> {
+        const update = await this.serviceProvided.updateServiceProvided(serviceID, serviceName, description, price)
+    }
+}
+
+/**
+ * US-16: As a cleaner, I want to delete my service 
+ *        so that I can remove my service provided
+ */
+export class DeleteServiceProvidedController{
+    private serviceProvided: ServiceProvided
+    constructor(){
+        this.serviceProvided = new ServiceProvided()
+    }
+    
+    async deleteServiceProvided(serviceID: number):Promise<void>{
+        const del = await this.serviceProvided.deleteServiceProvided(serviceID)
+    }
+}
+/**
  * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
  *            my services, so that I can understand the demand of my services
  */
@@ -193,7 +228,22 @@ export class UpdateNumberOfInterestedHomeownersController {
         )
     }
 }
+  /**
+     * US-21: As a cleaner, I want to know the number of homeowners that shortlisted me for my services,
+     *        so that I can track my popularity and potential bookings
+     */
+export class ViewShortlistedBookingsController{
+    private shortListedCleaner: ShortlistedCleaner
 
+    constructor(){
+        this.shortListedCleaner= new ShortlistedCleaner
+    }
+    public async viewNoOfShortlistedHomeowners(
+        cleanerID: number
+    ): Promise<number> {
+        return await this.shortListedCleaner.viewNoOfShortlistedHomeowners(cleanerID)
+    }
+}
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
@@ -209,3 +259,4 @@ export class ViewAllServicesProvidedController {
         return await this.serviceProvided.viewAllServicesProvided()
     }
 }
+

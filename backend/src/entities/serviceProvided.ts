@@ -6,6 +6,7 @@ import { AllServices, ServiceProvidedData } from "../shared/dataClasses"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { and, eq } from "drizzle-orm"
+import { string } from "zod"
 
 export class ServiceProvided {
     private db: DrizzleClient
@@ -52,6 +53,7 @@ export class ServiceProvided {
     public async viewServicesProvided(userID: number): Promise<ServiceProvidedData[]> {
         const servicesProvidedByCleaner = await this.db
             .select({
+                serviceProvidedID: servicesProvidedTable.id,
                 serviceName: servicesProvidedTable.serviceName,
                 description: servicesProvidedTable.description,
                 price: servicesProvidedTable.price
@@ -65,13 +67,39 @@ export class ServiceProvided {
 
         return servicesProvidedByCleaner.map(sp => {
             return {
+                serviceProvidedID: sp.serviceProvidedID,
                 serviceName: sp.serviceName,
                 description: sp.description,
                 price: Number(sp.price)
             } as ServiceProvidedData
         })
     }
-
+    /**
+     * US-15: As a cleaner, I want to update my service so  
+     *        that I can make changes to my service provided.
+     */
+    public async updateServiceProvided(
+        serviceID: number,
+        newserviceName: string,
+        newdescription: string,
+        newprice: number
+    ): Promise<void>{
+        const updateService = await this.db.update(servicesProvidedTable)
+                                .set({serviceName: newserviceName, 
+                                    description: newdescription, 
+                                    price: String(newprice)
+                                }).where(eq(servicesProvidedTable.id, serviceID))
+    }
+    /**
+    * US-16: As a cleaner, I want to delete my service 
+    * so that I can remove my service provided
+    */
+   public async deleteServiceProvided(
+    serviceID: number
+   ): Promise<void>{
+    const deleteService = await this.db.delete(servicesProvidedTable)
+                                        .where(eq(servicesProvidedTable.id, serviceID))
+   }
     /**
      * US-17: As a cleaner, I want to search my service so 
      *        that I can look up a specific service I provide
@@ -88,6 +116,7 @@ export class ServiceProvided {
 
         const servicesProvidedByCleaner = await this.db
             .select({
+                serviceProvidedID: servicesProvidedTable.id,
                 serviceName: servicesProvidedTable.serviceName,
                 description: servicesProvidedTable.description,
                 price: servicesProvidedTable.price
@@ -101,6 +130,7 @@ export class ServiceProvided {
 
         return servicesProvidedByCleaner.map(sp => {
             return {
+                serviceProvidedID: sp.serviceProvidedID,
                 serviceName: sp.serviceName,
                 description: sp.description,
                 price: Number(sp.price)

@@ -1,6 +1,7 @@
 import { ShortlistedCleaner } from "../entities/shortlistedCleaner"
 import { ServiceBooking } from "../entities/serviceBooking"
 import { ServiceHistory } from "../shared/dataClasses"
+import { BookingStatus } from "../db/schema/bookingStatusEnum"
 
 /**
  * US-26: As a homeowner, I want to save the cleaners into my short list 
@@ -116,5 +117,21 @@ export class ViewAllServiceHistoryController {
         userID: number
     ): Promise<ServiceHistory[]> {
         return await this.serviceBooking.viewAllServiceHistory(userID)
+    }
+}
+export class CreateServiceBookingController {
+    private serviceBooking: ServiceBooking
+
+    constructor() {
+        this.serviceBooking =  new ServiceBooking()
+    }
+
+    public async createServiceBooking(
+        homeownerID: number,
+        serviceProvidedID: number,
+        startTimestamp: Date,
+
+    ):Promise<void> {
+        await this.serviceBooking.createServiceBooking(homeownerID, serviceProvidedID, startTimestamp)
     }
 }

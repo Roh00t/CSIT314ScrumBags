@@ -14,7 +14,9 @@ import {
     CreateServiceProvidedController,
     ViewServicesProvidedController,
     ViewNumberOfInterestedHomeownersController,
-    UpdateNumberOfInterestedHomeownersController
+    UpdateNumberOfInterestedHomeownersController,
+    UpdateServiceProvidedController,
+    DeleteServiceProvidedController
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
 import {
@@ -285,5 +287,46 @@ servicesRouter.post(
         }
     }
 )
+/**
+ * US-15: As a cleaner, I want to update my service so  
+ *        that I can make changes to my service provided.
+ */
+servicesRouter.put(
+    '/',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> =>{
+        try{
+            //Should I place Line 206-213 here
+            const { serviceid, service, description, price } = req.body
+            await new UpdateServiceProvidedController().updateServiceProvided(serviceid, service, description, price)
+            res.status(StatusCodes.OK).send()
+        } catch (err) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
+        
+    }
+)
 
+/**
+ * US-16: As a cleaner, I want to delete my service 
+ * so that I can remove my service provided
+ */
+servicesRouter.delete(
+    '/',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> =>{
+        try{
+            const { serviceid } = req.body
+            await new DeleteServiceProvidedController().deleteServiceProvided(serviceid)
+            res.status(StatusCodes.OK).send()
+        } catch (err) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: (err as Error).message
+            })
+        }
+        
+    }
+)
 export default servicesRouter

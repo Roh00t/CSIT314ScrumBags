@@ -8,6 +8,7 @@ export type UserAccountData = {
 }
 
 export type ServiceProvidedData = {
+    serviceProvidedID: number
     serviceName: string
     description: string
     price: number

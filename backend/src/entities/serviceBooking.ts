@@ -9,7 +9,8 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import {
     CleanerServiceBookingData,
     ServiceBookingReportData,
-    ServiceHistory
+    ServiceHistory,
+    ServiceProvidedData
 } from '../shared/dataClasses'
 
 export class ServiceBooking {
@@ -215,7 +216,7 @@ export class ServiceBooking {
             } as CleanerServiceBookingData
         })
     }
-
+  
     /**
      * US-22: As a cleaner, I want to search the history of my confirmed services, 
      *        filtered by services, date period, so that I can easily find past jobs
@@ -451,4 +452,19 @@ export class ServiceBooking {
             status: res.status
         }));
     }
+
+        /**
+     * US-443: As a homeowner, I want to book for cleaners so that cleaners can clean my home.
+     */
+    public async createServiceBooking(
+        homeownerID: number,
+        serviceProvidedID: number,
+        startTimestamp: Date,
+    ):Promise<void> {
+        await this.db.insert(serviceBookingsTable).values({homeownerID:homeownerID, 
+                                                           serviceProvidedID: serviceProvidedID, 
+                                                           startTimestamp: startTimestamp, 
+                                                           status: BookingStatus.Pending})
+    }
 }
+
