@@ -119,6 +119,7 @@ export class ViewAllServiceHistoryController {
         return await this.serviceBooking.viewAllServiceHistory(userID)
     }
 }
+
 export class CreateServiceBookingController {
     private serviceBooking: ServiceBooking
 

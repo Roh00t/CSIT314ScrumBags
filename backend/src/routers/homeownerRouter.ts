@@ -168,6 +168,7 @@ homeownerRouter.get(
         }
     }
 )
+
 homeownerRouter.post(
     '/createbooking',
     requireAuthMiddleware,

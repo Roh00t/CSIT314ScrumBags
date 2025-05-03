@@ -453,7 +453,7 @@ export class ServiceBooking {
         }));
     }
 
-        /**
+    /**
      * US-443: As a homeowner, I want to book for cleaners so that cleaners can clean my home.
      */
     public async createServiceBooking(
