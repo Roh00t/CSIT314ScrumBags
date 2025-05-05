@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import '../../css/Cleaner/CleanerViewServices.css';
-import { Link } from 'react-router-dom';
-import logo from '../../assets/logo.png';
-import LogoutModal from '../../components/LogoutModal';
+import React, { useState, useEffect } from 'react'
+import '../../css/Cleaner/CleanerViewServices.css'
+import { Link } from 'react-router-dom'
+import logo from '../../assets/logo.png'
+import LogoutModal from '../../components/LogoutModal'
 
 interface UserAccountResponse {
-    id: number;
-    username: string;
-    userProfile: string;
+    id: number
+    username: string
+    userProfile: string
 }
   
 interface Service {
-    id: number;
-    type: string;
-    description: string;
-    price: number;
-    status?: 'Active' | 'Deactivate';
+    id: number
+    type: string
+    description: string
+    price: number
+    status?: 'Active' | 'Deactivate'
 }
 
 interface NewServiceInput {
@@ -32,10 +32,10 @@ interface editServiceInput {
 }
 
 const CleanerViewServicesRoute: React.FC = () => {
-    const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
+    const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}')
 
     // Variables
-    const [services, setServices] = useState<Service[]>([]); // Array of services to display
+    const [services, setServices] = useState<Service[]>([]) // Array of services to display
     const [search, setSearch] = useState('') // Search for service input
     const [availableCategories, setAvailableCategories] = useState<string[]>([]) // List of category for Create New Services
     const [newService, setNewService] = useState<NewServiceInput>({
@@ -71,42 +71,42 @@ const CleanerViewServicesRoute: React.FC = () => {
             body: JSON.stringify({
                 serviceName: search,
             }),
-            });
+            })
             if (!response.ok) {
-                throw new Error('Failed to fetch services');
+                throw new Error('Failed to fetch services')
             }
-            const data = await response.json();
+            const data = await response.json()
             const formatted: Service[] = data.map((item: any) => ({
                 id: item.serviceProvidedID,
                 type: item.serviceName,
                 description: item.description,
                 price: item.price,
-            }));
-            setServices(formatted);
+            }))
+            setServices(formatted)
         } catch (error) {
-            console.error('Error fetching services:', error);
+            console.error('Error fetching services:', error)
         }
-    };
+    }
 
     useEffect(() => {
-        fetchServices();
-    }, [sessionUser.id]); // Only on mount or user ID change
+        fetchServices()
+    }, [sessionUser.id]) // Only on mount or user ID change
 
     // Fetch available categories
     useEffect(() => {
         const fetchAvailableCategories = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/services/categories/');
-            if (!response.ok) throw new Error('Failed to fetch available categories');
-            const data = await response.json();
-            console.log('Fetched available categories:', data);
-            setAvailableCategories(data);
+            const response = await fetch('http://localhost:3000/api/services/categories/')
+            if (!response.ok) throw new Error('Failed to fetch available categories')
+            const data = await response.json()
+            console.log('Fetched available categories:', data)
+            setAvailableCategories(data)
         } catch (error) {
-            console.error('Error fetching available categories:', error);
+            console.error('Error fetching available categories:', error)
         }
-        };
-        fetchAvailableCategories();
-    }, []);
+        }
+        fetchAvailableCategories()
+    }, [])
 
     const handleCreateService = async () => {
         try {
@@ -124,21 +124,21 @@ const CleanerViewServicesRoute: React.FC = () => {
                     price: Number(newService.price),
                 }),
                 credentials: 'include',
-            });
+            })
         
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to create service');
+                const errorData = await response.json()
+                throw new Error(errorData.message || 'Failed to create service')
             }
         
-            setCreateServiceModal(false);
-            setNewService({ serviceCategory:'', serviceName: '', description: '', price: '' });
-            await fetchServices(); // re-fetch without refreshing
+            setCreateServiceModal(false)
+            setNewService({ serviceCategory:'', serviceName: '', description: '', price: '' })
+            await fetchServices() // re-fetch without refreshing
             } catch (error) {
-                console.error('Error creating service:', error);
-                alert('Failed to create service.');
+                console.error('Error creating service:', error)
+                alert('Failed to create service.')
             }
-    };
+    }
 
     const handleDelete = async () => {
         try {
@@ -151,11 +151,11 @@ const CleanerViewServicesRoute: React.FC = () => {
                     serviceid: selectedService
                 }),
                 credentials: 'include',
-            });
+            })
     
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to delete service');
+                const errorData = await response.json()
+                throw new Error(errorData.message || 'Failed to delete service')
             }
 
             setDeleteServiceModal(false)
@@ -180,11 +180,11 @@ const CleanerViewServicesRoute: React.FC = () => {
                     price: Number(editService.price)
                 }),
                 credentials: 'include',
-            });
+            })
     
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to edit service');
+                const errorData = await response.json()
+                throw new Error(errorData.message || 'Failed to edit service')
             }
 
             setEditServiceModal(false)
@@ -324,12 +324,12 @@ const CleanerViewServicesRoute: React.FC = () => {
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         onKeyDown={e => {
-                        if (e.key === 'Enter') fetchServices();
+                        if (e.key === 'Enter') fetchServices()
                         }}
                         />
                         <button className="search-btn" onClick={fetchServices}>Search</button>
                         <button className="create-btn" onClick={() => {
-                            setNewService({ serviceCategory:'', serviceName: '', description: '', price: '' });
+                            setNewService({ serviceCategory:'', serviceName: '', description: '', price: '' })
                             setCreateServiceModal(true)}}>Create New Services
                         </button>
                     </div>
@@ -358,7 +358,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                                                 serviceName: service.type,
                                                 description: service.description,
                                                 price: service.price.toString(), // Convert number to string to match `editServiceInput`
-                                            });
+                                            })
                                             setEditServiceModal(true)
                                         }}>
                                             Edit
@@ -380,7 +380,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                     </table>
                 </div>
             </div>
-            
+
             <footer className="footer">
                 © Copyright 2025 Easy & Breezy - All Rights Reserved
             </footer>
