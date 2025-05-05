@@ -134,6 +134,10 @@ td {
   color: black;
 }
 
+.modal input {
+  color: black;
+}
+
 .modal .modal-buttons {
   display: flex;
   justify-content: center;
