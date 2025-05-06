@@ -60,14 +60,14 @@ const driver = async (db: DrizzleClient): Promise<void> => {
     await generateUserAccounts(db, NO_OF_USER_ADMINS, 'user admin')
 
     const serviceCategories = await initServiceCategories(db, presetServiceCategories)
-    const servicesProvided = await initServicesProvided(
+    const allServicesProvided = await initServicesProvided(
         db,
         allCleaners,
         serviceCategories,
         presetServiceNames
     )
-    await initServiceBookings(db, allHomeowners, servicesProvided)
-    await initShortlistEntries(db, allHomeowners, allCleaners)
+    await initServiceBookings(db, allHomeowners, allServicesProvided)
+    await initShortlistEntries(db, allHomeowners, allServicesProvided)
     console.log("Successfully seeded the database!")
 }
 

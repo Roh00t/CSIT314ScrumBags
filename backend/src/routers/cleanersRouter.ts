@@ -12,11 +12,13 @@ const cleanersRouter = Router()
 
 
 cleanersRouter.get('/shortlist/count',
-    requireAuthMiddleware, 
+    requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try{
+        try {
             const cleanerID = req.session.user?.id as number
-            const shortlistedBookingsCount = await new ViewShortlistedBookingsController().viewNoOfShortlistedHomeowners(cleanerID)
+            const shortlistedBookingsCount =
+                await new ViewShortlistedBookingsController()
+                    .viewNoOfShortlistedHomeowners(cleanerID)
             res.status(StatusCodes.OK).json(shortlistedBookingsCount)
         } catch (error: any) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

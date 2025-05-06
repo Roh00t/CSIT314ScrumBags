@@ -51,4 +51,9 @@ export type ServiceHistory = {
     date: Date;
     price: string | null;
     status: BookingStatus;
-};
+}
+
+export type ServiceProvidedShortlists = {
+    serviceProvidedID: number
+    noOfShortlists: number
+}

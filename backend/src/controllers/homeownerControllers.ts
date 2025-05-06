@@ -1,4 +1,4 @@
-import { ShortlistedCleaner } from "../entities/shortlistedCleaner"
+import { ShortlistedServices } from "../entities/shortlistedService"
 import { ServiceBooking } from "../entities/serviceBooking"
 import { ServiceHistory } from "../shared/dataClasses"
 import { BookingStatus } from "../db/schema/bookingStatusEnum"
@@ -8,10 +8,10 @@ import { BookingStatus } from "../db/schema/bookingStatusEnum"
  *        so that I can have an easier time for future reference
  */
 export class AddToShortlistController {
-    private shortlistedCleaner: ShortlistedCleaner
+    private shortlistedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortlistedCleaner = new ShortlistedCleaner()
+        this.shortlistedCleaner = new ShortlistedServices()
     }
 
     public async addToShortlist(
@@ -27,10 +27,10 @@ export class AddToShortlistController {
  *        can have an easy time looking for a cleaner or service
  */
 export class ViewShortlistController {
-    private shortlistedCleaner: ShortlistedCleaner
+    private shortlistedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortlistedCleaner = new ShortlistedCleaner()
+        this.shortlistedCleaner = new ShortlistedServices()
     }
 
     public async viewShortlist(homeownerID: number): Promise<string[]> {
@@ -43,10 +43,10 @@ export class ViewShortlistController {
  *        I can find a specific cleaner or service I want
  */
 export class SearchShortlistController {
-    private shortlistedCleaner: ShortlistedCleaner
+    private shortlistedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortlistedCleaner = new ShortlistedCleaner()
+        this.shortlistedCleaner = new ShortlistedServices()
     }
 
     public async searchShortlist(
@@ -124,7 +124,7 @@ export class CreateServiceBookingController {
     private serviceBooking: ServiceBooking
 
     constructor() {
-        this.serviceBooking =  new ServiceBooking()
+        this.serviceBooking = new ServiceBooking()
     }
 
     public async createServiceBooking(
@@ -132,7 +132,7 @@ export class CreateServiceBookingController {
         serviceProvidedID: number,
         startTimestamp: Date,
 
-    ):Promise<void> {
+    ): Promise<void> {
         await this.serviceBooking.createServiceBooking(homeownerID, serviceProvidedID, startTimestamp)
     }
 }

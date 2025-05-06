@@ -11,7 +11,7 @@ import {
     CreateServiceBookingController
 } from "../controllers/homeownerControllers"
 import { Router } from "express"
-import { CleanerAlreadyShortlistedError } from "../shared/exceptions"
+import { ServiceAlreadyShortlistedError } from "../shared/exceptions"
 
 const homeownerRouter = Router()
 
@@ -39,7 +39,7 @@ homeownerRouter.post(
                 message: "Shortlist successful"
             })
         } catch (err: any) {
-            if (err instanceof CleanerAlreadyShortlistedError) {
+            if (err instanceof ServiceAlreadyShortlistedError) {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     error: err.message
                 })
@@ -173,17 +173,17 @@ homeownerRouter.post(
     '/createbooking',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try{
+        try {
             const homeownerID = req.session.user?.id as number
-            const {serviceProvidedID, startTimestamp} = req.body
+            const { serviceProvidedID, startTimestamp } = req.body
             const startDate = new Date(startTimestamp)
             await new CreateServiceBookingController().createServiceBooking(homeownerID, serviceProvidedID, startDate)
             res.status(StatusCodes.OK).send()
-        }catch (error: any) {
+        } catch (error: any) {
             res.status(StatusCodes.BAD_REQUEST).json({
                 error: error.message || "Failed to retrieve service history"
             })
-    }
+        }
     }
 )
 

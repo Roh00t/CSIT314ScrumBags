@@ -1,14 +1,14 @@
+import { ShortlistedServices } from '../entities/shortlistedService'
 import { ServiceProvided } from '../entities/serviceProvided'
 import { ServiceBooking } from '../entities/serviceBooking'
+import { ServiceView } from '../entities/serviceView'
 import UserAccount from '../entities/userAccount'
 import {
-    AllServices,
     CleanerServiceBookingData,
     CleanerServicesData,
-    ServiceProvidedData
+    ServiceProvidedData,
+    AllServices
 } from '../shared/dataClasses'
-import { ServiceView } from '../entities/serviceView'
-import { ShortlistedCleaner } from '../entities/shortlistedCleaner'
 
 /**
  * US-25: As a homeowner, I want to view cleaners 
@@ -235,10 +235,10 @@ export class UpdateNumberOfInterestedHomeownersController {
  *        me for my services, so that I can track my popularity and potential bookings
  */
 export class ViewShortlistedBookingsController {
-    private shortListedCleaner: ShortlistedCleaner
+    private shortListedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortListedCleaner = new ShortlistedCleaner
+        this.shortListedCleaner = new ShortlistedServices
     }
 
     public async viewNoOfShortlistedHomeowners(cleanerID: number): Promise<number> {

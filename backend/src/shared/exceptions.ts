@@ -46,9 +46,9 @@ export class ServiceCategoryAlreadyExistsError extends Error {
     }
 }
 
-export class CleanerAlreadyShortlistedError extends Error {
-    constructor(cleaner: string) {
-        super(`You have already shortlisted the cleaner '${cleaner}'`)
+export class ServiceAlreadyShortlistedError extends Error {
+    constructor() {
+        super("You have already shortlisted this service")
     }
 }
 

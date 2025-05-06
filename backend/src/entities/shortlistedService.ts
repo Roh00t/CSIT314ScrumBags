@@ -1,12 +1,12 @@
-import { shortlistedCleanersTable } from "../db/schema/shortlistedCleaners"
-import { CleanerAlreadyShortlistedError } from "../shared/exceptions"
+import { shortlistedServicesTable } from "../db/schema/shortlistedServices"
+import { ServiceAlreadyShortlistedError } from "../shared/exceptions"
 import { servicesProvidedTable } from "../db/schema/servicesProvided"
 import { userAccountsTable } from "../db/schema/userAccounts"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
-import { and, count, eq, ilike } from "drizzle-orm"
+import { and, eq, ilike, sql } from "drizzle-orm"
 
-export class ShortlistedCleaner {
+export class ShortlistedServices {
     private db: DrizzleClient
 
     constructor() {
@@ -18,37 +18,49 @@ export class ShortlistedCleaner {
      *        me for my services, so that I can track my popularity and potential bookings
      */
     public async viewNoOfShortlistedHomeowners(cleanerID: number): Promise<number> {
-        const [shortlistedBookings] = await this.db.select({ count: count() })
-            .from(shortlistedCleanersTable)
-            .where(eq(shortlistedCleanersTable.cleanerID, cleanerID))
-        return shortlistedBookings.count
+
+        const res = await this.db
+            .select()
+            .from(shortlistedServicesTable)
+            .leftJoin(servicesProvidedTable, eq(
+                shortlistedServicesTable.serviceProvidedID,
+                servicesProvidedTable.cleanerID
+            ))
+            .where(eq(shortlistedServicesTable.serviceProvidedID, cleanerID))
+            .groupBy(sql`${servicesProvidedTable.serviceName}`)
+
+        // return shortlistedBookings.count
+        return 69
     }
 
     /**
      * US-26: As a homeowner, I want to save the cleaners into my short list 
      *        so that I can have an easier time for future reference
      */
-    public async addToShortlist(homeownerID: number, cleanerID: number): Promise<void> {
-        const [result] = await this.db
-            .select({ cleaner: userAccountsTable.username })
-            .from(shortlistedCleanersTable)
+    public async addToShortlist(homeownerID: number, serviceProvidedID: number): Promise<void> {
+        const result = await this.db
+            .select()
+            .from(shortlistedServicesTable)
             .leftJoin(userAccountsTable, eq(
-                shortlistedCleanersTable.cleanerID,
+                shortlistedServicesTable.serviceProvidedID,
                 userAccountsTable.id
             ))
             .where(and(
-                eq(shortlistedCleanersTable.homeownerID, homeownerID),
-                eq(shortlistedCleanersTable.cleanerID, cleanerID)
+                eq(shortlistedServicesTable.homeownerID, homeownerID),
+                eq(shortlistedServicesTable.serviceProvidedID, serviceProvidedID)
             ))
             .limit(1)
 
-        if (result) {
-            throw new CleanerAlreadyShortlistedError(result.cleaner as string)
+        if (result.length > 0) {
+            throw new ServiceAlreadyShortlistedError()
         }
 
         await this.db
-            .insert(shortlistedCleanersTable)
-            .values({ homeownerID, cleanerID })
+            .insert(shortlistedServicesTable)
+            .values({
+                homeownerID: homeownerID,
+                serviceProvidedID: serviceProvidedID
+            })
     }
 
     /**
@@ -57,9 +69,9 @@ export class ShortlistedCleaner {
      */
     public async viewShortlist(homeownerID: number): Promise<string[]> {
         const shortlistedCleaners = await this.db
-            .select({ cleanerID: shortlistedCleanersTable.cleanerID })
-            .from(shortlistedCleanersTable)
-            .where(eq(shortlistedCleanersTable.homeownerID, homeownerID))
+            .select({ cleanerID: shortlistedServicesTable.serviceProvidedID })
+            .from(shortlistedServicesTable)
+            .where(eq(shortlistedServicesTable.homeownerID, homeownerID))
 
         // Retrieve cleaner names based on the cleanerIDs from shortlistedCleaners
         const cleanerNames = await Promise.all(shortlistedCleaners.map(async (entry) => {
@@ -84,17 +96,17 @@ export class ShortlistedCleaner {
     ): Promise<string[]> {
         const shortlistedCleaners = await this.db
             .select({ cleanerName: userAccountsTable.username })
-            .from(shortlistedCleanersTable)
+            .from(shortlistedServicesTable)
             .leftJoin(servicesProvidedTable, eq(
-                shortlistedCleanersTable.cleanerID,
+                shortlistedServicesTable.serviceProvidedID,
                 servicesProvidedTable.cleanerID
             ))
             .leftJoin(userAccountsTable, eq(
-                shortlistedCleanersTable.cleanerID,
+                shortlistedServicesTable.serviceProvidedID,
                 userAccountsTable.id
             ))
             .where(and(
-                eq(shortlistedCleanersTable.homeownerID, homeownerID),
+                eq(shortlistedServicesTable.homeownerID, homeownerID),
                 ilike(userAccountsTable.username, `%${search}%`),
             ))
             .groupBy(userAccountsTable.username)

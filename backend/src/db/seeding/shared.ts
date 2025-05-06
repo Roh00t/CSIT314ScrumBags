@@ -1,11 +1,14 @@
-import { ShortlistedCleanersInsert, shortlistedCleanersTable } from "../schema/shortlistedCleaners"
-import { serviceCategoriesTable } from "../schema/serviceCategories"
-import { servicesProvidedTable } from "../schema/servicesProvided"
-import { serviceBookingsTable } from "../schema/serviceBookings"
+import { ServicesProvidedSelect, servicesProvidedTable } from "../schema/servicesProvided"
 import { UserAccountsSelect, userAccountsTable } from "../schema/userAccounts"
+import { serviceCategoriesTable } from "../schema/serviceCategories"
+import { serviceBookingsTable } from "../schema/serviceBookings"
 import { userProfilesTable } from "../schema/userProfiles"
 import { DrizzleClient } from "../../shared/constants"
 import { faker } from "@faker-js/faker"
+import {
+    ShortlistedServicesInsert,
+    shortlistedServicesTable
+} from "../schema/shortlistedServices"
 import { sql } from "drizzle-orm"
 
 export const clearTheDatabase = async (db: DrizzleClient): Promise<void> => {
@@ -16,7 +19,7 @@ export const clearTheDatabase = async (db: DrizzleClient): Promise<void> => {
         ${serviceBookingsTable},
         ${servicesProvidedTable},
         ${serviceCategoriesTable},
-        ${shortlistedCleanersTable}
+        ${shortlistedServicesTable}
         RESTART IDENTITY CASCADE;
     `)
 }
@@ -33,23 +36,23 @@ export const createProfileIdMappings = async (
 export const initShortlistEntries = async (
     db: DrizzleClient,
     allHomeowners: UserAccountsSelect[],
-    allCleaners: UserAccountsSelect[]
+    allServicesProvided: ServicesProvidedSelect[]
 ): Promise<void> => {
 
-    const shortlistEntriesToInsert: ShortlistedCleanersInsert[] = []
+    const shortlistEntriesToInsert: ShortlistedServicesInsert[] = []
     allHomeowners.forEach(ho => {
-        faker.helpers.arrayElements(allCleaners, {
-            min: 0, max: allCleaners.length
-        }).forEach(cl => {
+        faker.helpers.arrayElements(allServicesProvided, {
+            min: 0, max: allServicesProvided.length
+        }).forEach(sp => {
             shortlistEntriesToInsert.push({
                 homeownerID: ho.id,
-                cleanerID: cl.id
+                serviceProvidedID: sp.id
             })
         })
     })
 
     await db
-        .insert(shortlistedCleanersTable)
+        .insert(shortlistedServicesTable)
         .values(shortlistEntriesToInsert)
         .onConflictDoNothing()
 }
