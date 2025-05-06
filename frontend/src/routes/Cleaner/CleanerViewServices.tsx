@@ -51,6 +51,9 @@ const CleanerViewServicesRoute: React.FC = () => {
         description: '',
         price: ''
     })
+    const [viewService, setViewService] = useState<Service | null>(null)
+    const [viewCount, setViewCount] = useState('')
+    const [shortlistCount, setShortlistCount] = useState('')
 
 
     // Popup modals
@@ -58,6 +61,7 @@ const CleanerViewServicesRoute: React.FC = () => {
     const [createServiceModal, setCreateServiceModal] = useState(false)
     const [deleteServiceModal, setDeleteServiceModal] = useState(false)
     const [editServiceModal, setEditServiceModal] = useState(false)
+    const [viewServiceModal, setViewServiceModal] = useState(false)
 
     // Fetch current services
     const fetchServices = async () => {
@@ -195,6 +199,37 @@ const CleanerViewServicesRoute: React.FC = () => {
         }
     }
 
+    // change this to run backend to retrieve view count and shortlist count
+    const handleView = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                serviceName: selectedServiceName,
+            }),
+            })
+            if (!response.ok) {
+                throw new Error('Failed to fetch services')
+            }
+            const data = await response.json()
+            const formatted: Service[] = data.map((item: any) => ({
+                id: item.serviceProvidedID,
+                type: item.serviceName,
+                description: item.description,
+                price: item.price,
+            }))
+            
+            // Set only the first service (or any specific one)
+            setViewService(formatted[0] || null) // Use null as fallback in case array is empty            
+        } catch (error) {
+            console.error('Error fetching services:', error)
+        }
+    }
+
     return (
         <div className="cleanerViewService-container">
             <div className="header_container">
@@ -313,6 +348,24 @@ const CleanerViewServicesRoute: React.FC = () => {
                 </div>
             )}
 
+            {/* View Service Modal */}
+            {viewServiceModal && (
+                <div className='modal-overlay'>
+                    <div className='modal'>
+                        <h3>Type of Service: {viewService?.type}</h3>
+                        <h3>Description: {viewService?.description}</h3>
+                        <h3>Price: {viewService?.price}</h3>
+
+                        <h3>Number of views: {viewCount}</h3>
+                        <h3>Number of shortlists: {shortlistCount}</h3>
+                        
+                        <div className="modal-buttons">
+                            <button onClick={() => setViewServiceModal(false)}>Close</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="content-center">
                 <div className="card">
                     <h1>View Services</h1>
@@ -348,7 +401,22 @@ const CleanerViewServicesRoute: React.FC = () => {
                                 <td>${service.price}</td>
                                 <td>
                                     <div className="action-buttons">
-                                        <button className="view-btn">View</button>
+                                        <button
+                                        className="view-btn"
+                                        onClick={() => {
+                                            setSelectedServiceName(service.type)
+                                            setSelectedService(service.id)
+                                            setViewService({
+                                                id: service.id,
+                                                type: service.type,
+                                                description: service.description,
+                                                price: service.price
+                                            })
+                                            // handleView()
+                                            setViewServiceModal(true)
+                                        }}>
+                                            View
+                                        </button>
                                         <button
                                         className="edit-btn"
                                         onClick={() => {
@@ -374,6 +442,8 @@ const CleanerViewServicesRoute: React.FC = () => {
                                         </button>
                                     </div>
                                 </td>
+
+
                             </tr>
                             ))}
                         </tbody>
