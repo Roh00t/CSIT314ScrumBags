@@ -9,17 +9,18 @@ import {
 } from '../controllers/platformManagerControllers'
 import { StatusCodes } from 'http-status-codes'
 import {
+    UpdateNumberOfInterestedHomeownersController,
+    ViewNumberOfInterestedHomeownersController,
     ViewAllServicesProvidedController,
     SearchServicesProvidedController,
     CreateServiceProvidedController,
-    ViewServicesProvidedController,
-    ViewNumberOfInterestedHomeownersController,
-    UpdateNumberOfInterestedHomeownersController,
     UpdateServiceProvidedController,
-    DeleteServiceProvidedController
+    DeleteServiceProvidedController,
+    ViewServicesProvidedController
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
 import {
+    DuplicateServiceProvidedError,
     ServiceCategoryAlreadyExistsError,
     ServiceCategoryNotFoundError
 } from '../shared/exceptions'
@@ -159,43 +160,6 @@ servicesRouter.get('/', async (_, res): Promise<void> => {
 })
 
 /**
- * US-14: As a cleaner, I want to view my service 
- *        so that I can check on my services provided
- * 
- * US-17: As a cleaner, I want to search my service so 
- *        that I can look up a specific service I provide
- * 
- * Gets all the service 'types' provided by a cleaner (by their userID).
- * 
- * Conditionally checks the "serviceName" field within request body. 
- * If it exists, it will invoke the controller to search services provided
- */
-servicesRouter.post('/:id', async (req, res): Promise<void> => {
-    try {
-        const { id } = req.params
-        const { serviceName } = req.body
-
-        if (serviceName && String(serviceName).length > 0) { //==== US-17 =====
-            const servicesProvided =
-                await new SearchServicesProvidedController()
-                    .searchServicesProvided(Number(id), serviceName)
-
-            res.status(StatusCodes.OK).json(servicesProvided)
-        } else { //========== US-14 =======
-            const servicesProvided =
-                await new ViewServicesProvidedController()
-                    .viewServicesProvided(Number(id))
-
-            res.status(StatusCodes.OK).json(servicesProvided)
-        }
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
-})
-
-/**
  * US-13: As a cleaner, I want to create my service so 
  *        that homeowners can view my services provided 
  */
@@ -227,6 +191,10 @@ servicesRouter.post(
         } catch (err) {
             if (err instanceof ServiceCategoryNotFoundError) {
                 res.status(StatusCodes.NOT_FOUND).json({
+                    message: (err as Error).message
+                })
+            } else if (err instanceof DuplicateServiceProvidedError) {
+                res.status(StatusCodes.CONFLICT).json({
                     message: (err as Error).message
                 })
             } else {
@@ -280,6 +248,7 @@ servicesRouter.post(
                     serviceProvidedID,
                     new Date()
                 )
+            res.status(StatusCodes.OK).send()
         } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
@@ -287,6 +256,7 @@ servicesRouter.post(
         }
     }
 )
+
 /**
  * US-15: As a cleaner, I want to update my service so  
  *        that I can make changes to my service provided.
@@ -294,30 +264,31 @@ servicesRouter.post(
 servicesRouter.put(
     '/',
     requireAuthMiddleware,
-    async (req, res): Promise<void> =>{
-        try{
+    async (req, res): Promise<void> => {
+        try {
             //Should I place Line 206-213 here
             const { serviceid, service, description, price } = req.body
-            await new UpdateServiceProvidedController().updateServiceProvided(serviceid, service, description, price)
+            await new UpdateServiceProvidedController().updateServiceProvided(
+                serviceid, service, description, price
+            )
             res.status(StatusCodes.OK).send()
         } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
             })
         }
-        
     }
 )
 
 /**
  * US-16: As a cleaner, I want to delete my service 
- * so that I can remove my service provided
+ *        so that I can remove my service provided
  */
 servicesRouter.delete(
     '/',
     requireAuthMiddleware,
-    async (req, res): Promise<void> =>{
-        try{
+    async (req, res): Promise<void> => {
+        try {
             const { serviceid } = req.body
             await new DeleteServiceProvidedController().deleteServiceProvided(serviceid)
             res.status(StatusCodes.OK).send()
@@ -326,7 +297,45 @@ servicesRouter.delete(
                 message: (err as Error).message
             })
         }
-        
+
     }
 )
+
+/**
+ * US-14: As a cleaner, I want to view my service 
+ *        so that I can check on my services provided
+ * 
+ * US-17: As a cleaner, I want to search my service so 
+ *        that I can look up a specific service I provide
+ * 
+ * Gets all the service 'types' provided by a cleaner (by their userID).
+ * 
+ * Conditionally checks the "serviceName" field within request body. 
+ * If it exists, it will invoke the controller to search services provided
+ */
+servicesRouter.post('/:id', async (req, res): Promise<void> => {
+    try {
+        const { id } = req.params
+        const { serviceName } = req.body
+
+        if (serviceName && String(serviceName).length > 0) { //==== US-17 =====
+            const servicesProvided =
+                await new SearchServicesProvidedController()
+                    .searchServicesProvided(Number(id), serviceName)
+
+            res.status(StatusCodes.OK).json(servicesProvided)
+        } else { //========== US-14 =======
+            const servicesProvided =
+                await new ViewServicesProvidedController()
+                    .viewServicesProvided(Number(id))
+
+            res.status(StatusCodes.OK).json(servicesProvided)
+        }
+    } catch (err) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: (err as Error).message
+        })
+    }
+})
+
 export default servicesRouter

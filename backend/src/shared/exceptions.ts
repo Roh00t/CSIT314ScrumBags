@@ -36,7 +36,7 @@ export class UserAccountSuspendedError extends Error {
 
 export class ServiceCategoryNotFoundError extends Error {
     constructor(serviceCategory: string) {
-        super("Service category'" + serviceCategory + "' doesn't exist")
+        super(`Service category '${serviceCategory}' doesn't exist`)
     }
 }
 
@@ -49,5 +49,11 @@ export class ServiceCategoryAlreadyExistsError extends Error {
 export class CleanerAlreadyShortlistedError extends Error {
     constructor(cleaner: string) {
         super(`You have already shortlisted the cleaner '${cleaner}'`)
+    }
+}
+
+export class DuplicateServiceProvidedError extends Error {
+    constructor(cleaner: string, service: string, category: string) {
+        super(`Cleaner '${cleaner}' already provides service with name '${service}' and category '${category}'`)
     }
 }

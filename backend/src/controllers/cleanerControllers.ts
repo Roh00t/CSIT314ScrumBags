@@ -159,7 +159,7 @@ export class CreateServiceProvidedController {
  * US-15: As a cleaner, I want to update my service so  
  *        that I can make changes to my service provided.
  */
-export class UpdateServiceProvidedController{
+export class UpdateServiceProvidedController {
     private serviceProvided: ServiceProvided
     constructor() {
         this.serviceProvided = new ServiceProvided()
@@ -171,7 +171,7 @@ export class UpdateServiceProvidedController{
         description: string,
         price: number
     ): Promise<void> {
-        const update = await this.serviceProvided.updateServiceProvided(serviceID, serviceName, description, price)
+        await this.serviceProvided.updateServiceProvided(serviceID, serviceName, description, price)
     }
 }
 
@@ -179,16 +179,17 @@ export class UpdateServiceProvidedController{
  * US-16: As a cleaner, I want to delete my service 
  *        so that I can remove my service provided
  */
-export class DeleteServiceProvidedController{
+export class DeleteServiceProvidedController {
     private serviceProvided: ServiceProvided
-    constructor(){
+    constructor() {
         this.serviceProvided = new ServiceProvided()
     }
-    
-    async deleteServiceProvided(serviceID: number):Promise<void>{
-        const del = await this.serviceProvided.deleteServiceProvided(serviceID)
+
+    async deleteServiceProvided(serviceID: number): Promise<void> {
+        await this.serviceProvided.deleteServiceProvided(serviceID)
     }
 }
+
 /**
  * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
  *            my services, so that I can understand the demand of my services
@@ -228,22 +229,23 @@ export class UpdateNumberOfInterestedHomeownersController {
         )
     }
 }
-  /**
-     * US-21: As a cleaner, I want to know the number of homeowners that shortlisted me for my services,
-     *        so that I can track my popularity and potential bookings
-     */
-export class ViewShortlistedBookingsController{
+
+/**
+ * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
+ *        me for my services, so that I can track my popularity and potential bookings
+ */
+export class ViewShortlistedBookingsController {
     private shortListedCleaner: ShortlistedCleaner
 
-    constructor(){
-        this.shortListedCleaner= new ShortlistedCleaner
+    constructor() {
+        this.shortListedCleaner = new ShortlistedCleaner
     }
-    public async viewNoOfShortlistedHomeowners(
-        cleanerID: number
-    ): Promise<number> {
+
+    public async viewNoOfShortlistedHomeowners(cleanerID: number): Promise<number> {
         return await this.shortListedCleaner.viewNoOfShortlistedHomeowners(cleanerID)
     }
 }
+
 /**
  * Gets all the service 'types' provided by a cleaner (by their userID)
  */
@@ -254,8 +256,7 @@ export class ViewAllServicesProvidedController {
         this.serviceProvided = new ServiceProvided()
     }
 
-    public async viewAllServicesProvided(
-    ): Promise<AllServices[]> {
+    public async viewAllServicesProvided(): Promise<AllServices[]> {
         return await this.serviceProvided.viewAllServicesProvided()
     }
 }

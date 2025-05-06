@@ -1,12 +1,14 @@
+import { AllServices, ServiceProvidedData } from "../shared/dataClasses"
 import { serviceCategoriesTable } from "../db/schema/serviceCategories"
 import { servicesProvidedTable } from "../db/schema/servicesProvided"
-import { ServiceCategoryNotFoundError } from "../shared/exceptions"
 import { userAccountsTable } from "../db/schema/userAccounts"
-import { AllServices, ServiceProvidedData } from "../shared/dataClasses"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { and, eq } from "drizzle-orm"
-import { string } from "zod"
+import {
+    DuplicateServiceProvidedError,
+    ServiceCategoryNotFoundError
+} from "../shared/exceptions"
 
 export class ServiceProvided {
     private db: DrizzleClient
@@ -33,6 +35,27 @@ export class ServiceProvided {
 
         if (!serviceCategoryEntry) {
             throw new ServiceCategoryNotFoundError(serviceCategory)
+        }
+
+        const result = await this.db
+            .select({ cleaner: userAccountsTable.username })
+            .from(servicesProvidedTable)
+            .leftJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
+            .where(and(
+                eq(servicesProvidedTable.cleanerID, cleanerID),
+                eq(servicesProvidedTable.serviceName, serviceName),
+                eq(servicesProvidedTable.serviceCategoryID, serviceCategoryEntry.id)
+            ))
+
+        if (result.length > 0) {
+            throw new DuplicateServiceProvidedError(
+                result[0].cleaner as string,
+                serviceName,
+                serviceCategory
+            )
         }
 
         await this.db.insert(servicesProvidedTable).values({
@@ -74,6 +97,7 @@ export class ServiceProvided {
             } as ServiceProvidedData
         })
     }
+
     /**
      * US-15: As a cleaner, I want to update my service so  
      *        that I can make changes to my service provided.
@@ -83,23 +107,26 @@ export class ServiceProvided {
         newserviceName: string,
         newdescription: string,
         newprice: number
-    ): Promise<void>{
-        const updateService = await this.db.update(servicesProvidedTable)
-                                .set({serviceName: newserviceName, 
-                                    description: newdescription, 
-                                    price: String(newprice)
-                                }).where(eq(servicesProvidedTable.id, serviceID))
+    ): Promise<void> {
+        await this.db
+            .update(servicesProvidedTable)
+            .set({
+                serviceName: newserviceName,
+                description: newdescription,
+                price: String(newprice)
+            }).where(eq(servicesProvidedTable.id, serviceID))
     }
+
     /**
-    * US-16: As a cleaner, I want to delete my service 
-    * so that I can remove my service provided
-    */
-   public async deleteServiceProvided(
-    serviceID: number
-   ): Promise<void>{
-    const deleteService = await this.db.delete(servicesProvidedTable)
-                                        .where(eq(servicesProvidedTable.id, serviceID))
-   }
+     * US-16: As a cleaner, I want to delete my service 
+     *        so that I can remove my service provided
+     */
+    public async deleteServiceProvided(serviceID: number): Promise<void> {
+        await this.db
+            .delete(servicesProvidedTable)
+            .where(eq(servicesProvidedTable.id, serviceID))
+    }
+
     /**
      * US-17: As a cleaner, I want to search my service so 
      *        that I can look up a specific service I provide

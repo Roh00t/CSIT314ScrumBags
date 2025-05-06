@@ -6,25 +6,24 @@ import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { and, count, eq, ilike } from "drizzle-orm"
 
-
 export class ShortlistedCleaner {
     private db: DrizzleClient
 
     constructor() {
         this.db = drizzle(process.env.DATABASE_URL!)
     }
-  /**
-     * US-21: As a cleaner, I want to know the number of homeowners that shortlisted me for my services,
-     *        so that I can track my popularity and potential bookings
+
+    /**
+     * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
+     *        me for my services, so that I can track my popularity and potential bookings
      */
-    public async viewNoOfShortlistedHomeowners(
-        cleanerID: number
-    ): Promise<number>{
-        const [shortlistedBookings] = await this.db.select({count:count()})
-                                                    .from(shortlistedCleanersTable)
-                                                    .where(eq(shortlistedCleanersTable.cleanerID, cleanerID))
+    public async viewNoOfShortlistedHomeowners(cleanerID: number): Promise<number> {
+        const [shortlistedBookings] = await this.db.select({ count: count() })
+            .from(shortlistedCleanersTable)
+            .where(eq(shortlistedCleanersTable.cleanerID, cleanerID))
         return shortlistedBookings.count
     }
+
     /**
      * US-26: As a homeowner, I want to save the cleaners into my short list 
      *        so that I can have an easier time for future reference

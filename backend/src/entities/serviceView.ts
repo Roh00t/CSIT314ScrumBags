@@ -31,6 +31,12 @@ export class ServiceView {
     /**
      * US-20 (b): As a cleaner, I want to view the number of homeowners interested in 
      *            my services, so that I can understand the demand of my services
+     * 
+     * This basically inserts an "view" entry into the database, where 
+     * "homeowner id" viewed "service provided id" at "viewed at timestamp". 
+     * 
+     * Onus on the frontend programmers to invoke this API call whenver
+     * a certain service is viewed by a homeowner
      */
     async updateNumberOfInterestedHomeowners(
         homeownerID: number,
