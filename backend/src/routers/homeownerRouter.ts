@@ -169,6 +169,9 @@ homeownerRouter.get(
     }
 )
 
+/**
+ * US-443: As a homeowner, I want to book for cleaners so that cleaners can clean my home
+ */
 homeownerRouter.post(
     '/createbooking',
     requireAuthMiddleware,
@@ -177,7 +180,9 @@ homeownerRouter.post(
             const homeownerID = req.session.user?.id as number
             const { serviceProvidedID, startTimestamp } = req.body
             const startDate = new Date(startTimestamp)
-            await new CreateServiceBookingController().createServiceBooking(homeownerID, serviceProvidedID, startDate)
+            await new CreateServiceBookingController().createServiceBooking(
+                homeownerID, serviceProvidedID, startDate
+            )
             res.status(StatusCodes.OK).send()
         } catch (error: any) {
             res.status(StatusCodes.BAD_REQUEST).json({

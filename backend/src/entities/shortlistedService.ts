@@ -4,7 +4,7 @@ import { servicesProvidedTable } from "../db/schema/servicesProvided"
 import { userAccountsTable } from "../db/schema/userAccounts"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
-import { and, eq, ilike, sql } from "drizzle-orm"
+import { and, count, eq, ilike } from "drizzle-orm"
 
 export class ShortlistedServices {
     private db: DrizzleClient
@@ -17,27 +17,25 @@ export class ShortlistedServices {
      * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
      *        me for my services, so that I can track my popularity and potential bookings
      */
-    public async viewNoOfShortlistedHomeowners(cleanerID: number): Promise<number> {
-
-        const res = await this.db
-            .select()
+    public async viewNoOfShortlistedHomeowners(
+        serviceProvidedID: number
+    ): Promise<number> {
+        const [res] = await this.db
+            .select({ count: count() })
             .from(shortlistedServicesTable)
-            .leftJoin(servicesProvidedTable, eq(
-                shortlistedServicesTable.serviceProvidedID,
-                servicesProvidedTable.cleanerID
-            ))
-            .where(eq(shortlistedServicesTable.serviceProvidedID, cleanerID))
-            .groupBy(sql`${servicesProvidedTable.serviceName}`)
+            .where(eq(shortlistedServicesTable.serviceProvidedID, serviceProvidedID))
 
-        // return shortlistedBookings.count
-        return 69
+        return res.count
     }
 
     /**
      * US-26: As a homeowner, I want to save the cleaners into my short list 
      *        so that I can have an easier time for future reference
      */
-    public async addToShortlist(homeownerID: number, serviceProvidedID: number): Promise<void> {
+    public async addToShortlist(
+        homeownerID: number,
+        serviceProvidedID: number
+    ): Promise<void> {
         const result = await this.db
             .select()
             .from(shortlistedServicesTable)

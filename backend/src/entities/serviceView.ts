@@ -15,7 +15,7 @@ export class ServiceView {
      * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
      *            my services, so that I can understand the demand of my services
      */
-    async viewNumberOfInterestedHomeowners(cleanerID: number): Promise<number> {
+    async viewNumberOfInterestedHomeowners(serviceProvidedID: number): Promise<number> {
         const [result] = await this.db
             .select({ count: count() })
             .from(serviceViewsTable)
@@ -23,7 +23,7 @@ export class ServiceView {
                 serviceViewsTable.serviceProvidedID,
                 servicesProvidedTable.id
             ))
-            .where(eq(servicesProvidedTable.cleanerID, cleanerID))
+            .where(eq(servicesProvidedTable.id, serviceProvidedID))
 
         return result.count
     }

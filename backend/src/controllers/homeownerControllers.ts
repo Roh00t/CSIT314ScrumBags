@@ -120,6 +120,9 @@ export class ViewAllServiceHistoryController {
     }
 }
 
+/**
+ * US-443: As a homeowner, I want to book for cleaners so that cleaners can clean my home
+ */
 export class CreateServiceBookingController {
     private serviceBooking: ServiceBooking
 
@@ -131,8 +134,9 @@ export class CreateServiceBookingController {
         homeownerID: number,
         serviceProvidedID: number,
         startTimestamp: Date,
-
     ): Promise<void> {
-        await this.serviceBooking.createServiceBooking(homeownerID, serviceProvidedID, startTimestamp)
+        await this.serviceBooking.createServiceBooking(
+            homeownerID, serviceProvidedID, startTimestamp
+        )
     }
 }
