@@ -73,9 +73,8 @@ const HomeOwnerViewHistory: React.FC = () => {
         throw new Error('Failed to fetch service history')
       }
 
-      const json = await response.json()
-
-      const formatted: History[] = json.data.map((item: any) => ({
+      const serviceHistoryData = await response.json()
+      const formatted: History[] = serviceHistoryData.map((item: any) => ({
         cleanerName: item.cleanerName,
         typeOfService: item.serviceName,
         price: item.price,
@@ -116,7 +115,7 @@ const HomeOwnerViewHistory: React.FC = () => {
 
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
-      
+
       <div className="body-container">
         <div className="card">
           <h1>View History</h1>

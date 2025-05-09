@@ -64,7 +64,7 @@ export class UpdateUserAccountController {
         updateAs: string,
         updatedUsername: string,
         updatedPassword: string
-    ): Promise<void> {
+    ): Promise<boolean> {
         return await this.userAccount.updateUserAccount(
             userID,
             updateAs,
@@ -157,7 +157,7 @@ export class UpdateUserProfileController {
     public async updateUserProfile(
         oldProfileName: string,
         newProfileName: string
-    ): Promise<void> {
+    ): Promise<boolean> {
         return await this.userProfile.updateUserProfile(
             oldProfileName,
             newProfileName

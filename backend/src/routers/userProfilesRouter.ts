@@ -44,17 +44,16 @@ userProfilesRouter.get('/', async (_, res): Promise<void> => {
  *        so that I can keep profile information up to date
  */
 userProfilesRouter.put('/update', async (req, res): Promise<void> => {
-    try {
-        const { oldProfileName, newProfileName } = req.body
-        await new UpdateUserProfileController().updateUserProfile(
-            oldProfileName,
-            newProfileName
-        )
-        res.status(StatusCodes.OK).json({ message: 'Update Success' })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { oldProfileName, newProfileName } = req.body
+    const updateSuccess = await new UpdateUserProfileController().updateUserProfile(
+        oldProfileName,
+        newProfileName
+    )
+
+    if (updateSuccess) {
+        res.status(StatusCodes.OK).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 

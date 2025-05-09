@@ -47,11 +47,20 @@ export class UserProfile {
     public async updateUserProfile(
         oldProfileName: string,
         newProfileName: string
-    ): Promise<void> {
-        await this.db
-            .update(userProfilesTable)
-            .set({ label: newProfileName })
-            .where(eq(userProfilesTable.label, oldProfileName))
+    ): Promise<boolean> {
+        try {
+            if (newProfileName.length === 0) {
+                return false
+            }
+
+            await this.db
+                .update(userProfilesTable)
+                .set({ label: newProfileName })
+                .where(eq(userProfilesTable.label, oldProfileName))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**

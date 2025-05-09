@@ -80,7 +80,7 @@ const UserAdminUserAccountManagement: React.FC = () => {
           <h2><Link to="/user-account-management">User Account</Link></h2>
           <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
         </div>
-        
+
         <div>
           <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
             <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
@@ -223,12 +223,12 @@ const UserAdminUserAccountManagement: React.FC = () => {
                 <input type="password" value={editingUser.password} onChange={e => setEditingUser({ ...editingUser, password: e.target.value })} required />
                 <label>Confirm Password:</label>
                 <input type="password" value={editingUser.confirmPassword} onChange={e => setEditingUser({ ...editingUser, confirmPassword: e.target.value })} required />
-                
+
                 <div className="modal-buttons">
                   <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
                   <button className="submit-btn" onClick={async () => {
                     if (editingUser.password !== editingUser.confirmPassword) {
-                      return alert("Passwords do not match!") 
+                      return alert("Passwords do not match!")
                     }
                     try {
                       await axios.post('http://localhost:3000/api/user-accounts/update', {

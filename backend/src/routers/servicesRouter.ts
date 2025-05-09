@@ -55,17 +55,11 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
  * View all service 'categories' that exist
  */
 servicesRouter.get('/categories', async (_, res): Promise<void> => {
-    try {
-        const allServiceCategories =
-            await new ViewServiceCategoriesController()
-                .viewServiceCategories()
+    const allServiceCategories =
+        await new ViewServiceCategoriesController()
+            .viewServiceCategories()
 
-        res.status(StatusCodes.OK).json(allServiceCategories)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
+    res.status(StatusCodes.OK).json(allServiceCategories)
 })
 
 /**

@@ -42,8 +42,12 @@ export class ServiceCategory {
      * View all service 'categories' that exist
      */
     public async viewServiceCategories(): Promise<string[]> {
-        const allServiceCategories = await this.db.select().from(serviceCategoriesTable)
-        return allServiceCategories.map(sc => sc.label)
+        try {
+            const res = await this.db.select().from(serviceCategoriesTable)
+            return res.map(sc => sc.label)
+        } catch (err) {
+            return []
+        }
     }
 
     /**

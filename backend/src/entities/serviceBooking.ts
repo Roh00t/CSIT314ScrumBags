@@ -8,7 +8,7 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import {
     CleanerServiceBookingData,
     ServiceBookingReportData,
-    ServiceHistory,
+    ServiceHistoryData,
 } from '../shared/dataClasses'
 
 export class ServiceBooking {
@@ -25,46 +25,50 @@ export class ServiceBooking {
     public async generateDailyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
-        const startOfNextDay = new Date(startDate)
-        startOfNextDay.setDate(startDate.getDate() + 1)
+        try {
+            const startOfNextDay = new Date(startDate)
+            startOfNextDay.setDate(startDate.getDate() + 1)
 
-        const dailyReport = await this.db
-            .select({
-                bookingID: serviceBookingsTable.id,
-                serviceName: serviceCategoriesTable.label,
-                cleanerName: userAccountsTable.username,
-                price: servicesProvidedTable.price,
-                date: serviceBookingsTable.startTimestamp
-            })
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                serviceCategoriesTable,
-                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
-            )
-            .where(
-                and(
-                    gte(serviceBookingsTable.startTimestamp, startDate),
-                    lt(serviceBookingsTable.startTimestamp, startOfNextDay)
+            const dailyReport = await this.db
+                .select({
+                    bookingID: serviceBookingsTable.id,
+                    serviceName: serviceCategoriesTable.label,
+                    cleanerName: userAccountsTable.username,
+                    price: servicesProvidedTable.price,
+                    date: serviceBookingsTable.startTimestamp
+                })
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
                 )
-            )
+                .leftJoin(
+                    serviceCategoriesTable,
+                    eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+                )
+                .where(
+                    and(
+                        gte(serviceBookingsTable.startTimestamp, startDate),
+                        lt(serviceBookingsTable.startTimestamp, startOfNextDay)
+                    )
+                )
 
-        return dailyReport.map(dr => {
-            return {
-                bookingid: dr.bookingID,
-                serviceName: dr.serviceName,
-                cleanerName: dr.cleanerName,
-                price: Number(dr.price),
-                date: dr.date
-            } as ServiceBookingReportData
-        })
+            return dailyReport.map(dr => {
+                return {
+                    bookingid: dr.bookingID,
+                    serviceName: dr.serviceName,
+                    cleanerName: dr.cleanerName,
+                    price: Number(dr.price),
+                    date: dr.date
+                } as ServiceBookingReportData
+            })
+        } catch (err) {
+            return []
+        }
     }
 
     /**
@@ -74,46 +78,50 @@ export class ServiceBooking {
     public async generateWeeklyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
-        const startOfNextWeek = new Date(startDate)
-        startOfNextWeek.setDate(startOfNextWeek.getDate() + 7)
+        try {
+            const startOfNextWeek = new Date(startDate)
+            startOfNextWeek.setDate(startOfNextWeek.getDate() + 7)
 
-        const weeklyReport = await this.db
-            .select({
-                bookingID: serviceBookingsTable.id,
-                serviceName: serviceCategoriesTable.label,
-                cleanerName: userAccountsTable.username,
-                price: servicesProvidedTable.price,
-                date: serviceBookingsTable.startTimestamp
-            })
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                serviceCategoriesTable,
-                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
-            )
-            .where(
-                and(
-                    gte(serviceBookingsTable.startTimestamp, startDate),
-                    lt(serviceBookingsTable.startTimestamp, startOfNextWeek)
+            const weeklyReport = await this.db
+                .select({
+                    bookingID: serviceBookingsTable.id,
+                    serviceName: serviceCategoriesTable.label,
+                    cleanerName: userAccountsTable.username,
+                    price: servicesProvidedTable.price,
+                    date: serviceBookingsTable.startTimestamp
+                })
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
                 )
-            )
+                .leftJoin(
+                    serviceCategoriesTable,
+                    eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+                )
+                .where(
+                    and(
+                        gte(serviceBookingsTable.startTimestamp, startDate),
+                        lt(serviceBookingsTable.startTimestamp, startOfNextWeek)
+                    )
+                )
 
-        return weeklyReport.map(wr => {
-            return {
-                bookingid: wr.bookingID,
-                serviceName: wr.serviceName,
-                cleanerName: wr.cleanerName,
-                price: Number(wr.price),
-                date: wr.date
-            } as ServiceBookingReportData
-        })
+            return weeklyReport.map(wr => {
+                return {
+                    bookingid: wr.bookingID,
+                    serviceName: wr.serviceName,
+                    cleanerName: wr.cleanerName,
+                    price: Number(wr.price),
+                    date: wr.date
+                } as ServiceBookingReportData
+            })
+        } catch (err) {
+            return []
+        }
     }
 
     /**
@@ -123,48 +131,52 @@ export class ServiceBooking {
     public async generateMonthlyReport(
         startDate: Date
     ): Promise<ServiceBookingReportData[]> {
-        const date = new Date(startDate)
-        const nextMonth = new Date(date.setMonth(startDate.getMonth() + 1))
+        try {
+            const date = new Date(startDate)
+            const nextMonth = new Date(date.setMonth(startDate.getMonth() + 1))
 
-        const monthlyReport = await this.db
-            .select({
-                bookingID: serviceBookingsTable.id,
-                serviceName: serviceCategoriesTable.label,
-                cleanerName: userAccountsTable.username,
-                price: servicesProvidedTable.price,
-                date: serviceBookingsTable.startTimestamp
-            })
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                serviceCategoriesTable,
-                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
-            )
-            .where(
-                and(
-                    gte(serviceBookingsTable.startTimestamp, startDate),
-                    lt(
-                        serviceBookingsTable.startTimestamp,
-                        nextMonth
+            const monthlyReport = await this.db
+                .select({
+                    bookingID: serviceBookingsTable.id,
+                    serviceName: serviceCategoriesTable.label,
+                    cleanerName: userAccountsTable.username,
+                    price: servicesProvidedTable.price,
+                    date: serviceBookingsTable.startTimestamp
+                })
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+                )
+                .leftJoin(
+                    serviceCategoriesTable,
+                    eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+                )
+                .where(
+                    and(
+                        gte(serviceBookingsTable.startTimestamp, startDate),
+                        lt(
+                            serviceBookingsTable.startTimestamp,
+                            nextMonth
+                        )
                     )
                 )
-            )
-        return monthlyReport.map(mr => {
-            return {
-                bookingid: mr.bookingID,
-                serviceName: mr.serviceName,
-                cleanerName: mr.cleanerName,
-                price: Number(mr.price),
-                date: mr.date
-            } as ServiceBookingReportData
-        })
+            return monthlyReport.map(mr => {
+                return {
+                    bookingid: mr.bookingID,
+                    serviceName: mr.serviceName,
+                    cleanerName: mr.cleanerName,
+                    price: Number(mr.price),
+                    date: mr.date
+                } as ServiceBookingReportData
+            })
+        } catch (err) {
+            return []
+        }
     }
 
     /**
@@ -268,7 +280,7 @@ export class ServiceBooking {
 
     public async viewAllServiceHistory(
         userID: number
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         const results = await this.db
             .select({
                 cleanerName: userAccountsTable.username,
@@ -295,7 +307,7 @@ export class ServiceBooking {
                 date: res.date,
                 price: res.price,
                 status: res.status
-            } as ServiceHistory
+            } as ServiceHistoryData
         })
     }
 
@@ -311,66 +323,65 @@ export class ServiceBooking {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
+        try {
+            const conditions = [
+                eq(serviceBookingsTable.homeownerID, userID),
+            ];
 
-        const conditions = [
-            eq(serviceBookingsTable.homeownerID, userID),
-        ];
+            if (service) {
+                conditions.push(eq(servicesProvidedTable.serviceName, service));
+            }
 
-        if (service) {
-            conditions.push(eq(servicesProvidedTable.serviceName, service));
+            if (fromDate) {
+                const normalizedFromDate = typeof fromDate === 'string' ? new Date(fromDate) : fromDate;
+                const startOfFromDay = new Date(normalizedFromDate.setHours(0, 0, 0, 0));
+
+                conditions.push(
+                    gt(serviceBookingsTable.startTimestamp, startOfFromDay)
+                );
+            }
+
+            if (toDate) {
+                const normalizedToDate = typeof toDate === 'string' ? new Date(toDate) : toDate;
+                const startOfToDay = new Date(normalizedToDate.setHours(0, 0, 0, 0));
+                const endOfToDay = new Date(startOfToDay);
+                endOfToDay.setDate(endOfToDay.getDate() + 1);
+
+                conditions.push(
+                    lt(serviceBookingsTable.startTimestamp, endOfToDay)
+                );
+            }
+
+            const results = await this.db
+                .select({
+                    cleanerName: userAccountsTable.username,
+                    serviceName: servicesProvidedTable.serviceName,
+                    date: serviceBookingsTable.startTimestamp,
+                    price: servicesProvidedTable.price,
+                    status: serviceBookingsTable.status
+                })
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+                )
+                .where(and(...conditions));
+
+            return results.map(res => ({
+                cleanerName: res.cleanerName,
+                serviceName: res.serviceName,
+                date: new Date(res.date),
+                price: res.price,
+                status: res.status
+            }));
+        } catch (err) {
+            return []
         }
-
-        if (fromDate) {
-            const normalizedFromDate = typeof fromDate === 'string' ? new Date(fromDate) : fromDate;
-            const startOfFromDay = new Date(normalizedFromDate.setHours(0, 0, 0, 0));
-
-            conditions.push(
-                gt(serviceBookingsTable.startTimestamp, startOfFromDay)
-            );
-        }
-
-        if (toDate) {
-            const normalizedToDate = typeof toDate === 'string' ? new Date(toDate) : toDate;
-            const startOfToDay = new Date(normalizedToDate.setHours(0, 0, 0, 0));
-            const endOfToDay = new Date(startOfToDay);
-            endOfToDay.setDate(endOfToDay.getDate() + 1);
-
-            conditions.push(
-                lt(serviceBookingsTable.startTimestamp, endOfToDay)
-            );
-        }
-
-        const results = await this.db
-            .select({
-                cleanerName: userAccountsTable.username,
-                serviceName: servicesProvidedTable.serviceName,
-                date: serviceBookingsTable.startTimestamp,
-                price: servicesProvidedTable.price,
-                status: serviceBookingsTable.status
-            })
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
-            )
-            .where(and(...conditions));
-
-        if (results.length === 0) {
-            throw new Error("No service history found for the given criteria.");
-        }
-
-        return results.map(res => ({
-            cleanerName: res.cleanerName,
-            serviceName: res.serviceName,
-            date: new Date(res.date),
-            price: res.price,
-            status: res.status
-        }));
     }
 
     /**
@@ -384,72 +395,69 @@ export class ServiceBooking {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
+        try {
+            const conditions = [
+                eq(serviceBookingsTable.homeownerID, userID),
+            ];
 
-        const conditions = [
-            eq(serviceBookingsTable.homeownerID, userID),
-        ];
+            if (service) {
+                conditions.push(eq(servicesProvidedTable.serviceName, service))
+            }
 
-        if (service) {
-            conditions.push(eq(servicesProvidedTable.serviceName, service));
+            if (fromDate) {
+                const normalizedFromDate = typeof fromDate === 'string' ? new Date(fromDate) : fromDate
+                const startOfFromDay = new Date(normalizedFromDate.setHours(0, 0, 0, 0))
+
+                conditions.push(
+                    gt(serviceBookingsTable.startTimestamp, startOfFromDay)
+                );
+            }
+
+            if (toDate) {
+                const normalizedToDate = typeof toDate === 'string' ? new Date(toDate) : toDate
+                const startOfToDay = new Date(normalizedToDate.setHours(0, 0, 0, 0))
+                const endOfToDay = new Date(startOfToDay);
+                endOfToDay.setDate(endOfToDay.getDate() + 1)
+
+                conditions.push(
+                    lt(serviceBookingsTable.startTimestamp, endOfToDay)
+                )
+            }
+
+            if (cleanerName) {
+                conditions.push(eq(userAccountsTable.username, cleanerName))
+            }
+
+            const results = await this.db
+                .select({
+                    cleanerName: userAccountsTable.username,
+                    serviceName: servicesProvidedTable.serviceName,
+                    date: serviceBookingsTable.startTimestamp,
+                    price: servicesProvidedTable.price,
+                    status: serviceBookingsTable.status
+                })
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
+                )
+                .where(and(...conditions))
+
+            return results.map(res => ({
+                cleanerName: res.cleanerName,
+                serviceName: res.serviceName,
+                date: new Date(res.date),
+                price: res.price,
+                status: res.status
+            }))
+        } catch (err) {
+            return []
         }
-
-        if (fromDate) {
-            const normalizedFromDate = typeof fromDate === 'string' ? new Date(fromDate) : fromDate;
-            const startOfFromDay = new Date(normalizedFromDate.setHours(0, 0, 0, 0));
-
-            conditions.push(
-                gt(serviceBookingsTable.startTimestamp, startOfFromDay)
-            );
-        }
-
-        if (toDate) {
-            const normalizedToDate = typeof toDate === 'string' ? new Date(toDate) : toDate;
-            const startOfToDay = new Date(normalizedToDate.setHours(0, 0, 0, 0));
-            const endOfToDay = new Date(startOfToDay);
-            endOfToDay.setDate(endOfToDay.getDate() + 1);
-
-            conditions.push(
-                lt(serviceBookingsTable.startTimestamp, endOfToDay)
-            );
-        }
-
-        if (cleanerName) {
-            conditions.push(eq(userAccountsTable.username, cleanerName));
-        }
-
-        const results = await this.db
-            .select({
-                cleanerName: userAccountsTable.username,
-                serviceName: servicesProvidedTable.serviceName,
-                date: serviceBookingsTable.startTimestamp,
-                price: servicesProvidedTable.price,
-                status: serviceBookingsTable.status
-            })
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(servicesProvidedTable.cleanerID, userAccountsTable.id)
-            )
-            .where(and(...conditions));
-
-        // Handle no results
-        if (results.length === 0) {
-            throw new Error("No service history found for the given criteria.");
-        }
-
-        // Map and return results
-        return results.map(res => ({
-            cleanerName: res.cleanerName,
-            serviceName: res.serviceName,
-            date: new Date(res.date),
-            price: res.price,
-            status: res.status
-        }));
     }
 
     /**

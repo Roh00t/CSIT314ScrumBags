@@ -1,6 +1,6 @@
 import { ShortlistedServices } from "../entities/shortlistedService"
 import { ServiceBooking } from "../entities/serviceBooking"
-import { ServiceHistory, ShortlistEntry } from "../shared/dataClasses"
+import { ServiceHistoryData, ShortlistEntry } from "../shared/dataClasses"
 
 /**
  * US-26: As a homeowner, I want to save the cleaners into my short list 
@@ -73,7 +73,7 @@ export class ViewHomeownerServiceHistoryController {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.viewHomeownerServiceHistory(
             userID, service, fromDate, toDate
         )
@@ -98,7 +98,7 @@ export class SearchHomeownerServiceHistoryController {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.searchHomeownerServiceHistory(
             userID, cleanerName, service, fromDate, toDate
         )
@@ -114,7 +114,7 @@ export class ViewAllServiceHistoryController {
 
     public async viewAllServiceHistory(
         userID: number
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.viewAllServiceHistory(userID)
     }
 }

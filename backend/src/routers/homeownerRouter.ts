@@ -96,35 +96,26 @@ homeownerRouter.post(
     '/servicehistory',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const { cleanerName, service, fromDate, toDate } = req.body
+        const homeownerID = (req.session.user as UserAccountData).id
+        const { cleanerName, service, fromDate, toDate } = req.body
 
-            if (cleanerName && String(cleanerName).length > 0) { //===== US-31 ======
-                const serviceHistory =
-                    await new SearchHomeownerServiceHistoryController()
-                        .searchHomeownerServiceHistory(
-                            homeownerID, cleanerName, service, fromDate, toDate
-                        )
-                res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully",
-                    data: serviceHistory
-                })
-            } else { //========== US-32 ==========
-                const serviceHistory =
-                    await new ViewHomeownerServiceHistoryController()
-                        .viewHomeownerServiceHistory(
-                            homeownerID, service, fromDate, toDate
-                        )
-                res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully",
-                    data: serviceHistory
-                })
-            }
-        } catch (error: any) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                error: error.message || "Failed to retrieve service history"
-            })
+        //===== US-31 ======
+        if (cleanerName && String(cleanerName).length > 0) {
+            const serviceHistory =
+                await new SearchHomeownerServiceHistoryController()
+                    .searchHomeownerServiceHistory(
+                        homeownerID,
+                        cleanerName,
+                        service,
+                        fromDate,
+                        toDate
+                    )
+            res.status(StatusCodes.OK).json(serviceHistory)
+        } else { //========== US-32 ==========
+            const serviceHistory =
+                await new ViewHomeownerServiceHistoryController()
+                    .viewHomeownerServiceHistory(homeownerID, service, fromDate, toDate)
+            res.status(StatusCodes.OK).json(serviceHistory)
         }
     }
 )

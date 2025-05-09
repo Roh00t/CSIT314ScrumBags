@@ -49,7 +49,7 @@ export type CleanerServicesData = {
     serviceProvidedID: number
 }
 
-export type ServiceHistory = {
+export type ServiceHistoryData = {
     cleanerName: string | null;
     serviceName: string | null;
     date: Date;

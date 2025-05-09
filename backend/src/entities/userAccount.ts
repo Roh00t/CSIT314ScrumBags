@@ -256,20 +256,30 @@ export default class UserAccount {
         updateAs: string,
         updatedUsername: string,
         updatedPassword: string
-    ): Promise<void> {
-        const [userProfile] = await this.db
-            .select()
-            .from(userProfilesTable)
-            .where(eq(userProfilesTable.label, updateAs))
+    ): Promise<boolean> {
+        try {
+            const [userProfile] = await this.db
+                .select()
+                .from(userProfilesTable)
+                .where(eq(userProfilesTable.label, updateAs))
 
-        await this.db
-            .update(userAccountsTable)
-            .set({
-                username: updatedUsername,
-                password: updatedPassword,
-                userProfileId: userProfile.id
-            })
-            .where(eq(userAccountsTable.id, userID))
+            if (!userProfile) {
+                return false
+            }
+
+            await this.db
+                .update(userAccountsTable)
+                .set({
+                    username: updatedUsername,
+                    password: updatedPassword,
+                    userProfileId: userProfile.id
+                })
+                .where(eq(userAccountsTable.id, userID))
+
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**

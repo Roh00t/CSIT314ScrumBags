@@ -151,19 +151,17 @@ userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
  *       so that I can keep user information accurate
  */
 userAccountsRouter.post('/update', async (req, res): Promise<void> => {
-    try {
-        const { userId, updatedAs, updatedUsername, updatedPassword } = req.body
-        await new UpdateUserAccountController().updateUserAccount(
-            userId,
-            updatedAs,
-            updatedUsername,
-            updatedPassword
-        )
-        res.status(StatusCodes.OK).json({ message: 'Update Success' })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { userId, updatedAs, updatedUsername, updatedPassword } = req.body
+    const updateSuccess = await new UpdateUserAccountController().updateUserAccount(
+        userId,
+        updatedAs,
+        updatedUsername,
+        updatedPassword
+    )
+    if (updateSuccess) {
+        res.status(StatusCodes.OK).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 
