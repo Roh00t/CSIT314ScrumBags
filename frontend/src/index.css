@@ -86,6 +86,7 @@
   margin-right: 1rem;
   background-color: white;
   color: black;
+  border-width: thin;
 }
 
 .body-container .card .top-bar button {
@@ -104,7 +105,6 @@
 .body-container .card .top-bar2 {
   justify-content: space-between;
   margin-bottom: 1.5rem;
-
 }
 
 .body-container .card .top-bar2 select{
@@ -116,6 +116,7 @@
   margin: 0 1rem 1rem 0;
   background-color: white;
   color: black;
+  border-width: thin;
 }
 
 .body-container .card .top-bar2 input {
@@ -127,6 +128,7 @@
   margin: 0 1rem 1rem 0;
   background-color: white;
   color: black;
+  border-width: thin;
 }
 
 .body-container .card .top-bar2 button {
@@ -179,6 +181,7 @@
   background-color: white;
   border-radius: 6px;
   padding:0.5rem;
+  border-width: thin;
 }
 
 .modal input{
@@ -187,6 +190,7 @@
   background-color: white;
   border-radius: 6px;
   padding:0.5rem;
+  border-width: thin;
 }
 
 .modal textarea{
@@ -194,6 +198,7 @@
   color: black;
   background-color: white;
   border-radius: 6px;
+  border-width: thin;
 }
 
 .modal .modal-buttons {
@@ -579,6 +584,7 @@ create */
   margin-top: 0.3rem;
   background-color: #e0e0e0;
   color: black;
+  border-width: thin;
 }
 
 .input_group {
@@ -597,6 +603,7 @@ create */
   border: none;
   outline: none;
   flex: 1;
+  border-width: thin;
 }
 
 .create_btn,
