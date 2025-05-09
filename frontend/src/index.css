@@ -142,9 +142,10 @@
 }
 
 .footer-container {
-  padding: 25px 0;
   text-align: center;
-  font-weight: 600;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #444;
 }
 
 /* Popup modal */
@@ -177,6 +178,7 @@
   color: black;
   background-color: white;
   border-radius: 6px;
+  padding:0.5rem;
 }
 
 .modal input{
@@ -184,6 +186,7 @@
   color: black;
   background-color: white;
   border-radius: 6px;
+  padding:0.5rem;
 }
 
 .modal textarea{
@@ -297,6 +300,122 @@ td {
   color:white;
 }
 
+.download-btn {
+  width: 100%;
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.download-btn:hover {
+  background-color: #333;
+}
+
+.create-btn a{
+  color: white;
+  text-decoration: none;
+}
+
+/* For platform manager report */
+.report-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-controls input[type="text"] {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  min-width: 200px;
+}
+
+.report-controls input[type="date"] {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.filter-options {
+  display: flex;
+  gap: 1rem;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.report-container {
+  background: white;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.report-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-controls input[type="text"],
+.date-picker {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.date-picker {
+  max-width: 180px;
+}
+
+.filter-options {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+  align-items: center;
+}
+
+.filter-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: center;
+}
+
 /* =============================================================== */
 /* Login */
 
@@ -384,15 +503,9 @@ td {
 
 /* ================================================
 create */
-
-
-
-
-
 .create_container {
   display: flex;
   flex-direction: row;
-  background-color: #a7c7e7;
   font-family: 'Arial', sans-serif;
   min-height: 100vh;
   flex-wrap: wrap;
@@ -436,21 +549,25 @@ create */
   width: 100%;
   max-width: 400px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  color: black;
 }
 
 .create_form h2 {
   font-size: 1.8rem;
   margin-bottom: 0.2rem;
+  color: black;
 }
 
 .create_form p {
   margin-bottom: 1rem;
+  color: black;
 }
 
 .create_form label {
   font-weight: 600;
   margin-top: 0.5rem;
   display: block;
+  color: black;
 }
 
 .create_form select,
@@ -461,6 +578,7 @@ create */
   border: none;
   margin-top: 0.3rem;
   background-color: #e0e0e0;
+  color: black;
 }
 
 .input_group {
@@ -471,6 +589,7 @@ create */
   padding: 0.3rem;
   border-radius: 8px;
   margin-top: 0.3rem;
+  color: black;
 }
 
 .input_group input {
@@ -500,6 +619,11 @@ create */
 .cancel_btn {
   background-color: #bdd7ee;
   color: black;
+}
+
+.cancel_btn a{
+  color:black;
+  text-decoration: none;
 }
 
 

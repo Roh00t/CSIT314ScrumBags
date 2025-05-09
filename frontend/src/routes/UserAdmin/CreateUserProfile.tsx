@@ -39,22 +39,27 @@ const CreateProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="user-profile-page">
-      {/* Navbar */}
-      <div className="create_container">
-        <div className="header_container">
+    <div className="page-container">
+      <div className="header-container">
+        <div>
           <img src={logo} alt="Logo" height={40} />
           <h2><Link to="/admin-dashboard">Home</Link></h2>
           <h2><Link to="/user-account-management">User Account</Link></h2>
           <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
+        </div>
+
+        <div>
           <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
             <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
           </h2>
         </div>
+      </div>
 
-        {/* Logout Modal */}
-        <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
+      {/* Logout Modal */}
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
+      {/* Navbar */}
+      <div className="create_container">
         {/* Left Side */}
         <div className="left_side">
           <h1>Experience a New Level of Clean</h1>
@@ -100,6 +105,10 @@ const CreateProfilePage: React.FC = () => {
             </button>
           </form>
         </div>
+      </div>
+      
+      <div className="footer-container">
+        <p>© Copyright 2025 Easy & Breezy - All Rights Reserved</p>
       </div>
     </div>
   )

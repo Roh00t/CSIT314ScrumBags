@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import LogoutModal from '../../components/LogoutModal';
-import logo from '../../assets/logo.png';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+import LogoutModal from '../../components/LogoutModal'
+import logo from '../../assets/logo.png'
 
 interface shortlistView {
   cleanerName: string
@@ -10,13 +10,13 @@ interface shortlistView {
 }
 
 const ViewShortlist: React.FC = () => {
-  const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
+  const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
 
-  const [shortlist, setShortlist] = useState<shortlistView[]>([]);
+  const [shortlist, setShortlist] = useState<shortlistView[]>([])
   const [search, setSearch] = useState<string>('')
 
   // Logout Modal State
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   const fetchUsers = async () => {
     try {
@@ -28,20 +28,20 @@ const ViewShortlist: React.FC = () => {
       const response = await axios.get(`http://localhost:3000/api/homeowner/shortlist/`, {
         params: queryParams,
         withCredentials: true,
-      });
+      })
 
       // Assuming the backend returns { message: 'Shortlist retrieved successfully', data: ['user2', 'User5'] }
-      const data: shortlistView[] = response.data.data;  // Access the data property
-      console.log(data);  // Log the data to verify structure
-      setShortlist(data);  // Set the users list with the fetched data
+      const data: shortlistView[] = response.data.data  // Access the data property
+      console.log(data)  // Log the data to verify structure
+      setShortlist(data)  // Set the users list with the fetched data
     } catch (err) {
-      console.error('Failed to fetch users:', err);
+      console.error('Failed to fetch users:', err)
     }
-  };
+  }
 
   useEffect(() => {
     fetchUsers()
-  }, []);  // Empty dependency array ensures this runs once when the component mounts
+  }, [])  // Empty dependency array ensures this runs once when the component mounts
 
   return (
     <div className="page-container">
@@ -120,7 +120,7 @@ const ViewShortlist: React.FC = () => {
         <b>© Copyright 2025 Easy & Breezy - All Rights Reserved</b>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ViewShortlist;
+export default ViewShortlist
