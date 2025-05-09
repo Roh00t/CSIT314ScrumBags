@@ -1,43 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import LogoutModal from '../../components/LogoutModal';
-import logo from '../../assets/logo.png';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import LogoutModal from '../../components/LogoutModal'
+import logo from '../../assets/logo.png'
+import axios from 'axios'
 
 interface UserAccountResponse {
-  id: number;
-  username: string;
-  userProfile: string;
+  id: number
+  username: string
+  userProfile: string
 }
 
 interface History {
-  bookingId: number;
-  cleanerName: string | null;
-  typeOfService: string | null;
-  homeowner: string | null;
-  date: Date;
+  bookingId: number
+  cleanerName: string | null
+  typeOfService: string | null
+  homeowner: string | null
+  date: Date
 }
 
 const CleanerViewMyBookings: React.FC = () => {
-  const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
+  const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}')
 
   // Variables
-  const [history, setHistory] = useState<History[]>([]); // Array of service history
-  const [services, setServices] = useState<{ serviceName: string }[]>([]); // Array of services available
+  const [history, setHistory] = useState<History[]>([]) // Array of service history
+  const [services, setServices] = useState<{ serviceName: string }[]>([]) // Array of services available
 
   // Filter variables
-  const [serviceName, setServiceName] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [search, setSearch] = useState('');
+  const [serviceName, setServiceName] = useState('')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+  const [search, setSearch] = useState('')
 
   // Popup modals
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   const formatDate = (dateString: string) => {
-    const [year, month, day] = dateString.split('-');
-    return `${month}/${day}/${year}`; // MM/DD/YYYY
-  };
+    const [year, month, day] = dateString.split('-')
+    return `${month}/${day}/${year}` // MM/DD/YYYY
+  }
 
   // Fetching list of services this cleaner has
   useEffect(() => {
@@ -45,15 +45,15 @@ const CleanerViewMyBookings: React.FC = () => {
       try {
         const response = await axios.post(`http://localhost:3000/api/services/${sessionUser.id}`, {
           serviceName: ''
-        });
-        setServices(response.data);
-        console.log(response.data); // Log services returned from the API
+        })
+        setServices(response.data)
+        console.log(response.data) // Log services returned from the API
       } catch (error) {
-        console.error('Error fetching cleaner services:', error);
+        console.error('Error fetching cleaner services:', error)
       }
-    };
-    fetchServices();
-  }, [sessionUser.id]);
+    }
+    fetchServices()
+  }, [sessionUser.id])
 
   // Fetch service history for the logged-in cleaner
   const fetchServiceHist = async () => {
@@ -71,10 +71,10 @@ const CleanerViewMyBookings: React.FC = () => {
         {
           withCredentials: true, // Ensure session cookies are included with the request
         }
-      );
+      )
 
       // Log the response to see its structure
-      console.log('Service History Response:', response.data);
+      console.log('Service History Response:', response.data)
 
       // Assuming the array is inside the 'data' property of the response
       if (Array.isArray(response.data)) {
@@ -84,9 +84,9 @@ const CleanerViewMyBookings: React.FC = () => {
           typeOfService: item.serviceName,
           homeowner: item.homeOwnerName,
           date: item.date
-        }));
+        }))
 
-        setHistory(formatted); // Update the history state
+        setHistory(formatted) // Update the history state
       } else if (Array.isArray(response.data.data)) {
         // Handle case where the array is inside response.data.data
         const formatted: History[] = response.data.data.map((item: any) => ({
@@ -96,21 +96,21 @@ const CleanerViewMyBookings: React.FC = () => {
           homeowner: item.homeOwnerName,
           price: item.price,
           date: item.date,
-        }));
+        }))
 
-        setHistory(formatted); // Update the history state
+        setHistory(formatted) // Update the history state
       } else {
-        setHistory([]);
-        console.error('Failed to fetch service history: response data is not an array');
+        setHistory([])
+        console.error('Failed to fetch service history: response data is not an array')
       }
     } catch (error) {
-      console.error('Error fetching service history:', error);
+      console.error('Error fetching service history:', error)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchServiceHist();
-  }, [sessionUser.id]);
+    fetchServiceHist()
+  }, [sessionUser.id])
 
   return (
     <div className="page-container">
@@ -128,8 +128,9 @@ const CleanerViewMyBookings: React.FC = () => {
               </h2>
           </div>
 
-          <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
       </div>
+      
+      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       <div className="body-container">
         <div className="card">
@@ -207,7 +208,7 @@ const CleanerViewMyBookings: React.FC = () => {
         © Copyright 2025 Easy & Breezy - All Rights Reserved
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default CleanerViewMyBookings;
+export default CleanerViewMyBookings

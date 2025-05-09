@@ -245,8 +245,9 @@ const CleanerViewServicesRoute: React.FC = () => {
                     </h2>
                 </div>
 
-                <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             </div>
+            
+            <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
             {/* Create new services popup */}
             {createServiceModal && (

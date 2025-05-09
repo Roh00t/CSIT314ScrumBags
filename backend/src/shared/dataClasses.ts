@@ -1,5 +1,3 @@
-import { BookingStatus } from "../db/schema/bookingStatusEnum"
-
 export type UserAccountData = {
     id: number
     username: string
@@ -43,6 +41,8 @@ export type CleanerServicesData = {
     cleaner: string
     service: string
     price: number
+    description: string
+    serviceProvidedID: number
 }
 
 export type ServiceHistory = {
@@ -50,10 +50,14 @@ export type ServiceHistory = {
     serviceName: string | null;
     date: Date;
     price: string | null;
-    status: BookingStatus;
 }
 
 export type ServiceProvidedShortlists = {
     serviceProvidedID: number
     noOfShortlists: number
+}
+
+export type shortlistView = {
+    cleanerName: string
+    serviceName: string
 }

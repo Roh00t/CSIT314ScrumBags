@@ -5,6 +5,8 @@ import { userAccountsTable } from "../db/schema/userAccounts"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { and, count, eq, ilike } from "drizzle-orm"
+import UserAccount from "./userAccount"
+import { shortlistView } from "../shared/dataClasses"
 
 export class ShortlistedServices {
     private db: DrizzleClient
@@ -65,23 +67,28 @@ export class ShortlistedServices {
      * US-28: As a homeowner, I want to view my shortlist so that I 
      *        can have an easy time looking for a cleaner or service
      */
-    public async viewShortlist(homeownerID: number): Promise<string[]> {
+    public async viewShortlist(homeownerID: number): Promise<shortlistView[]> {
         const shortlistedCleaners = await this.db
-            .select({ cleanerID: shortlistedServicesTable.serviceProvidedID })
+            .select({
+                cleanerName: userAccountsTable.username,
+                serviceName: servicesProvidedTable.serviceName
+            })
             .from(shortlistedServicesTable)
+            .leftJoin(servicesProvidedTable, eq(
+                shortlistedServicesTable.serviceProvidedID,
+                servicesProvidedTable.id
+            ))
+            .leftJoin(userAccountsTable, eq(
+                servicesProvidedTable.cleanerID,
+                userAccountsTable.id
+            ))
             .where(eq(shortlistedServicesTable.homeownerID, homeownerID))
 
-        // Retrieve cleaner names based on the cleanerIDs from shortlistedCleaners
-        const cleanerNames = await Promise.all(shortlistedCleaners.map(async (entry) => {
-            const [cleaner] = await this.db
-                .select({ cleanerName: userAccountsTable.username })
-                .from(userAccountsTable)
-                .where(eq(userAccountsTable.id, entry.cleanerID))
 
-            return cleaner?.cleanerName || "Unknown Cleaner"
-        }));
-
-        return cleanerNames
+        return shortlistedCleaners.map(entry => ({
+            cleanerName: entry.cleanerName ?? 'Unknown',
+            serviceName: entry.serviceName ?? 'Unknown',
+        }))
     }
 
     /**
@@ -91,9 +98,12 @@ export class ShortlistedServices {
     public async searchShortlist(
         homeownerID: number,
         search: string
-    ): Promise<string[]> {
+    ): Promise<shortlistView[]> {
         const shortlistedCleaners = await this.db
-            .select({ cleanerName: userAccountsTable.username })
+            .select({
+                cleanerName: userAccountsTable.username,
+                serviceName: servicesProvidedTable.serviceName
+            })
             .from(shortlistedServicesTable)
             .leftJoin(servicesProvidedTable, eq(
                 shortlistedServicesTable.serviceProvidedID,
@@ -105,10 +115,12 @@ export class ShortlistedServices {
             ))
             .where(and(
                 eq(shortlistedServicesTable.homeownerID, homeownerID),
-                ilike(userAccountsTable.username, `%${search}%`),
+                eq(userAccountsTable.username, search),
             ))
-            .groupBy(userAccountsTable.username)
 
-        return shortlistedCleaners.map(cl => cl.cleanerName || "Unknown Cleaner")
+        return shortlistedCleaners.map(entry => ({
+            cleanerName: entry.cleanerName ?? 'Unknown',
+            serviceName: entry.serviceName ?? 'Unknown',
+        }))
     }
 }

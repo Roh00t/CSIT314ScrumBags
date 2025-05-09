@@ -31,9 +31,9 @@ homeownerRouter.post(
     async (req, res): Promise<void> => {
         try {
             const homeownerID = (req.session.user as UserAccountData).id
-            const { cleanerID } = req.body
+            const { serviceProvidedID } = req.body
 
-            await new AddToShortlistController().addToShortlist(homeownerID, cleanerID)
+            await new AddToShortlistController().addToShortlist(homeownerID, serviceProvidedID)
 
             res.status(StatusCodes.OK).json({
                 message: "Shortlist successful"

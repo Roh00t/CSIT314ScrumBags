@@ -287,6 +287,16 @@ td {
   background-color: #d32f2f;
 }
 
+.shortlist-btn {
+  background-color: #4CAF50;
+  color:white;
+}
+
+.shortlist-btn:hover {
+  background-color: #45a049;
+  color:white;
+}
+
 /* =============================================================== */
 /* Login */
 

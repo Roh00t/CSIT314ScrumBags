@@ -156,7 +156,9 @@ export default class UserAccount {
                 cleanerID: userAccountsTable.id,
                 cleaner: userAccountsTable.username,
                 serviceCategory: serviceCategoriesTable.label,
-                price: servicesProvidedTable.price
+                price: servicesProvidedTable.price,
+                description: servicesProvidedTable.description,
+                serviceID: servicesProvidedTable.id
             })
             .from(servicesProvidedTable)
             .innerJoin(serviceCategoriesTable, eq(
@@ -178,7 +180,9 @@ export default class UserAccount {
                 cleanerID: query.cleanerID,
                 cleaner: query.cleaner,
                 service: query.serviceCategory,
-                price: Number(query.price)
+                price: Number(query.price),
+                description: query.description,
+                serviceProvidedID: query.serviceID
             } as CleanerServicesData
         })
     }
@@ -201,7 +205,9 @@ export default class UserAccount {
                 cleanerID: userAccountsTable.id,
                 cleaner: userAccountsTable.username,
                 serviceCategory: serviceCategoriesTable.label,
-                price: servicesProvidedTable.price
+                price: servicesProvidedTable.price,
+                description: servicesProvidedTable.description,
+                serviceID: servicesProvidedTable.id
             })
             .from(servicesProvidedTable)
             .innerJoin(serviceCategoriesTable, eq(
@@ -223,7 +229,9 @@ export default class UserAccount {
                 cleanerID: query.cleanerID,
                 cleaner: query.cleaner,
                 service: query.serviceCategory,
-                price: Number(query.price)
+                price: Number(query.price),
+                description: query.description,
+                serviceProvidedID: query.serviceID
             } as CleanerServicesData
         })
     }
