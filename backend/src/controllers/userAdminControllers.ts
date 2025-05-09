@@ -1,5 +1,5 @@
 import { UserProfilesSelect } from '../db/schema/userProfiles'
-import { UserAccountData } from '../shared/dataClasses'
+import { UserAccountData, UserProfileData } from '../shared/dataClasses'
 import { UserProfile } from '../entities/userProfile'
 import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
@@ -138,7 +138,7 @@ export class ViewUserProfilesController {
         this.userProfile = new UserProfile()
     }
 
-    public async viewUserProfiles(): Promise<UserProfilesSelect[]> {
+    public async viewUserProfiles(): Promise<UserProfileData[]> {
         return await this.userProfile.viewUserProfiles()
     }
 }

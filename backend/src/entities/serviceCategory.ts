@@ -1,12 +1,9 @@
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
+import { ServiceCategoryNotFoundError } from '../shared/exceptions'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { DrizzleClient } from '../shared/constants'
 import { eq, ilike } from 'drizzle-orm'
-import {
-    ServiceCategoryAlreadyExistsError,
-    ServiceCategoryNotFoundError
-} from '../shared/exceptions'
 
 export class ServiceCategory {
     private db: DrizzleClient
@@ -19,18 +16,23 @@ export class ServiceCategory {
      * US-33: As a Platform Manager, I want to create service categories, 
      *        to display more services which fit the requirements of our customers
      */
-    public async createServiceCategory(category: string): Promise<void> {
-        const [res] = await this.db
-            .select()
-            .from(serviceCategoriesTable)
-            .where(eq(serviceCategoriesTable.label, category))
-            .limit(1)
+    public async createServiceCategory(category: string): Promise<boolean> {
+        try {
+            const [res] = await this.db
+                .select()
+                .from(serviceCategoriesTable)
+                .where(eq(serviceCategoriesTable.label, category))
+                .limit(1)
 
-        if (res) {
-            throw new ServiceCategoryAlreadyExistsError(category)
+            if (res) { // Service category already exists
+                return false
+            }
+
+            await this.db.insert(serviceCategoriesTable).values({ label: category })
+            return true
+        } catch (err) {
+            return false
         }
-
-        await this.db.insert(serviceCategoriesTable).values({ label: category })
     }
 
     /**

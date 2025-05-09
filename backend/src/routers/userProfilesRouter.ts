@@ -35,14 +35,8 @@ userProfilesRouter.post('/', async (req, res): Promise<void> => {
  *       so that I can access profile information
  */
 userProfilesRouter.get('/', async (_, res): Promise<void> => {
-    try {
-        const profiles = await new ViewUserProfilesController().viewUserProfiles()
-        res.status(StatusCodes.OK).json(profiles)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
+    const userProfiles = await new ViewUserProfilesController().viewUserProfiles()
+    res.status(StatusCodes.OK).json(userProfiles)
 })
 
 /**

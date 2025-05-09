@@ -67,7 +67,7 @@ export class CreateServiceCategoryController {
         this.serviceCategory = new ServiceCategory()
     }
 
-    public async createServiceCategory(category: string): Promise<void> {
+    public async createServiceCategory(category: string): Promise<boolean> {
         return await this.serviceCategory.createServiceCategory(category)
     }
 }

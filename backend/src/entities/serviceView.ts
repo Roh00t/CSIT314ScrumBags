@@ -12,8 +12,8 @@ export class ServiceView {
     }
 
     /**
-     * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
-     *            my services, so that I can understand the demand of my services
+     * US-20: As a cleaner, I want to view the number of homeowners interested in 
+     *        my services, so that I can understand the demand of my services
      */
     async viewNumberOfInterestedHomeowners(serviceProvidedID: number): Promise<number> {
         const [result] = await this.db
@@ -26,29 +26,5 @@ export class ServiceView {
             .where(eq(servicesProvidedTable.id, serviceProvidedID))
 
         return result.count
-    }
-
-    /**
-     * US-20 (b): As a cleaner, I want to view the number of homeowners interested in 
-     *            my services, so that I can understand the demand of my services
-     * 
-     * This basically inserts an "view" entry into the database, where 
-     * "homeowner id" viewed "service provided id" at "viewed at timestamp". 
-     * 
-     * Onus on the frontend programmers to invoke this API call whenver
-     * a certain service is viewed by a homeowner
-     */
-    async updateNumberOfInterestedHomeowners(
-        homeownerID: number,
-        serviceProvidedID: number,
-        viewedAtTimestamp: Date
-    ): Promise<void> {
-        await this.db
-            .insert(serviceViewsTable)
-            .values({
-                homeownerID: homeownerID,
-                serviceProvidedID: serviceProvidedID,
-                viewedAt: viewedAtTimestamp
-            })
     }
 }

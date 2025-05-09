@@ -1,9 +1,13 @@
+import { userProfilesTable } from "../db/schema/userProfiles"
+
 export type UserAccountData = {
     id: number
     username: string
     userProfile: string
     isSuspended: boolean
 }
+
+export type UserProfileData = typeof userProfilesTable.$inferSelect
 
 export type ServiceProvidedData = {
     serviceProvidedID: number
@@ -57,7 +61,7 @@ export type ServiceProvidedShortlists = {
     noOfShortlists: number
 }
 
-export type shortlistView = {
+export type ShortlistEntry = {
     cleanerName: string
     serviceName: string
 }

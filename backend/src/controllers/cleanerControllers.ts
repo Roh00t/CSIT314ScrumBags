@@ -145,8 +145,8 @@ export class CreateServiceProvidedController {
         serviceCategory: string,
         description: string,
         price: number
-    ): Promise<void> {
-        await this.serviceProvided.createServiceProvided(
+    ): Promise<boolean> {
+        return await this.serviceProvided.createServiceProvided(
             cleanerID,
             serviceName,
             serviceCategory,
@@ -192,8 +192,8 @@ export class DeleteServiceProvidedController {
 }
 
 /**
- * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
- *            my services, so that I can understand the demand of my services
+ * US-20: As a cleaner, I want to view the number of homeowners interested in 
+ *        my services, so that I can understand the demand of my services
  */
 export class ViewNumberOfInterestedHomeownersController {
     private serviceView: ServiceView
@@ -208,42 +208,18 @@ export class ViewNumberOfInterestedHomeownersController {
 }
 
 /**
- * US-20 (b): As a cleaner, I want to view the number of homeowners interested in 
- *            my services, so that I can understand the demand of my services
- */
-export class UpdateNumberOfInterestedHomeownersController {
-    private serviceView: ServiceView
-
-    constructor() {
-        this.serviceView = new ServiceView()
-    }
-
-    async updateNumberOfInterestedHomeowners(
-        homeownerID: number,
-        serviceProvidedID: number,
-        viewedAtTimestamp: Date
-    ): Promise<void> {
-        this.serviceView.updateNumberOfInterestedHomeowners(
-            homeownerID,
-            serviceProvidedID,
-            viewedAtTimestamp
-        )
-    }
-}
-
-/**
  * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
  *        me for my services, so that I can track my popularity and potential bookings
  */
-export class ViewShortlistedBookingsController {
+export class ViewNoOfShortlistedHomeownersController {
     private shortListedCleaner: ShortlistedServices
 
     constructor() {
         this.shortListedCleaner = new ShortlistedServices
     }
 
-    public async viewNoOfShortlistedHomeowners(cleanerID: number): Promise<number> {
-        return await this.shortListedCleaner.viewNoOfShortlistedHomeowners(cleanerID)
+    public async viewNoOfShortlistedHomeowners(serviceProvidedID: number): Promise<number> {
+        return await this.shortListedCleaner.viewNoOfShortlistedHomeowners(serviceProvidedID)
     }
 }
 

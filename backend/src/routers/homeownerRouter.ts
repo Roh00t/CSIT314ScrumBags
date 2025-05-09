@@ -63,34 +63,22 @@ homeownerRouter.get(
     '/shortlist',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const searchParam = req.query.search
+        const homeownerID = (req.session.user as UserAccountData).id
+        const searchParam = req.query.search
 
-            if (searchParam && String(searchParam).length > 0) { //===== US-27 ======
-                const searchedShortlistedCleaners =
-                    await new SearchShortlistController()
-                        .searchShortlist(homeownerID, String(searchParam))
+        //===== US-27 ======
+        if (searchParam && String(searchParam).length > 0) {
+            const searchedShortlistedCleaners =
+                await new SearchShortlistController()
+                    .searchShortlist(homeownerID, String(searchParam))
 
-                res.status(StatusCodes.OK).json({
-                    message: "Shortlist retrieved successfully",
-                    data: searchedShortlistedCleaners
-                })
-            } else { //====== US-28 =======
-                const shortlistedCleaners =
-                    await new ViewShortlistController()
-                        .viewShortlist(homeownerID)
+            res.status(StatusCodes.OK).json(searchedShortlistedCleaners)
+        } else { //====== US-28 =======
+            const shortlistedCleaners =
+                await new ViewShortlistController()
+                    .viewShortlist(homeownerID)
 
-                res.status(StatusCodes.OK).json({
-                    message: "Shortlist retrieved successfully",
-                    data: shortlistedCleaners
-                })
-            }
-
-        } catch (error: any) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                error: error.message || "Failed to retrieve shortlist"
-            })
+            res.status(StatusCodes.OK).json(shortlistedCleaners)
         }
     }
 )

@@ -4,6 +4,7 @@ import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { ilike } from 'drizzle-orm'
 import { eq } from 'drizzle-orm'
+import { UserProfileData } from '../shared/dataClasses'
 
 export class UserProfile {
     private db: DrizzleClient
@@ -31,12 +32,12 @@ export class UserProfile {
      * US-9: As a user admin, I want to view user profiles 
      *       so that I can access profile information
      */
-    public async viewUserProfiles(): Promise<UserProfilesSelect[]> {
-        const result = await this.db
-            .select()
-            .from(userProfilesTable)
-
-        return result
+    public async viewUserProfiles(): Promise<UserProfileData[]> {
+        try {
+            return await this.db.select().from(userProfilesTable)
+        } catch (err) {
+            return []
+        }
     }
 
     /**

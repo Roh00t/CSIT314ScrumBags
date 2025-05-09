@@ -31,7 +31,7 @@ const ViewShortlist: React.FC = () => {
       })
 
       // Assuming the backend returns { message: 'Shortlist retrieved successfully', data: ['user2', 'User5'] }
-      const data: shortlistView[] = response.data.data  // Access the data property
+      const data: shortlistView[] = response.data // Access the data property
       console.log(data)  // Log the data to verify structure
       setShortlist(data)  // Set the users list with the fetched data
     } catch (err) {
@@ -61,7 +61,7 @@ const ViewShortlist: React.FC = () => {
         </div>
       </div>
 
-      
+
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 

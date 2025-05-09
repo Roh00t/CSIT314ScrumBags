@@ -2,23 +2,25 @@ import { requireAuthMiddleware } from "../shared/middleware"
 import { UserAccountData } from "../shared/dataClasses"
 import { StatusCodes } from "http-status-codes"
 import {
+    ViewNoOfShortlistedHomeownersController,
     SearchCleanerServiceHistoryController,
-    ViewCleanerServiceHistoryController,
-    ViewShortlistedBookingsController
+    ViewCleanerServiceHistoryController
 } from "../controllers/cleanerControllers"
 import { Router } from "express"
 
 const cleanersRouter = Router()
 
-
+/**
+ * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
+ *        me for my services, so that I can track my popularity and potential bookings
+ */
 cleanersRouter.get('/shortlist/count',
-    requireAuthMiddleware,
     async (req, res): Promise<void> => {
         try {
-            const cleanerID = req.session.user?.id as number
+            const { serviceProvidedID } = req.body
             const shortlistedBookingsCount =
-                await new ViewShortlistedBookingsController()
-                    .viewNoOfShortlistedHomeowners(cleanerID)
+                await new ViewNoOfShortlistedHomeownersController()
+                    .viewNoOfShortlistedHomeowners(serviceProvidedID)
             res.status(StatusCodes.OK).json(shortlistedBookingsCount)
         } catch (error: any) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

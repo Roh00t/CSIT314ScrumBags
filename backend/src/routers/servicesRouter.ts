@@ -9,7 +9,6 @@ import {
 } from '../controllers/platformManagerControllers'
 import { StatusCodes } from 'http-status-codes'
 import {
-    UpdateNumberOfInterestedHomeownersController,
     ViewNumberOfInterestedHomeownersController,
     ViewAllServicesProvidedController,
     SearchServicesProvidedController,
@@ -20,8 +19,6 @@ import {
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
 import {
-    DuplicateServiceProvidedError,
-    ServiceCategoryAlreadyExistsError,
     ServiceCategoryNotFoundError
 } from '../shared/exceptions'
 
@@ -38,20 +35,16 @@ declare module 'express-session' {
  *        to display more services which fit the requirements of our customers
  */
 servicesRouter.post('/categories', async (req, res): Promise<void> => {
-    try {
-        const { category } = req.body
-        await new CreateServiceCategoryController().createServiceCategory(category)
-        res.status(StatusCodes.CREATED).send()
-    } catch (err) {
-        if (err instanceof ServiceCategoryAlreadyExistsError) {
-            res.status(StatusCodes.CONFLICT).json({
-                message: (err as Error).message
-            })
-        } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
+    const { category } = req.body
+
+    const createSuccess =
+        await new CreateServiceCategoryController()
+            .createServiceCategory(category)
+
+    if (createSuccess) {
+        res.status(StatusCodes.CREATED).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 
@@ -167,88 +160,52 @@ servicesRouter.post(
     '/me',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            if (!req.session.user) {
-                /**
-                 * Shouldn't reach here, as the 'requireAuthMiddleware'
-                 * should ensure the user object is valid
-                 *
-                 * Just asserting that it isn't null to stop the
-                 * Typescript compiler from complaining (zzzzz)
-                 */
-                throw new Error("This isn't (theoretically) possible")
-            }
+        if (!req.session.user) {
+            /**
+             * Shouldn't reach here, as the 'requireAuthMiddleware'
+             * should ensure the user object is valid
+             *
+             * Just asserting that it isn't null to stop the
+             * Typescript compiler from complaining (zzzzz)
+             */
+            // throw new Error("This isn't (theoretically) possible")
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
+            return
+        }
 
-            const { service, category, description, price } = req.body
-            await new CreateServiceProvidedController().createServiceProvided(
+        const { service, category, description, price } = req.body
+        const createSuccess = await new CreateServiceProvidedController()
+            .createServiceProvided(
                 req.session.user?.id,
                 service,
                 category,
                 description,
                 Number(price)
             )
-            res.status(StatusCodes.CREATED).send()
-        } catch (err) {
-            if (err instanceof ServiceCategoryNotFoundError) {
-                res.status(StatusCodes.NOT_FOUND).json({
-                    message: (err as Error).message
-                })
-            } else if (err instanceof DuplicateServiceProvidedError) {
-                res.status(StatusCodes.CONFLICT).json({
-                    message: (err as Error).message
-                })
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    message: (err as Error).message
-                })
-            }
+
+        if (createSuccess) {
+            res.status(StatusCodes.CREATED).json(true)
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
         }
     }
 )
 
 /**
- * US-20 (a): As a cleaner, I want to view the number of homeowners interested in 
- *            my services, so that I can understand the demand of my services
+ * US-20: As a cleaner, I want to view the number of homeowners interested in 
+ *        my services, so that I can understand the demand of my services
  */
 servicesRouter.get(
     '/views',
-    requireAuthMiddleware,
     async (req, res): Promise<void> => {
         try {
-            const cleanerID = (req.session.user as UserAccountData).id
+            const { serviceProvidedID } = req.body
 
             const noOfInterestedHomeowners =
                 await new ViewNumberOfInterestedHomeownersController()
-                    .viewNumberOfInterestedHomeowners(cleanerID)
+                    .viewNumberOfInterestedHomeowners(serviceProvidedID)
 
             res.status(StatusCodes.OK).json(noOfInterestedHomeowners)
-        } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
-    }
-)
-
-/**
- * US-20 (b): As a cleaner, I want to view the number of homeowners interested in 
- *            my services, so that I can understand the demand of my services
- */
-servicesRouter.post(
-    '/views',
-    requireAuthMiddleware,
-    async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const { serviceProvidedID } = req.body
-
-            await new UpdateNumberOfInterestedHomeownersController()
-                .updateNumberOfInterestedHomeowners(
-                    homeownerID,
-                    serviceProvidedID,
-                    new Date()
-                )
-            res.status(StatusCodes.OK).send()
         } catch (err) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: (err as Error).message
@@ -314,27 +271,21 @@ servicesRouter.delete(
  * If it exists, it will invoke the controller to search services provided
  */
 servicesRouter.post('/:id', async (req, res): Promise<void> => {
-    try {
-        const { id } = req.params
-        const { serviceName } = req.body
+    const { id } = req.params
+    const { serviceName } = req.body
 
-        if (serviceName && String(serviceName).length > 0) { //==== US-17 =====
-            const servicesProvided =
-                await new SearchServicesProvidedController()
-                    .searchServicesProvided(Number(id), serviceName)
+    if (serviceName && String(serviceName).length > 0) { //==== US-17 =====
+        const servicesProvided =
+            await new SearchServicesProvidedController()
+                .searchServicesProvided(Number(id), serviceName)
 
-            res.status(StatusCodes.OK).json(servicesProvided)
-        } else { //========== US-14 =======
-            const servicesProvided =
-                await new ViewServicesProvidedController()
-                    .viewServicesProvided(Number(id))
+        res.status(StatusCodes.OK).json(servicesProvided)
+    } else { //========== US-14 =======
+        const servicesProvided =
+            await new ViewServicesProvidedController()
+                .viewServicesProvided(Number(id))
 
-            res.status(StatusCodes.OK).json(servicesProvided)
-        }
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+        res.status(StatusCodes.OK).json(servicesProvided)
     }
 })
 
