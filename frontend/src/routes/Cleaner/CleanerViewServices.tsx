@@ -230,15 +230,21 @@ const CleanerViewServicesRoute: React.FC = () => {
     }
 
     return (
-        <div className="page_container">
-            <div className="header_container">
-                <img src={logo} alt="Logo" height={40} />
-                <h2><Link to="/cleaner-dashboard">Home</Link></h2>
-                <h2><Link to="/cleaner-view-services">My Services</Link></h2>
-                <h2><Link to="/cleaner-view-bookings">My Bookings</Link></h2>
-                <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-                <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
-                </h2>
+        <div className="page-container">
+            <div className="header-container">
+                <div>
+                    <img src={logo} alt="Logo" height={40} />
+                    <h2><Link to="/cleaner-dashboard">Home</Link></h2>
+                    <h2><Link to="/cleaner-view-services">My Services</Link></h2>
+                    <h2><Link to="/cleaner-view-bookings">My Bookings</Link></h2>
+                </div>
+
+                <div>
+                    <h2 id="logout-button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+                    <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
+                    </h2>
+                </div>
+
                 <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
             </div>
 
@@ -365,11 +371,11 @@ const CleanerViewServicesRoute: React.FC = () => {
                 </div>
             )}
 
-            <div className="body_container">
+            <div className="body-container">
                 <div className="card">
                     <h1>View Services</h1>
 
-                    <div className="top_bar">
+                    <div className="top-bar">
                         <input
                         type="text"
                         placeholder="🔍 Search...."
@@ -388,9 +394,9 @@ const CleanerViewServicesRoute: React.FC = () => {
                     <table>
                         <thead>
                             <tr>
-                            <th><b>Type of Service</b></th>
-                            <th>Price</th>
-                            <th>Actions</th>
+                                <th><b>Type of Service</b></th>
+                                <th>Price</th>
+                                <th id='actionCol'>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -441,8 +447,6 @@ const CleanerViewServicesRoute: React.FC = () => {
                                         </button>
                                     </div>
                                 </td>
-
-
                             </tr>
                             ))}
                         </tbody>
@@ -450,7 +454,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                 </div>
             </div>
 
-            <footer className="footer">
+            <footer className="footer-container">
                 © Copyright 2025 Easy & Breezy - All Rights Reserved
             </footer>
         </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import '../../css/HomeOwner/HomeOwnerViewHistory.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';

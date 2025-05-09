@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import '../../css/Cleaner/CleanerViewMyBookings.css';
 import { Link } from 'react-router-dom';
 import LogoutModal from '../../components/LogoutModal';
 import logo from '../../assets/logo.png';
@@ -11,28 +10,28 @@ interface UserAccountResponse {
   userProfile: string;
 }
 
-//testing
 interface History {
   bookingId: number;
   cleanerName: string | null;
   typeOfService: string | null;
   homeowner: string | null;
   date: Date;
-  status: string;
 }
 
 const CleanerViewMyBookings: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
 
-  const [services, setServices] = useState<{ serviceName: string }[]>([]);
+  // Variables
+  const [history, setHistory] = useState<History[]>([]); // Array of service history
+  const [services, setServices] = useState<{ serviceName: string }[]>([]); // Array of services available
+
+  // Filter variables
   const [serviceName, setServiceName] = useState('');
-  const [homeowner] = useState('');
-  const [bookingId] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
-  const [history, setHistory] = useState<History[]>([]);
   const [search, setSearch] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'All' | 'Pending' | 'Confirmed' | 'Cancelled'>('All');
+
+  // Popup modals
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -40,6 +39,7 @@ const CleanerViewMyBookings: React.FC = () => {
     return `${month}/${day}/${year}`; // MM/DD/YYYY
   };
 
+  // Fetching list of services this cleaner has
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -56,19 +56,17 @@ const CleanerViewMyBookings: React.FC = () => {
   }, [sessionUser.id]);
 
   // Fetch service history for the logged-in cleaner
-  const fetchServiceHist = async (statusFilter?: string) => {
+  const fetchServiceHist = async () => {
     try {
       // Make the request with session cookie handling
       const response = await axios.post(
-        'http://localhost:3000/api/cleaners/servicehistory',
+        'http://localhost:3000/api/cleaners/serviceHistory',
         {
-          cleanerId: sessionUser.id,
-          bookingid: bookingId,
-          service: serviceName || search,
-          homeOwnerName: homeowner,
+          cleanerID: sessionUser.id,
+          service: serviceName,
+          homeownerName: search,
           startDate: fromDate ? formatDate(fromDate) : null,
           endDate: toDate ? formatDate(toDate) : null,
-          status: statusFilter ?? null,
         },
         {
           withCredentials: true, // Ensure session cookies are included with the request
@@ -85,8 +83,7 @@ const CleanerViewMyBookings: React.FC = () => {
           cleanerName: item.cleanerName,
           typeOfService: item.serviceName,
           homeowner: item.homeOwnerName,
-          date: item.date,
-          status: item.status,
+          date: item.date
         }));
 
         setHistory(formatted); // Update the history state
@@ -99,7 +96,6 @@ const CleanerViewMyBookings: React.FC = () => {
           homeowner: item.homeOwnerName,
           price: item.price,
           date: item.date,
-          status: item.status,
         }));
 
         setHistory(formatted); // Update the history state
@@ -116,49 +112,31 @@ const CleanerViewMyBookings: React.FC = () => {
     fetchServiceHist();
   }, [sessionUser.id]);
 
-  const filteredHistory = filterStatus === 'All'
-    ? history
-    : history.filter(item => item.status?.toLowerCase() === filterStatus.toLowerCase());
-
-  const countStatus = (status: 'Pending' | 'Confirmed' | 'Cancelled') =>
-    history.filter(item => item.status?.toLowerCase() === status.toLowerCase()).length;
-
   return (
-    <div className="view-mybooking-container">
-      <div className="header_container">
-        <img src={logo} alt="Logo" height={40} />
-        <h2><Link to="/cleaner-dashboard">Home</Link></h2>
-        <h2><Link to="/cleaner-view-services">My Services</Link></h2>
-        <h2><Link to="/cleaner-view-bookings">My Bookings</Link></h2>
-        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
-        </h2>
+    <div className="page-container">
+      <div className="header-container">
+          <div>
+              <img src={logo} alt="Logo" height={40} />
+              <h2><Link to="/cleaner-dashboard">Home</Link></h2>
+              <h2><Link to="/cleaner-view-services">My Services</Link></h2>
+              <h2><Link to="/cleaner-view-bookings">My Bookings</Link></h2>
+          </div>
+
+          <div>
+              <h2 id="logout-button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+              <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
+              </h2>
+          </div>
+
+          <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
       </div>
 
-      <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
-
-      <div className="content-center">
+      <div className="body-container">
         <div className="card">
           <h1>My Bookings</h1>
 
-          {/* Status Tabs */}
-          <div className="status-tabs">
-            <span className={`tab ${filterStatus === 'All' ? 'active' : ''}`} onClick={() => setFilterStatus('All')}>
-              All Bookings ({history.length})
-            </span>
-            <span className={`tab ${filterStatus === 'Pending' ? 'active' : ''}`} onClick={() => setFilterStatus('Pending')}>
-              Pending ({countStatus('Pending')})
-            </span>
-            <span className={`tab ${filterStatus === 'Confirmed' ? 'active' : ''}`} onClick={() => setFilterStatus('Confirmed')}>
-              Confirmed ({countStatus('Confirmed')})
-            </span>
-            <span className={`tab ${filterStatus === 'Cancelled' ? 'active' : ''}`} onClick={() => setFilterStatus('Cancelled')}>
-              Cancelled ({countStatus('Cancelled')})
-            </span>
-          </div>
-
           {/* Top Bar Filters */}
-          <div className="top-bar">
+          <div className="top-bar2">
             <select
               value={serviceName}
               onChange={(e) => setServiceName(e.target.value)}
@@ -201,22 +179,20 @@ const CleanerViewMyBookings: React.FC = () => {
               <tr>
                 <th><b>ID</b></th>
                 <th><b>Services</b></th>
-                <th><b>Status</b></th>
                 <th><b>Date</b></th>
-                <th><b>Home Owner</b></th>
+                <th><b>Homeowner Name</b></th>
               </tr>
             </thead>
             <tbody>
-              {filteredHistory.length === 0 ? (
+              {history.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: 'center' }}>No history found for the selected filters.</td>
+                  <td>No history found for the selected filters.</td>
                 </tr>
               ) : (
-                filteredHistory.map((service, index) => (
+                history.map((service, index) => (
                   <tr key={index}>
                     <td>{service.bookingId}</td>
                     <td>{service.typeOfService}</td>
-                    <td>{service.status}</td>
                     <td>{new Date(service.date).toLocaleDateString('en-GB')}</td>
                     <td>{service.homeowner}</td>
                   </tr>
@@ -227,7 +203,7 @@ const CleanerViewMyBookings: React.FC = () => {
         </div>
       </div>
 
-      <footer className="footer">
+      <footer className="footer-container">
         © Copyright 2025 Easy & Breezy - All Rights Reserved
       </footer>
     </div>

@@ -46,7 +46,7 @@ cleanersRouter.post(
     async (req, res): Promise<void> => {
         try {
             const cleanerID = (req.session.user as UserAccountData).id
-            const { service, startDate, endDate } = req.body
+            const { service, startDate, endDate, homeownerName } = req.body
 
             if (service && String(service).length > 0) { //===== US-22 ======
                 const searchedServiceHistory =
@@ -66,7 +66,8 @@ cleanersRouter.post(
                     .viewCleanerServiceHistory(
                         cleanerID,
                         startDate ? new Date(startDate) : null,
-                        endDate ? new Date(endDate) : null
+                        endDate ? new Date(endDate) : null,
+                        homeownerName || null
                     )
                 res.status(StatusCodes.OK).json({
                     message: "Service history retrieved successfully 2",

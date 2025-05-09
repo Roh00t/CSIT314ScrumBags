@@ -175,7 +175,8 @@ export class ServiceBooking {
     public async viewCleanerServiceHistory(
         cleanerID: number,
         startDate: Date | null,
-        endDate: Date | null
+        endDate: Date | null,
+        homeownerName: string | null
     ): Promise<CleanerServiceBookingData[]> {
 
         const conditions = [
@@ -185,6 +186,10 @@ export class ServiceBooking {
         if (startDate && endDate) {
             conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
             conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+        }
+
+        if (homeownerName) {
+            conditions.push(eq(userAccountsTable.username, homeownerName))
         }
 
         const queryResult = await this.db.select()

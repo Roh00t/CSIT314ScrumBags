@@ -8,7 +8,6 @@ import CreateAccountPage from "./routes/UserAdmin/CreateUserAccount"
 import CreateProfilePage from "./routes/UserAdmin/CreateUserProfile"
 import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
-import LogoutPage from "./routes/Logout"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
 import ViewUserProfile from "./routes/UserAdmin/ViewUserProfile"
 import ViewCleanerService from "./routes/HomeOwner/ViewCleanerService"
@@ -25,7 +24,6 @@ const browserRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
-  { path: "/logout", element: <LogoutPage /> },
   { path: "/ViewUserProfile", element: <ViewUserProfile /> },
   { path: "/ViewCleanerService", element: <ViewCleanerService /> },
   { path: "/ViewShortlist", element: <ViewShortlist /> },

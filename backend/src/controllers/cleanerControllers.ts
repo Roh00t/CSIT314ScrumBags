@@ -57,10 +57,11 @@ export class ViewCleanerServiceHistoryController {
     public async viewCleanerServiceHistory(
         cleanerID: number,
         startDate: Date | null,
-        endDate: Date | null
+        endDate: Date | null,
+        homeownerName: string | null
     ): Promise<CleanerServiceBookingData[]> {
         return await this.serviceBooking.viewCleanerServiceHistory(
-            cleanerID, startDate, endDate
+            cleanerID, startDate, endDate, homeownerName
         )
     }
 }
