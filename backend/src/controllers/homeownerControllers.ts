@@ -1,7 +1,6 @@
 import { ShortlistedServices } from "../entities/shortlistedService"
 import { ServiceBooking } from "../entities/serviceBooking"
 import { ServiceHistory } from "../shared/dataClasses"
-import { BookingStatus } from "../db/schema/bookingStatusEnum"
 
 /**
  * US-26: As a homeowner, I want to save the cleaners into my short list 

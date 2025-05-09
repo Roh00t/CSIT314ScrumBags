@@ -1,5 +1,5 @@
 import { ServiceBookingsInsert, serviceBookingsTable } from '../schema/serviceBookings'
-import { BookingStatus } from '../schema/bookingStatusEnum'
+// import { BookingStatus } from '../schema/bookingStatusEnum'
 import { UserAccountsSelect } from '../schema/userAccounts'
 import { DrizzleClient } from '../../shared/constants'
 import { faker } from '@faker-js/faker'
@@ -93,12 +93,12 @@ export const initServiceBookings = async (
                 startTimestamp: faker.date.between({
                     from: twoYearsAgo,
                     to: new Date()
-                }),
-                status: faker.helpers.arrayElement([
-                    BookingStatus.Pending,
-                    BookingStatus.Cancelled,
-                    BookingStatus.Confirmed
-                ])
+                })
+                // status: faker.helpers.arrayElement([
+                //     BookingStatus.Pending,
+                //     BookingStatus.Cancelled,
+                //     BookingStatus.Confirmed
+                // ])
             })
         })
     })

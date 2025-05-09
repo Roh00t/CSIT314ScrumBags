@@ -1,7 +1,6 @@
 import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { serviceBookingsTable } from '../db/schema/serviceBookings'
-import { BookingStatus } from '../db/schema/bookingStatusEnum'
 import { userAccountsTable } from '../db/schema/userAccounts'
 import { and, eq, gt, gte, ilike, lt } from 'drizzle-orm'
 import { DrizzleClient } from '../shared/constants'
@@ -10,7 +9,6 @@ import {
     CleanerServiceBookingData,
     ServiceBookingReportData,
     ServiceHistory,
-    ServiceProvidedData
 } from '../shared/dataClasses'
 
 export class ServiceBooking {
@@ -182,7 +180,6 @@ export class ServiceBooking {
 
         const conditions = [
             eq(servicesProvidedTable.cleanerID, cleanerID),
-            eq(serviceBookingsTable.status, BookingStatus.Confirmed)
         ]
 
         if (startDate && endDate) {
@@ -229,7 +226,6 @@ export class ServiceBooking {
     ): Promise<CleanerServiceBookingData[]> {
         const conditions = [
             eq(servicesProvidedTable.cleanerID, cleanerID),
-            eq(serviceBookingsTable.status, BookingStatus.Confirmed),
             ilike(servicesProvidedTable.serviceName, `%${service}%`)
         ]
 
@@ -314,7 +310,6 @@ export class ServiceBooking {
 
         const conditions = [
             eq(serviceBookingsTable.homeownerID, userID),
-            eq(serviceBookingsTable.status, BookingStatus.Confirmed)
         ];
 
         if (service) {
@@ -388,7 +383,6 @@ export class ServiceBooking {
 
         const conditions = [
             eq(serviceBookingsTable.homeownerID, userID),
-            eq(serviceBookingsTable.status, BookingStatus.Confirmed)
         ];
 
         if (service) {
@@ -468,7 +462,6 @@ export class ServiceBooking {
                 homeownerID: homeownerID,
                 serviceProvidedID: serviceProvidedID,
                 startTimestamp: startTimestamp,
-                status: BookingStatus.Pending
             })
     }
 }
