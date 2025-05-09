@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import '../../css/Cleaner/CleanerViewServices.css'
 import { Link } from 'react-router-dom'
 import logo from '../../assets/logo.png'
 import LogoutModal from '../../components/LogoutModal'
@@ -231,7 +230,7 @@ const CleanerViewServicesRoute: React.FC = () => {
     }
 
     return (
-        <div className="cleanerViewService-container">
+        <div className="page_container">
             <div className="header_container">
                 <img src={logo} alt="Logo" height={40} />
                 <h2><Link to="/cleaner-dashboard">Home</Link></h2>
@@ -366,11 +365,11 @@ const CleanerViewServicesRoute: React.FC = () => {
                 </div>
             )}
 
-            <div className="content-center">
+            <div className="body_container">
                 <div className="card">
                     <h1>View Services</h1>
 
-                    <div className="top-bar">
+                    <div className="top_bar">
                         <input
                         type="text"
                         placeholder="🔍 Search...."
