@@ -71,28 +71,32 @@ export class ServiceProvided {
      * Gets all the service 'types' provided by a cleaner (by their userID)
      */
     public async viewServicesProvided(userID: number): Promise<ServiceProvidedData[]> {
-        const servicesProvidedByCleaner = await this.db
-            .select({
-                serviceProvidedID: servicesProvidedTable.id,
-                serviceName: servicesProvidedTable.serviceName,
-                description: servicesProvidedTable.description,
-                price: servicesProvidedTable.price
-            })
-            .from(servicesProvidedTable)
-            .leftJoin(userAccountsTable, eq(
-                servicesProvidedTable.cleanerID,
-                userAccountsTable.id
-            ))
-            .where(eq(userAccountsTable.id, userID))
+        try {
+            const servicesProvidedByCleaner = await this.db
+                .select({
+                    serviceProvidedID: servicesProvidedTable.id,
+                    serviceName: servicesProvidedTable.serviceName,
+                    description: servicesProvidedTable.description,
+                    price: servicesProvidedTable.price
+                })
+                .from(servicesProvidedTable)
+                .leftJoin(userAccountsTable, eq(
+                    servicesProvidedTable.cleanerID,
+                    userAccountsTable.id
+                ))
+                .where(eq(userAccountsTable.id, userID))
 
-        return servicesProvidedByCleaner.map(sp => {
-            return {
-                serviceProvidedID: sp.serviceProvidedID,
-                serviceName: sp.serviceName,
-                description: sp.description,
-                price: Number(sp.price)
-            } as ServiceProvidedData
-        })
+            return servicesProvidedByCleaner.map(sp => {
+                return {
+                    serviceProvidedID: sp.serviceProvidedID,
+                    serviceName: sp.serviceName,
+                    description: sp.description,
+                    price: Number(sp.price)
+                } as ServiceProvidedData
+            })
+        } catch (err) {
+            return []
+        }
     }
 
     /**
@@ -104,24 +108,38 @@ export class ServiceProvided {
         newserviceName: string,
         newdescription: string,
         newprice: number
-    ): Promise<void> {
-        await this.db
-            .update(servicesProvidedTable)
-            .set({
-                serviceName: newserviceName,
-                description: newdescription,
-                price: String(newprice)
-            }).where(eq(servicesProvidedTable.id, serviceID))
+    ): Promise<boolean> {
+        try {
+            if (newserviceName.trim().length === 0 || newprice <= 0) {
+                return false
+            }
+
+            await this.db
+                .update(servicesProvidedTable)
+                .set({
+                    serviceName: newserviceName,
+                    description: newdescription,
+                    price: String(newprice)
+                }).where(eq(servicesProvidedTable.id, serviceID))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**
      * US-16: As a cleaner, I want to delete my service 
      *        so that I can remove my service provided
      */
-    public async deleteServiceProvided(serviceID: number): Promise<void> {
-        await this.db
-            .delete(servicesProvidedTable)
-            .where(eq(servicesProvidedTable.id, serviceID))
+    public async deleteServiceProvided(serviceID: number): Promise<boolean> {
+        try {
+            await this.db
+                .delete(servicesProvidedTable)
+                .where(eq(servicesProvidedTable.id, serviceID))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**

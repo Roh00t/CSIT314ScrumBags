@@ -162,6 +162,7 @@ export class CreateServiceProvidedController {
  */
 export class UpdateServiceProvidedController {
     private serviceProvided: ServiceProvided
+
     constructor() {
         this.serviceProvided = new ServiceProvided()
     }
@@ -171,8 +172,13 @@ export class UpdateServiceProvidedController {
         serviceName: string,
         description: string,
         price: number
-    ): Promise<void> {
-        await this.serviceProvided.updateServiceProvided(serviceID, serviceName, description, price)
+    ): Promise<boolean> {
+        return await this.serviceProvided.updateServiceProvided(
+            serviceID,
+            serviceName,
+            description,
+            price
+        )
     }
 }
 
@@ -182,12 +188,13 @@ export class UpdateServiceProvidedController {
  */
 export class DeleteServiceProvidedController {
     private serviceProvided: ServiceProvided
+
     constructor() {
         this.serviceProvided = new ServiceProvided()
     }
 
-    async deleteServiceProvided(serviceID: number): Promise<void> {
-        await this.serviceProvided.deleteServiceProvided(serviceID)
+    public async deleteServiceProvided(serviceID: number): Promise<boolean> {
+        return await this.serviceProvided.deleteServiceProvided(serviceID)
     }
 }
 
@@ -202,8 +209,10 @@ export class ViewNumberOfInterestedHomeownersController {
         this.serviceView = new ServiceView()
     }
 
-    async viewNumberOfInterestedHomeowners(cleanerID: number): Promise<number> {
-        return this.serviceView.viewNumberOfInterestedHomeowners(cleanerID)
+    public async viewNumberOfInterestedHomeowners(
+        serviceProvidedID: number
+    ): Promise<number> {
+        return this.serviceView.viewNumberOfInterestedHomeowners(serviceProvidedID)
     }
 }
 
@@ -218,8 +227,11 @@ export class ViewNoOfShortlistedHomeownersController {
         this.shortListedCleaner = new ShortlistedServices
     }
 
-    public async viewNoOfShortlistedHomeowners(serviceProvidedID: number): Promise<number> {
-        return await this.shortListedCleaner.viewNoOfShortlistedHomeowners(serviceProvidedID)
+    public async viewNoOfShortlistedHomeowners(
+        serviceProvidedID: number
+    ): Promise<number> {
+        return await this.shortListedCleaner
+            .viewNoOfShortlistedHomeowners(serviceProvidedID)
     }
 }
 

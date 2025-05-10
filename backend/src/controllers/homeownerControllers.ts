@@ -16,8 +16,11 @@ export class AddToShortlistController {
     public async addToShortlist(
         homeownerID: number,
         serviceProvidedID: number
-    ): Promise<void> {
-        return await this.shortlistedCleaner.addToShortlist(homeownerID, serviceProvidedID)
+    ): Promise<boolean> {
+        return await this.shortlistedCleaner.addToShortlist(
+            homeownerID,
+            serviceProvidedID
+        )
     }
 }
 
@@ -133,8 +136,8 @@ export class CreateServiceBookingController {
         homeownerID: number,
         serviceProvidedID: number,
         startTimestamp: Date,
-    ): Promise<void> {
-        await this.serviceBooking.createServiceBooking(
+    ): Promise<boolean> {
+        return await this.serviceBooking.createServiceBooking(
             homeownerID, serviceProvidedID, startTimestamp
         )
     }

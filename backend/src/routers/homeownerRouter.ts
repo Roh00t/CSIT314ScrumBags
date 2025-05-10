@@ -11,7 +11,6 @@ import {
     CreateServiceBookingController
 } from "../controllers/homeownerControllers"
 import { Router } from "express"
-import { ServiceAlreadyShortlistedError } from "../shared/exceptions"
 
 const homeownerRouter = Router()
 
@@ -29,25 +28,17 @@ homeownerRouter.post(
     '/shortlist',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const { serviceProvidedID } = req.body
+        const homeownerID = (req.session.user as UserAccountData).id
+        const { serviceProvidedID } = req.body
 
-            await new AddToShortlistController().addToShortlist(homeownerID, serviceProvidedID)
+        const opSuccess =
+            await new AddToShortlistController()
+                .addToShortlist(homeownerID, serviceProvidedID)
 
-            res.status(StatusCodes.OK).json({
-                message: "Shortlist successful"
-            })
-        } catch (err: any) {
-            if (err instanceof ServiceAlreadyShortlistedError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    error: err.message
-                })
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    error: err.message || "Shortlist failed"
-                })
-            }
+        if (opSuccess) {
+            res.status(StatusCodes.OK).json(true)
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
         }
     }
 )
@@ -155,18 +146,19 @@ homeownerRouter.post(
     '/createbooking',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = req.session.user?.id as number
-            const { serviceProvidedID, startTimestamp } = req.body
-            const startDate = new Date(startTimestamp)
-            await new CreateServiceBookingController().createServiceBooking(
-                homeownerID, serviceProvidedID, startDate
-            )
-            res.status(StatusCodes.OK).send()
-        } catch (error: any) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                error: error.message || "Failed to retrieve service history"
-            })
+
+        const homeownerID = req.session.user?.id as number
+        const { serviceProvidedID, startTimestamp } = req.body
+        const startDate = new Date(startTimestamp)
+
+        const createSuccess =
+            await new CreateServiceBookingController()
+                .createServiceBooking(homeownerID, serviceProvidedID, startDate)
+
+        if (createSuccess) {
+            res.status(StatusCodes.OK).json(true)
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
         }
     }
 )

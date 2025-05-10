@@ -16,17 +16,13 @@ const cleanersRouter = Router()
  */
 cleanersRouter.get('/shortlist/count',
     async (req, res): Promise<void> => {
-        try {
-            const { serviceProvidedID } = req.body
-            const shortlistedBookingsCount =
-                await new ViewNoOfShortlistedHomeownersController()
-                    .viewNoOfShortlistedHomeowners(serviceProvidedID)
-            res.status(StatusCodes.OK).json(shortlistedBookingsCount)
-        } catch (error: any) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                error: error.message || "Failed to retrieve service history"
-            })
-        }
+        const { serviceProvidedID } = req.body
+
+        const shortlistedBookingsCount =
+            await new ViewNoOfShortlistedHomeownersController()
+                .viewNoOfShortlistedHomeowners(serviceProvidedID)
+
+        res.status(StatusCodes.OK).json(shortlistedBookingsCount)
     }
 )
 

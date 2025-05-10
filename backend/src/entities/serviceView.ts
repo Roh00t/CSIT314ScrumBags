@@ -16,15 +16,23 @@ export class ServiceView {
      *        my services, so that I can understand the demand of my services
      */
     async viewNumberOfInterestedHomeowners(serviceProvidedID: number): Promise<number> {
-        const [result] = await this.db
-            .select({ count: count() })
-            .from(serviceViewsTable)
-            .leftJoin(servicesProvidedTable, eq(
-                serviceViewsTable.serviceProvidedID,
-                servicesProvidedTable.id
-            ))
-            .where(eq(servicesProvidedTable.id, serviceProvidedID))
+        try {
+            const [result] = await this.db
+                .select({ count: count() })
+                .from(serviceViewsTable)
+                .leftJoin(servicesProvidedTable, eq(
+                    serviceViewsTable.serviceProvidedID,
+                    servicesProvidedTable.id
+                ))
+                .where(eq(servicesProvidedTable.id, serviceProvidedID))
 
-        return result.count
+            if (!result) {
+                return 0
+            }
+
+            return result.count
+        } catch (err) {
+            return 0
+        }
     }
 }

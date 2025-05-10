@@ -18,9 +18,6 @@ import {
     ViewServicesProvidedController
 } from '../controllers/cleanerControllers'
 import { Router } from 'express'
-import {
-    ServiceCategoryNotFoundError
-} from '../shared/exceptions'
 
 const servicesRouter = Router()
 
@@ -41,10 +38,11 @@ servicesRouter.post('/categories', async (req, res): Promise<void> => {
         await new CreateServiceCategoryController()
             .createServiceCategory(category)
 
+    // Return (TRUE | FALSE) to the boundary, depending on service category create success
     if (createSuccess) {
-        res.status(StatusCodes.CREATED).json(true)
+        res.status(StatusCodes.CREATED).json(true) // Normal flow
     } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
     }
 })
 
@@ -72,7 +70,7 @@ servicesRouter.put('/categories', async (req, res): Promise<void> => {
         await new UpdateServiceCategoryController()
             .updateServiceCategory(category, newCategory)
 
-    // Return (TRUE | FALSE) to the boundary 
+    // Return (TRUE | FALSE) to the boundary, depending on service category update success 
     if (updateSuccess) {
         res.status(StatusCodes.OK).send(true) // Normal flow
     } else {
@@ -91,7 +89,7 @@ servicesRouter.delete('/categories', async (req, res): Promise<void> => {
         await new DeleteServiceCategoryController()
             .deleteServiceCategory(category)
 
-    // Return (TRUE | FALSE) to the boundary 
+    // Return (TRUE | FALSE) to the boundary, depending on service category deletion success
     if (deleteSuccess) {
         res.status(StatusCodes.OK).send(true) // Normal flow
     } else {
@@ -163,10 +161,11 @@ servicesRouter.post(
                 Number(price)
             )
 
+        // Return (TRUE | FALSE) to the boundary, depending on service creation success
         if (createSuccess) {
-            res.status(StatusCodes.CREATED).json(true)
+            res.status(StatusCodes.CREATED).json(true) // Normal flow
         } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
         }
     }
 )
@@ -178,19 +177,13 @@ servicesRouter.post(
 servicesRouter.get(
     '/views',
     async (req, res): Promise<void> => {
-        try {
-            const { serviceProvidedID } = req.body
+        const { serviceProvidedID } = req.body
 
-            const noOfInterestedHomeowners =
-                await new ViewNumberOfInterestedHomeownersController()
-                    .viewNumberOfInterestedHomeowners(serviceProvidedID)
+        const noOfInterestedHomeowners =
+            await new ViewNumberOfInterestedHomeownersController()
+                .viewNumberOfInterestedHomeowners(serviceProvidedID)
 
-            res.status(StatusCodes.OK).json(noOfInterestedHomeowners)
-        } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
+        res.status(StatusCodes.OK).json(noOfInterestedHomeowners)
     }
 )
 
@@ -202,17 +195,17 @@ servicesRouter.put(
     '/',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            //Should I place Line 206-213 here
-            const { serviceid, service, description, price } = req.body
-            await new UpdateServiceProvidedController().updateServiceProvided(
-                serviceid, service, description, price
-            )
-            res.status(StatusCodes.OK).send()
-        } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
+        const { serviceid, service, description, price } = req.body
+
+        const updateSuccess =
+            await new UpdateServiceProvidedController()
+                .updateServiceProvided(serviceid, service, description, price)
+
+        // Return (TRUE | FALSE) to the boundary, depending on whether update succeeded
+        if (updateSuccess) {
+            res.status(StatusCodes.OK).json(true) // Normal flow
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
         }
     }
 )
@@ -225,16 +218,18 @@ servicesRouter.delete(
     '/',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const { serviceid } = req.body
-            await new DeleteServiceProvidedController().deleteServiceProvided(serviceid)
-            res.status(StatusCodes.OK).send()
-        } catch (err) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
+        const { serviceid } = req.body
 
+        const deletedSuccessfully =
+            await new DeleteServiceProvidedController()
+                .deleteServiceProvided(serviceid)
+
+        // Return (TRUE | FALSE) to the boundary, depending on whether deletion succeeded
+        if (deletedSuccessfully) {
+            res.status(StatusCodes.OK).json(true) // Normal flow
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
+        }
     }
 )
 

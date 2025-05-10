@@ -475,14 +475,19 @@ export class ServiceBooking {
         homeownerID: number,
         serviceProvidedID: number,
         startTimestamp: Date,
-    ): Promise<void> {
-        await this.db
-            .insert(serviceBookingsTable)
-            .values({
-                homeownerID: homeownerID,
-                serviceProvidedID: serviceProvidedID,
-                startTimestamp: startTimestamp,
-            })
+    ): Promise<boolean> {
+        try {
+            await this.db
+                .insert(serviceBookingsTable)
+                .values({
+                    homeownerID: homeownerID,
+                    serviceProvidedID: serviceProvidedID,
+                    startTimestamp: startTimestamp,
+                })
+            return true
+        } catch (err) {
+            return false
+        }
     }
 }
 

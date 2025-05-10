@@ -21,12 +21,20 @@ export class ShortlistedServices {
     public async viewNoOfShortlistedHomeowners(
         serviceProvidedID: number
     ): Promise<number> {
-        const [res] = await this.db
-            .select({ count: count() })
-            .from(shortlistedServicesTable)
-            .where(eq(shortlistedServicesTable.serviceProvidedID, serviceProvidedID))
+        try {
+            const [res] = await this.db
+                .select({ count: count() })
+                .from(shortlistedServicesTable)
+                .where(eq(shortlistedServicesTable.serviceProvidedID, serviceProvidedID))
 
-        return res.count
+            if (!res) {
+                return 0
+            }
+
+            return res.count
+        } catch (err) {
+            return 0
+        }
     }
 
     /**
@@ -36,30 +44,36 @@ export class ShortlistedServices {
     public async addToShortlist(
         homeownerID: number,
         serviceProvidedID: number
-    ): Promise<void> {
-        const result = await this.db
-            .select()
-            .from(shortlistedServicesTable)
-            .leftJoin(userAccountsTable, eq(
-                shortlistedServicesTable.serviceProvidedID,
-                userAccountsTable.id
-            ))
-            .where(and(
-                eq(shortlistedServicesTable.homeownerID, homeownerID),
-                eq(shortlistedServicesTable.serviceProvidedID, serviceProvidedID)
-            ))
-            .limit(1)
+    ): Promise<boolean> {
+        try {
+            const result = await this.db
+                .select()
+                .from(shortlistedServicesTable)
+                .leftJoin(userAccountsTable, eq(
+                    shortlistedServicesTable.serviceProvidedID,
+                    userAccountsTable.id
+                ))
+                .where(and(
+                    eq(shortlistedServicesTable.homeownerID, homeownerID),
+                    eq(shortlistedServicesTable.serviceProvidedID, serviceProvidedID)
+                ))
+                .limit(1)
 
-        if (result.length > 0) {
-            throw new ServiceAlreadyShortlistedError()
+            if (result.length > 0) {
+                console.log("Already shortlisted service")
+                return false
+            }
+
+            await this.db
+                .insert(shortlistedServicesTable)
+                .values({
+                    homeownerID: homeownerID,
+                    serviceProvidedID: serviceProvidedID
+                })
+            return true
+        } catch (err) {
+            return false
         }
-
-        await this.db
-            .insert(shortlistedServicesTable)
-            .values({
-                homeownerID: homeownerID,
-                serviceProvidedID: serviceProvidedID
-            })
     }
 
     /**
