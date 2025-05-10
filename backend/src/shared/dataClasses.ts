@@ -56,12 +56,7 @@ export type ServiceHistoryData = {
     price: string | null;
 }
 
-export type ServiceProvidedShortlists = {
-    serviceProvidedID: number
-    noOfShortlists: number
-}
-
-export type ShortlistEntry = {
+export type ShortlistData = {
     cleanerName: string
     serviceName: string
 }

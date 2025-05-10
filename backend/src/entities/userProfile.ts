@@ -1,10 +1,9 @@
-import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles'
-import { SearchUserProfileNoResultError } from '../shared/exceptions'
+import { userProfilesTable } from '../db/schema/userProfiles'
+import { UserProfileData } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { ilike } from 'drizzle-orm'
 import { eq } from 'drizzle-orm'
-import { UserProfileData } from '../shared/dataClasses'
 
 export class UserProfile {
     private db: DrizzleClient
@@ -67,11 +66,16 @@ export class UserProfile {
      * US-11: As a user admin, I want to suspend user profiles 
      *        so that I can restrict user access if necessary
      */
-    public async suspendUserProfile(profileName: string): Promise<void> {
-        await this.db
-            .update(userProfilesTable)
-            .set({ isSuspended: true })
-            .where(eq(userProfilesTable.label, profileName))
+    public async suspendUserProfile(profileName: string): Promise<boolean> {
+        try {
+            await this.db
+                .update(userProfilesTable)
+                .set({ isSuspended: true })
+                .where(eq(userProfilesTable.label, profileName))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**
@@ -89,16 +93,20 @@ export class UserProfile {
      * US-12: As a user admin, I want to search for user profiles 
      *        so that I can find specific user profiles
      */
-    public async searchUserProfile(search: string): Promise<UserProfilesSelect> {
-        const [profile] = await this.db
-            .select()
-            .from(userProfilesTable)
-            .where(ilike(userProfilesTable.label, `%${search}%`)) // partial + case-insensitive
-            .limit(1)
+    public async searchUserProfile(search: string): Promise<UserProfileData | null> {
+        try {
+            const [userProfile] = await this.db
+                .select()
+                .from(userProfilesTable)
+                .where(ilike(userProfilesTable.label, `%${search}%`))
+                .limit(1)
 
-        if (!profile) {
-            throw new SearchUserProfileNoResultError(search)
+            if (!userProfile) {
+                return null
+            }
+            return userProfile
+        } catch (err) {
+            return null
         }
-        return profile
     }
 }

@@ -87,18 +87,6 @@ const CleanerViewMyBookings: React.FC = () => {
         }))
 
         setHistory(formatted) // Update the history state
-      } else if (Array.isArray(response.data.data)) {
-        // Handle case where the array is inside response.data.data
-        const formatted: History[] = response.data.data.map((item: any) => ({
-          bookingId: item.bookingid,
-          cleanerName: item.cleanerName,
-          typeOfService: item.serviceName,
-          homeowner: item.homeOwnerName,
-          price: item.price,
-          date: item.date,
-        }))
-
-        setHistory(formatted) // Update the history state
       } else {
         setHistory([])
         console.error('Failed to fetch service history: response data is not an array')
@@ -115,21 +103,21 @@ const CleanerViewMyBookings: React.FC = () => {
   return (
     <div className="page-container">
       <div className="header-container">
-          <div>
-              <img src={logo} alt="Logo" height={40} />
-              <h2><Link to="/cleaner-dashboard">Home</Link></h2>
-              <h2><Link to="/cleaner-view-services">My Services</Link></h2>
-              <h2><Link to="/cleaner-view-bookings">My Bookings</Link></h2>
-          </div>
+        <div>
+          <img src={logo} alt="Logo" height={40} />
+          <h2><Link to="/cleaner-dashboard">Home</Link></h2>
+          <h2><Link to="/cleaner-view-services">My Services</Link></h2>
+          <h2><Link to="/cleaner-view-bookings">My Bookings</Link></h2>
+        </div>
 
-          <div>
-              <h2 id="logout-button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-              <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
-              </h2>
-          </div>
+        <div>
+          <h2 id="logout-button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+            <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
+          </h2>
+        </div>
 
       </div>
-      
+
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       <div className="body-container">

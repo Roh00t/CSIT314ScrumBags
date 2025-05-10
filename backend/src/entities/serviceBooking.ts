@@ -190,45 +190,48 @@ export class ServiceBooking {
         endDate: Date | null,
         homeownerName: string | null
     ): Promise<CleanerServiceBookingData[]> {
+        try {
+            const conditions = [
+                eq(servicesProvidedTable.cleanerID, cleanerID),
+            ]
 
-        const conditions = [
-            eq(servicesProvidedTable.cleanerID, cleanerID),
-        ]
+            if (startDate && endDate) {
+                conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
+                conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+            }
 
-        if (startDate && endDate) {
-            conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
-            conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+            if (homeownerName) {
+                conditions.push(eq(userAccountsTable.username, homeownerName))
+            }
+
+            const queryResult = await this.db.select()
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(serviceBookingsTable.homeownerID, userAccountsTable.id)
+                )
+                .leftJoin(
+                    serviceCategoriesTable,
+                    eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+                )
+                .where(and(...conditions))
+
+            return queryResult.map(qr => {
+                return {
+                    bookingid: qr.service_bookings.id,
+                    status: qr.service_bookings.status,
+                    serviceName: qr.services_provided?.serviceName,
+                    date: qr.service_bookings.startTimestamp,
+                    homeOwnerName: qr.user_accounts?.username
+                } as CleanerServiceBookingData
+            })
+        } catch (err) {
+            return []
         }
-
-        if (homeownerName) {
-            conditions.push(eq(userAccountsTable.username, homeownerName))
-        }
-
-        const queryResult = await this.db.select()
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(serviceBookingsTable.homeownerID, userAccountsTable.id)
-            )
-            .leftJoin(
-                serviceCategoriesTable,
-                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
-            )
-            .where(and(...conditions))
-
-        return queryResult.map(qr => {
-            return {
-                bookingid: qr.service_bookings.id,
-                status: qr.service_bookings.status,
-                serviceName: qr.services_provided?.serviceName,
-                date: qr.service_bookings.startTimestamp,
-                homeOwnerName: qr.user_accounts?.username
-            } as CleanerServiceBookingData
-        })
     }
 
     /**
@@ -241,41 +244,45 @@ export class ServiceBooking {
         startDate: Date | null,
         endDate: Date | null
     ): Promise<CleanerServiceBookingData[]> {
-        const conditions = [
-            eq(servicesProvidedTable.cleanerID, cleanerID),
-            ilike(servicesProvidedTable.serviceName, `%${service}%`)
-        ]
+        try {
+            const conditions = [
+                eq(servicesProvidedTable.cleanerID, cleanerID),
+                ilike(servicesProvidedTable.serviceName, `%${service}%`)
+            ]
 
-        if (startDate && endDate) {
-            conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
-            conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+            if (startDate && endDate) {
+                conditions.push(gte(serviceBookingsTable.startTimestamp, startDate))
+                conditions.push(lt(serviceBookingsTable.startTimestamp, endDate))
+            }
+
+            const queryResult = await this.db.select()
+                .from(serviceBookingsTable)
+                .leftJoin(
+                    servicesProvidedTable,
+                    eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
+                )
+                .leftJoin(
+                    userAccountsTable,
+                    eq(serviceBookingsTable.homeownerID, userAccountsTable.id)
+                )
+                .leftJoin(
+                    serviceCategoriesTable,
+                    eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
+                )
+                .where(and(...conditions))
+
+            return queryResult.map(qr => {
+                return {
+                    bookingid: qr.service_bookings.id,
+                    status: qr.service_bookings.status,
+                    serviceName: qr.services_provided?.serviceName,
+                    date: qr.service_bookings.startTimestamp,
+                    homeOwnerName: qr.user_accounts?.username
+                } as CleanerServiceBookingData
+            })
+        } catch (err) {
+            return []
         }
-
-        const queryResult = await this.db.select()
-            .from(serviceBookingsTable)
-            .leftJoin(
-                servicesProvidedTable,
-                eq(serviceBookingsTable.serviceProvidedID, servicesProvidedTable.id)
-            )
-            .leftJoin(
-                userAccountsTable,
-                eq(serviceBookingsTable.homeownerID, userAccountsTable.id)
-            )
-            .leftJoin(
-                serviceCategoriesTable,
-                eq(servicesProvidedTable.serviceCategoryID, serviceCategoriesTable.id)
-            )
-            .where(and(...conditions))
-
-        return queryResult.map(qr => {
-            return {
-                bookingid: qr.service_bookings.id,
-                status: qr.service_bookings.status,
-                serviceName: qr.services_provided?.serviceName,
-                date: qr.service_bookings.startTimestamp,
-                homeOwnerName: qr.user_accounts?.username
-            } as CleanerServiceBookingData
-        })
     }
 
     public async viewAllServiceHistory(

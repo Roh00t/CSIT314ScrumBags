@@ -101,13 +101,13 @@ const ViewCleanerService: React.FC = () => {
 
       {showViewCleanerModal && (
         <div className='modal-overlay'>
-            <div className='modal'>
-                <p>This is empty for now, our user story is to view cleaner service, we already have a bce to view each service provided but its under cleaner should we do it?</p>
-                
-                <div className="modal-buttons">
-                    <button onClick={() => setShowViewCleanerModal(false)}>Close</button>
-                </div>
+          <div className='modal'>
+            <p>This is empty for now, our user story is to view cleaner service, we already have a bce to view each service provided but its under cleaner should we do it?</p>
+
+            <div className="modal-buttons">
+              <button onClick={() => setShowViewCleanerModal(false)}>Close</button>
             </div>
+          </div>
         </div>
       )}
 
@@ -139,7 +139,7 @@ const ViewCleanerService: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {cleanerServices.length === 0 ?(
+              {cleanerServices.length === 0 ? (
                 <tr>
                   <td>No users found</td>
                 </tr>
@@ -152,19 +152,19 @@ const ViewCleanerService: React.FC = () => {
                     <td>
                       <div className="action-buttons">
                         <button
-                        className="view-btn"
-                        onClick={() => {
-                          setCurrentServiceID(service.serviceProvidedID)
-                          setShowViewCleanerModal(true)
-                        }}>
+                          className="view-btn"
+                          onClick={() => {
+                            setCurrentServiceID(service.serviceProvidedID)
+                            setShowViewCleanerModal(true)
+                          }}>
                           View
                         </button>
                         <button
-                        className="shortlist-btn"
-                        onClick={() => {
-                          setCurrentServiceID(service.serviceProvidedID)
-                          setShowShortlistModal(true)
-                        }}>
+                          className="shortlist-btn"
+                          onClick={() => {
+                            setCurrentServiceID(service.serviceProvidedID)
+                            setShowShortlistModal(true)
+                          }}>
                           Shortlist
                         </button>
                       </div>

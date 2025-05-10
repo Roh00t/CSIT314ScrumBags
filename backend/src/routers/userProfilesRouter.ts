@@ -50,6 +50,7 @@ userProfilesRouter.put('/update', async (req, res): Promise<void> => {
         newProfileName
     )
 
+    // Return (TRUE | FALSE) to the boundary - depending on whether update succeeded
     if (updateSuccess) {
         res.status(StatusCodes.OK).json(true)
     } else {
@@ -62,14 +63,17 @@ userProfilesRouter.put('/update', async (req, res): Promise<void> => {
  *        so that I can restrict user access if necessary
  */
 userProfilesRouter.post('/suspend', async (req, res): Promise<void> => {
-    try {
-        const { profileName } = req.body
-        await new SuspendUserProfileController().suspendUserProfile(profileName)
-        res.status(StatusCodes.OK).json({ message: 'UserProfile suspended' })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { profileName } = req.body
+
+    const suspensionSuccess =
+        await new SuspendUserProfileController()
+            .suspendUserProfile(profileName)
+
+    // Return (TRUE | FALSE) to the boundary - depending on whether suspension succeeded
+    if (suspensionSuccess) {
+        res.status(StatusCodes.OK).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 
@@ -93,20 +97,13 @@ userProfilesRouter.post('/unsuspend', async (req, res): Promise<void> => {
  *        so that I can find specific user profiles
  */
 userProfilesRouter.get('/search', async (req, res): Promise<void> => {
-    try {
-        const search = req.query.search as string | undefined
-        if (!search) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                message: 'Search query is required'
-            })
-            return
-        }
-        const data = await new SearchUserProfileController().searchUserProfiles(search)
-        res.status(StatusCodes.OK).json(data)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const search = req.query.search as string
+    const userProfile = await new SearchUserProfileController().searchUserProfiles(search)
+
+    if (userProfile !== null) {
+        res.status(StatusCodes.OK).json(userProfile) // Normal flow
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(null) // Alternate flow
     }
 })
 

@@ -258,6 +258,10 @@ export default class UserAccount {
         updatedPassword: string
     ): Promise<boolean> {
         try {
+            if (updatedUsername.length === 0 || updatedPassword.length === 0) {
+                return false
+            }
+
             const [userProfile] = await this.db
                 .select()
                 .from(userProfilesTable)
@@ -286,11 +290,16 @@ export default class UserAccount {
      * US-4: As a user admin, I want to suspend user accounts 
      *       so that I can restrict access when needed
      */
-    public async suspendUserAccount(userID: number): Promise<void> {
-        await this.db
-            .update(userAccountsTable)
-            .set({ isSuspended: true })
-            .where(eq(userAccountsTable.id, userID))
+    public async suspendUserAccount(userID: number): Promise<boolean> {
+        try {
+            await this.db
+                .update(userAccountsTable)
+                .set({ isSuspended: true })
+                .where(eq(userAccountsTable.id, userID))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**
@@ -307,31 +316,35 @@ export default class UserAccount {
      * US-5: As a user admin, I want to search for user 
      *       accounts so that I can locate specific users
      */
-    public async searchUserAccount(search: string): Promise<UserAccountData> {
-        const [res] = await this.db
-            .select({
-                id: userAccountsTable.id,
-                username: userAccountsTable.username,
-                userProfile: userProfilesTable.label,
-                isSuspended: userAccountsTable.isSuspended
-            })
-            .from(userAccountsTable)
-            .leftJoin(userProfilesTable, eq(
-                userAccountsTable.userProfileId,
-                userProfilesTable.id
-            ))
-            .where(ilike(userAccountsTable.username, `%${search}%`))
-            .limit(1)
+    public async searchUserAccount(search: string): Promise<UserAccountData | null> {
+        try {
+            const [res] = await this.db
+                .select({
+                    id: userAccountsTable.id,
+                    username: userAccountsTable.username,
+                    userProfile: userProfilesTable.label,
+                    isSuspended: userAccountsTable.isSuspended
+                })
+                .from(userAccountsTable)
+                .leftJoin(userProfilesTable, eq(
+                    userAccountsTable.userProfileId,
+                    userProfilesTable.id
+                ))
+                .where(ilike(userAccountsTable.username, `%${search}%`))
+                .limit(1)
 
-        if (!res) {
-            throw new SearchUserAccountNoResultError(search)
+            if (!res) {
+                return null
+            }
+
+            return {
+                id: res.id,
+                username: res.username,
+                userProfile: res.userProfile,
+                isSuspended: res.isSuspended
+            } as UserAccountData
+        } catch (err) {
+            return null
         }
-
-        return {
-            id: res.id,
-            username: res.username,
-            userProfile: res.userProfile,
-            isSuspended: res.isSuspended
-        } as UserAccountData
     }
 }

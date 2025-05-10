@@ -135,7 +135,8 @@ userAccountsRouter.get('/', async (_, res): Promise<void> => {
 userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
     const { cleanerName } = req.body
 
-    if (cleanerName && String(cleanerName).length > 0) { //==== US-24 ====
+    //==== US-24 ====
+    if (cleanerName && String(cleanerName).length > 0) {
         const searchedCleaners =
             await new SearchCleanersController()
                 .searchCleaners(cleanerName)
@@ -170,16 +171,14 @@ userAccountsRouter.post('/update', async (req, res): Promise<void> => {
  *       so that I can restrict access when needed
  */
 userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
-    try {
-        const { id } = req.body
-        await new SuspendUserAccountController().suspendUserAccount(id)
-        res.status(StatusCodes.OK).json({
-            message: "User account of ID '" + id + "' has been suspended"
-        })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { id } = req.body
+    const suspensionSuccess =
+        await new SuspendUserAccountController()
+            .suspendUserAccount(id)
+    if (suspensionSuccess) {
+        res.status(StatusCodes.OK).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 
@@ -205,26 +204,16 @@ userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
  *       accounts so that I can locate specific users
  */
 userAccountsRouter.get('/search', async (req, res): Promise<void> => {
-    try {
-        const search = req.query.search as string | undefined
-        if (!search) {
-            res.status(StatusCodes.BAD_REQUEST)
-                .json({ message: 'Search query is required' })
-            return
-        }
-        const foundUserAccounts =
-            await new SearchUserAccountController().searchUserAccount(search)
+    const search = req.query.search as string
+
+    const foundUserAccounts: (UserAccountData | null) =
+        await new SearchUserAccountController()
+            .searchUserAccount(search)
+
+    if (foundUserAccounts !== null) {
         res.status(StatusCodes.OK).json(foundUserAccounts)
-    } catch (err) {
-        if (err instanceof SearchUserAccountNoResultError) {
-            res.status(StatusCodes.NOT_FOUND).json({
-                message: (err as Error).message
-            })
-        } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send()
     }
 })
 

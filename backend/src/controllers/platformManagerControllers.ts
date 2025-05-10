@@ -104,8 +104,8 @@ export class UpdateServiceCategoryController {
     public async updateServiceCategory(
         category: string,
         newCategory: string
-    ): Promise<void> {
-        await this.serviceCategory.updateServiceCategory(category, newCategory)
+    ): Promise<boolean> {
+        return await this.serviceCategory.updateServiceCategory(category, newCategory)
     }
 }
 
@@ -120,8 +120,8 @@ export class DeleteServiceCategoryController {
         this.serviceCategory = new ServiceCategory()
     }
 
-    public async deleteServiceCategory(category: string): Promise<void> {
-        await this.serviceCategory.deleteServiceCategory(category)
+    public async deleteServiceCategory(category: string): Promise<boolean> {
+        return await this.serviceCategory.deleteServiceCategory(category)
     }
 }
 

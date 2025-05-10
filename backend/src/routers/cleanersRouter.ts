@@ -29,6 +29,7 @@ cleanersRouter.get('/shortlist/count',
         }
     }
 )
+
 /**
  * US-22: As a cleaner, I want to search the history of my confirmed services, 
  *        filtered by services, date period, so that I can easily find past jobs
@@ -46,40 +47,29 @@ cleanersRouter.post(
     '/serviceHistory',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const cleanerID = (req.session.user as UserAccountData).id
-            const { service, startDate, endDate, homeownerName } = req.body
+        const cleanerID = (req.session.user as UserAccountData).id
+        const { service, startDate, endDate, homeownerName } = req.body
 
-            if (service && String(service).length > 0) { //===== US-22 ======
-                const searchedServiceHistory =
-                    await new SearchCleanerServiceHistoryController()
-                        .searchCleanerServiceHistory(
-                            cleanerID,
-                            service,
-                            startDate ? new Date(startDate) : null,
-                            endDate ? new Date(endDate) : null
-                        )
-                res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully 1",
-                    data: searchedServiceHistory
-                })
-            } else { //====== US-23 ========
-                const allServiceHistory = await new ViewCleanerServiceHistoryController()
-                    .viewCleanerServiceHistory(
+        //===== US-22 ======
+        if (service && String(service).length > 0) {
+            const searchedServiceHistory =
+                await new SearchCleanerServiceHistoryController()
+                    .searchCleanerServiceHistory(
                         cleanerID,
+                        service,
                         startDate ? new Date(startDate) : null,
-                        endDate ? new Date(endDate) : null,
-                        homeownerName || null
+                        endDate ? new Date(endDate) : null
                     )
-                res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully 2",
-                    data: allServiceHistory
-                })
-            }
-        } catch (error: any) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                error: error.message || "Failed to retrieve service history"
-            })
+            res.status(StatusCodes.OK).json(searchedServiceHistory)
+        } else { //====== US-23 ========
+            const allServiceHistory = await new ViewCleanerServiceHistoryController()
+                .viewCleanerServiceHistory(
+                    cleanerID,
+                    startDate ? new Date(startDate) : null,
+                    endDate ? new Date(endDate) : null,
+                    homeownerName || null
+                )
+            res.status(StatusCodes.OK).json(allServiceHistory)
         }
     }
 )

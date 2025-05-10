@@ -2,7 +2,7 @@ import { shortlistedServicesTable } from "../db/schema/shortlistedServices"
 import { ServiceAlreadyShortlistedError } from "../shared/exceptions"
 import { servicesProvidedTable } from "../db/schema/servicesProvided"
 import { userAccountsTable } from "../db/schema/userAccounts"
-import { ShortlistEntry } from "../shared/dataClasses"
+import { ShortlistData } from "../shared/dataClasses"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { and, count, eq } from "drizzle-orm"
@@ -66,7 +66,7 @@ export class ShortlistedServices {
      * US-28: As a homeowner, I want to view my shortlist so that I 
      *        can have an easy time looking for a cleaner or service
      */
-    public async viewShortlist(homeownerID: number): Promise<ShortlistEntry[]> {
+    public async viewShortlist(homeownerID: number): Promise<ShortlistData[]> {
         try {
             const shortlistedCleaners = await this.db
                 .select({
@@ -100,7 +100,7 @@ export class ShortlistedServices {
     public async searchShortlist(
         homeownerID: number,
         search: string
-    ): Promise<ShortlistEntry[]> {
+    ): Promise<ShortlistData[]> {
         try {
             const shortlistedCleaners = await this.db
                 .select({
