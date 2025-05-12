@@ -147,11 +147,11 @@ export class ServiceProvided {
      *        that I can look up a specific service I provide
      */
     public async searchServicesProvided(
-        userID: number,
+        id: number,
         serviceName: string
     ): Promise<ServiceProvidedData[]> {
         try {
-            const conditions = [eq(userAccountsTable.id, userID)]
+            const conditions = [eq(userAccountsTable.id, id)]
             if (serviceName) {
                 conditions.push(eq(servicesProvidedTable.serviceName, serviceName))
             }
