@@ -174,7 +174,7 @@ servicesRouter.post(
  * US-20: As a cleaner, I want to view the number of homeowners interested in 
  *        my services, so that I can understand the demand of my services
  */
-servicesRouter.get(
+servicesRouter.post(
     '/views',
     async (req, res): Promise<void> => {
         const { serviceProvidedID } = req.body

@@ -199,31 +199,38 @@ const CleanerViewServicesRoute: React.FC = () => {
     }
 
     // change this to run backend to retrieve view count and shortlist count
-    const handleView = async () => {
+    const handleView = async (serviceID: number) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/services/${sessionUser.id}`, {
+            const response = await fetch(`http://localhost:3000/api/services/views`, {
             method: 'POST',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                serviceName: selectedServiceName,
+                serviceProvidedID: serviceID,
             }),
             })
+
+            const response2 = await fetch(`http://localhost:3000/api/cleaners/shortlist/count`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                serviceProvidedID: serviceID,
+            }),
+            })
+
             if (!response.ok) {
                 throw new Error('Failed to fetch services')
             }
             const data = await response.json()
-            const formatted: Service[] = data.map((item: any) => ({
-                id: item.serviceProvidedID,
-                type: item.serviceName,
-                description: item.description,
-                price: item.price,
-            }))
+            const data2 = await response2.json()
             
-            // Set only the first service (or any specific one)
-            setViewService(formatted[0] || null) // Use null as fallback in case array is empty            
+            setViewCount(data.toString())
+            setShortlistCount(data2.toString())
         } catch (error) {
             console.error('Error fetching services:', error)
         }
@@ -409,7 +416,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                                     <div className="action-buttons">
                                         <button
                                         className="view-btn"
-                                        onClick={() => {
+                                        onClick={async () => {
                                             setSelectedServiceName(service.type)
                                             setSelectedService(service.id)
                                             setViewService({
@@ -418,7 +425,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                                                 description: service.description,
                                                 price: service.price
                                             })
-                                            // handleView()
+                                            await handleView(service.id)
                                             setViewServiceModal(true)
                                         }}>
                                             View

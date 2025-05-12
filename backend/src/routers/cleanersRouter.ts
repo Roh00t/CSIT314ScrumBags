@@ -14,7 +14,7 @@ const cleanersRouter = Router()
  * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
  *        me for my services, so that I can track my popularity and potential bookings
  */
-cleanersRouter.get('/shortlist/count',
+cleanersRouter.post('/shortlist/count',
     async (req, res): Promise<void> => {
         const { serviceProvidedID } = req.body
 
