@@ -1,23 +1,26 @@
-import { ShortlistedCleaner } from "../entities/shortlistedCleaner"
+import { ShortlistedServices } from "../entities/shortlistedService"
 import { ServiceBooking } from "../entities/serviceBooking"
-import { ServiceHistory } from "../shared/dataClasses"
+import { ServiceHistoryData, ShortlistData } from "../shared/dataClasses"
 
 /**
  * US-26: As a homeowner, I want to save the cleaners into my short list 
  *        so that I can have an easier time for future reference
  */
 export class AddToShortlistController {
-    private shortlistedCleaner: ShortlistedCleaner
+    private shortlistedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortlistedCleaner = new ShortlistedCleaner()
+        this.shortlistedCleaner = new ShortlistedServices()
     }
 
     public async addToShortlist(
         homeownerID: number,
-        cleanerID: number
-    ): Promise<void> {
-        return await this.shortlistedCleaner.addToShortlist(homeownerID, cleanerID)
+        serviceProvidedID: number
+    ): Promise<boolean> {
+        return await this.shortlistedCleaner.addToShortlist(
+            homeownerID,
+            serviceProvidedID
+        )
     }
 }
 
@@ -26,13 +29,13 @@ export class AddToShortlistController {
  *        can have an easy time looking for a cleaner or service
  */
 export class ViewShortlistController {
-    private shortlistedCleaner: ShortlistedCleaner
+    private shortlistedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortlistedCleaner = new ShortlistedCleaner()
+        this.shortlistedCleaner = new ShortlistedServices()
     }
 
-    public async viewShortlist(homeownerID: number): Promise<string[]> {
+    public async viewShortlist(homeownerID: number): Promise<ShortlistData[]> {
         return await this.shortlistedCleaner.viewShortlist(homeownerID)
     }
 }
@@ -42,16 +45,16 @@ export class ViewShortlistController {
  *        I can find a specific cleaner or service I want
  */
 export class SearchShortlistController {
-    private shortlistedCleaner: ShortlistedCleaner
+    private shortlistedCleaner: ShortlistedServices
 
     constructor() {
-        this.shortlistedCleaner = new ShortlistedCleaner()
+        this.shortlistedCleaner = new ShortlistedServices()
     }
 
     public async searchShortlist(
         homeownerID: number,
         search: string
-    ): Promise<string[]> {
+    ): Promise<ShortlistData[]> {
         return await this.shortlistedCleaner.searchShortlist(homeownerID, search)
     }
 }
@@ -73,7 +76,7 @@ export class ViewHomeownerServiceHistoryController {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.viewHomeownerServiceHistory(
             userID, service, fromDate, toDate
         )
@@ -98,7 +101,7 @@ export class SearchHomeownerServiceHistoryController {
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.searchHomeownerServiceHistory(
             userID, cleanerName, service, fromDate, toDate
         )
@@ -114,7 +117,28 @@ export class ViewAllServiceHistoryController {
 
     public async viewAllServiceHistory(
         userID: number
-    ): Promise<ServiceHistory[]> {
+    ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.viewAllServiceHistory(userID)
+    }
+}
+
+/**
+ * US-443: As a homeowner, I want to book for cleaners so that cleaners can clean my home
+ */
+export class CreateServiceBookingController {
+    private serviceBooking: ServiceBooking
+
+    constructor() {
+        this.serviceBooking = new ServiceBooking()
+    }
+
+    public async createServiceBooking(
+        homeownerID: number,
+        serviceProvidedID: number,
+        startTimestamp: Date,
+    ): Promise<boolean> {
+        return await this.serviceBooking.createServiceBooking(
+            homeownerID, serviceProvidedID, startTimestamp
+        )
     }
 }

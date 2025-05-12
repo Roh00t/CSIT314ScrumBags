@@ -8,7 +8,6 @@ import CreateAccountPage from "./routes/UserAdmin/CreateUserAccount"
 import CreateProfilePage from "./routes/UserAdmin/CreateUserProfile"
 import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
-import LogoutPage from "./routes/Logout"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
 import ViewUserProfile from "./routes/UserAdmin/ViewUserProfile"
 import ViewCleanerService from "./routes/HomeOwner/ViewCleanerService"
@@ -25,34 +24,34 @@ const browserRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
   { path: "/create-profile", element: <CreateProfilePage /> },
-  { path: "/logout", element: <LogoutPage /> },
-  { path: "/ViewUserProfile", element: <ViewUserProfile/>},
-  { path: "/ViewCleanerService", element: <ViewCleanerService/>},
+  { path: "/ViewUserProfile", element: <ViewUserProfile /> },
+  { path: "/ViewCleanerService", element: <ViewCleanerService /> },
   { path: "/ViewShortlist", element: <ViewShortlist /> },
   { path: "/ViewServiceCategories", element: <ViewServiceCategories /> },
-  { path: "/ViewServiceHistory", element: <HomeOwnerViewHistory />},
-  { path: "/platformManager-view-report", element: <PlatformManagerViewReports />},
-  { path: "/homeowner-dashboard", element: <HomeownerDashBoard />},
-  {path: "/user-account-management", element: <UserAdminUserAccountManagement />},
+  { path: "/ViewServiceHistory", element: <HomeOwnerViewHistory /> },
+  { path: "/platformManager-view-report", element: <PlatformManagerViewReports /> },
+  { path: "/homeowner-dashboard", element: <HomeownerDashBoard /> },
+  { path: "/user-account-management", element: <UserAdminUserAccountManagement /> },
   // Protected Routes (only accessible when logged in)
   {
-    path: "/cleaner-view-bookings", 
+    path: "/cleaner-view-bookings",
     element: <ProtectedRoute>
       <CleanerViewMyBookings />
-      </ProtectedRoute>
+    </ProtectedRoute>
   },
 
   {
-    path: "/user-account-management", 
+    path: "/user-account-management",
     element: <ProtectedRoute>
       <UserAdminUserAccountManagement />
-      </ProtectedRoute>
-  },
-  { path: "/homeowner-dashboard", 
-    element: 
-    <ProtectedRoute>
-      <HomeownerDashBoard />
     </ProtectedRoute>
+  },
+  {
+    path: "/homeowner-dashboard",
+    element:
+      <ProtectedRoute>
+        <HomeownerDashBoard />
+      </ProtectedRoute>
   },
   {
     path: "/ViewUserProfile",

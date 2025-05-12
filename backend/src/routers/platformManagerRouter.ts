@@ -1,8 +1,8 @@
 import { UserAccountData } from '../shared/dataClasses'
 import {
+    GenerateMonthlyReportController,
     GenerateWeeklyReportController,
-    GenerateDailyReportController,
-    GenerateMonthlyReportController
+    GenerateDailyReportController
 } from '../controllers/platformManagerControllers'
 import { StatusCodes } from 'http-status-codes'
 import { Router } from 'express'
@@ -20,21 +20,15 @@ declare module 'express-session' {
  *        that I can view the daily statistics of cleaners and services
  */
 platformManagerRouter.post('/daily', async (req, res): Promise<void> => {
-    try {
-        const { chosenDate } = req.body
-        const normalizedDate = new Date(chosenDate)
-        normalizedDate.setHours(0, 0, 0, 0)
+    const { chosenDate } = req.body
+    const normalizedDate = new Date(chosenDate)
+    normalizedDate.setHours(0, 0, 0, 0)
 
-        const dailyReport =
-            await new GenerateDailyReportController()
-                .generateDailyReport(normalizedDate)
+    const dailyReport =
+        await new GenerateDailyReportController()
+            .generateDailyReport(normalizedDate)
 
-        res.status(StatusCodes.OK).json(dailyReport)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message,
-        });
-    }
+    res.status(StatusCodes.OK).json(dailyReport)
 })
 
 /**
@@ -42,21 +36,15 @@ platformManagerRouter.post('/daily', async (req, res): Promise<void> => {
  *        that I can view the weekly statistics of cleaners and services
  */
 platformManagerRouter.post('/weekly', async (req, res): Promise<void> => {
-    try {
-        const { chosenDate } = req.body
-        const normalizedDate = new Date(chosenDate)
-        normalizedDate.setHours(0, 0, 0, 0)
+    const { chosenDate } = req.body
+    const normalizedDate = new Date(chosenDate)
+    normalizedDate.setHours(0, 0, 0, 0)
 
-        const weeklyReport =
-            await new GenerateWeeklyReportController()
-                .generateWeeklyReport(normalizedDate)
+    const weeklyReport =
+        await new GenerateWeeklyReportController()
+            .generateWeeklyReport(normalizedDate)
 
-        res.status(StatusCodes.OK).json(weeklyReport)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message,
-        });
-    }
+    res.status(StatusCodes.OK).json(weeklyReport)
 })
 
 /**
@@ -64,21 +52,15 @@ platformManagerRouter.post('/weekly', async (req, res): Promise<void> => {
  *        that I can view the monthly statistics of cleaners and services
  */
 platformManagerRouter.post('/monthly', async (req, res): Promise<void> => {
-    try {
-        const { chosenDate } = req.body
-        const normalizedDate = new Date(chosenDate)
-        normalizedDate.setHours(0, 0, 0, 0)
+    const { chosenDate } = req.body
+    const normalizedDate = new Date(chosenDate)
+    normalizedDate.setHours(0, 0, 0, 0)
 
-        const monthlyReport =
-            await new GenerateMonthlyReportController()
-                .generateMonthlyReport(normalizedDate)
+    const monthlyReport =
+        await new GenerateMonthlyReportController()
+            .generateMonthlyReport(normalizedDate)
 
-        res.status(StatusCodes.OK).json(monthlyReport)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message,
-        });
-    }
+    res.status(StatusCodes.OK).json(monthlyReport)
 })
 
 export default platformManagerRouter

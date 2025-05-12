@@ -1,5 +1,4 @@
-import { UserProfilesSelect } from '../db/schema/userProfiles'
-import { UserAccountData } from '../shared/dataClasses'
+import { UserAccountData, UserProfileData } from '../shared/dataClasses'
 import { UserProfile } from '../entities/userProfile'
 import UserAccount from '../entities/userAccount'
 import { GLOBALS } from '../shared/constants'
@@ -64,7 +63,7 @@ export class UpdateUserAccountController {
         updateAs: string,
         updatedUsername: string,
         updatedPassword: string
-    ): Promise<void> {
+    ): Promise<boolean> {
         return await this.userAccount.updateUserAccount(
             userID,
             updateAs,
@@ -85,8 +84,8 @@ export class SuspendUserAccountController {
         this.userAccount = new UserAccount()
     }
 
-    public async suspendUserAccount(userID: number) {
-        await this.userAccount.suspendUserAccount(userID)
+    public async suspendUserAccount(userID: number): Promise<boolean> {
+        return await this.userAccount.suspendUserAccount(userID)
     }
 
     // TODO: Remove this for submission (??)
@@ -106,7 +105,7 @@ export class SearchUserAccountController {
         this.userAccount = new UserAccount()
     }
 
-    public async searchUserAccount(search: string): Promise<UserAccountData> {
+    public async searchUserAccount(search: string): Promise<UserAccountData | null> {
         return await this.userAccount.searchUserAccount(search)
     }
 }
@@ -138,7 +137,7 @@ export class ViewUserProfilesController {
         this.userProfile = new UserProfile()
     }
 
-    public async viewUserProfiles(): Promise<{ name: string, isSuspended: boolean }[]> {
+    public async viewUserProfiles(): Promise<UserProfileData[]> {
         return await this.userProfile.viewUserProfiles()
     }
 }
@@ -157,7 +156,7 @@ export class UpdateUserProfileController {
     public async updateUserProfile(
         oldProfileName: string,
         newProfileName: string
-    ): Promise<void> {
+    ): Promise<boolean> {
         return await this.userProfile.updateUserProfile(
             oldProfileName,
             newProfileName
@@ -176,8 +175,8 @@ export class SuspendUserProfileController {
         this.userProfile = new UserProfile()
     }
 
-    public async suspendUserProfile(profileName: string): Promise<void> {
-        await this.userProfile.suspendUserProfile(profileName)
+    public async suspendUserProfile(profileName: string): Promise<boolean> {
+        return await this.userProfile.suspendUserProfile(profileName)
     }
 
     public async unsuspendProfile(profileName: string): Promise<void> {
@@ -196,7 +195,7 @@ export class SearchUserProfileController {
         this.userProfile = new UserProfile()
     }
 
-    public async searchUserProfiles(search: string): Promise<UserProfilesSelect> {
+    public async searchUserProfiles(search: string): Promise<UserProfileData | null> {
         return await this.userProfile.searchUserProfile(search)
     }
 }

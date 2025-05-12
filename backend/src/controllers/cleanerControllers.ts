@@ -1,11 +1,13 @@
+import { ShortlistedServices } from '../entities/shortlistedService'
 import { ServiceProvided } from '../entities/serviceProvided'
 import { ServiceBooking } from '../entities/serviceBooking'
+import { ServiceView } from '../entities/serviceView'
 import UserAccount from '../entities/userAccount'
 import {
-    AllServices,
     CleanerServiceBookingData,
     CleanerServicesData,
-    ServiceProvidedData
+    ServiceProvidedData,
+    AllServices
 } from '../shared/dataClasses'
 
 /**
@@ -28,7 +30,7 @@ export class ViewCleanersController {
  * US-24: As a homeowner, I want to search for cleaners so 
  *        that I can find a potential cleaner for my home
  */
-export class SearchCleanersControllers {
+export class SearchCleanersController {
     private userAccount: UserAccount
 
     constructor() {
@@ -55,10 +57,11 @@ export class ViewCleanerServiceHistoryController {
     public async viewCleanerServiceHistory(
         cleanerID: number,
         startDate: Date | null,
-        endDate: Date | null
+        endDate: Date | null,
+        homeownerName: string | null
     ): Promise<CleanerServiceBookingData[]> {
         return await this.serviceBooking.viewCleanerServiceHistory(
-            cleanerID, startDate, endDate
+            cleanerID, startDate, endDate, homeownerName
         )
     }
 }
@@ -142,14 +145,93 @@ export class CreateServiceProvidedController {
         serviceCategory: string,
         description: string,
         price: number
-    ): Promise<void> {
-        await this.serviceProvided.createServiceProvided(
+    ): Promise<boolean> {
+        return await this.serviceProvided.createServiceProvided(
             cleanerID,
             serviceName,
             serviceCategory,
             description,
             price
         )
+    }
+}
+
+/**
+ * US-15: As a cleaner, I want to update my service so  
+ *        that I can make changes to my service provided.
+ */
+export class UpdateServiceProvidedController {
+    private serviceProvided: ServiceProvided
+
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async updateServiceProvided(
+        serviceID: number,
+        serviceName: string,
+        description: string,
+        price: number
+    ): Promise<boolean> {
+        return await this.serviceProvided.updateServiceProvided(
+            serviceID,
+            serviceName,
+            description,
+            price
+        )
+    }
+}
+
+/**
+ * US-16: As a cleaner, I want to delete my service 
+ *        so that I can remove my service provided
+ */
+export class DeleteServiceProvidedController {
+    private serviceProvided: ServiceProvided
+
+    constructor() {
+        this.serviceProvided = new ServiceProvided()
+    }
+
+    public async deleteServiceProvided(serviceID: number): Promise<boolean> {
+        return await this.serviceProvided.deleteServiceProvided(serviceID)
+    }
+}
+
+/**
+ * US-20: As a cleaner, I want to view the number of homeowners interested in 
+ *        my services, so that I can understand the demand of my services
+ */
+export class ViewNumberOfInterestedHomeownersController {
+    private serviceView: ServiceView
+
+    constructor() {
+        this.serviceView = new ServiceView()
+    }
+
+    public async viewNumberOfInterestedHomeowners(
+        serviceProvidedID: number
+    ): Promise<number> {
+        return this.serviceView.viewNumberOfInterestedHomeowners(serviceProvidedID)
+    }
+}
+
+/**
+ * US-21: As a cleaner, I want to know the number of homeowners that shortlisted 
+ *        me for my services, so that I can track my popularity and potential bookings
+ */
+export class ViewNoOfShortlistedHomeownersController {
+    private shortListedCleaner: ShortlistedServices
+
+    constructor() {
+        this.shortListedCleaner = new ShortlistedServices
+    }
+
+    public async viewNoOfShortlistedHomeowners(
+        serviceProvidedID: number
+    ): Promise<number> {
+        return await this.shortListedCleaner
+            .viewNoOfShortlistedHomeowners(serviceProvidedID)
     }
 }
 
@@ -163,8 +245,8 @@ export class ViewAllServicesProvidedController {
         this.serviceProvided = new ServiceProvided()
     }
 
-    public async viewAllServicesProvided(
-    ): Promise<AllServices[]> {
+    public async viewAllServicesProvided(): Promise<AllServices[]> {
         return await this.serviceProvided.viewAllServicesProvided()
     }
 }
+

@@ -7,10 +7,10 @@ import {
     AddToShortlistController,
     ViewShortlistController,
     SearchShortlistController,
-    SearchHomeownerServiceHistoryController
+    SearchHomeownerServiceHistoryController,
+    CreateServiceBookingController
 } from "../controllers/homeownerControllers"
 import { Router } from "express"
-import { CleanerAlreadyShortlistedError } from "../shared/exceptions"
 
 const homeownerRouter = Router()
 
@@ -28,25 +28,17 @@ homeownerRouter.post(
     '/shortlist',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const { cleanerID } = req.body
+        const homeownerID = (req.session.user as UserAccountData).id
+        const { serviceProvidedID } = req.body
 
-            await new AddToShortlistController().addToShortlist(homeownerID, cleanerID)
+        const opSuccess =
+            await new AddToShortlistController()
+                .addToShortlist(homeownerID, serviceProvidedID)
 
-            res.status(StatusCodes.OK).json({
-                message: "Shortlist successful"
-            })
-        } catch (err: any) {
-            if (err instanceof CleanerAlreadyShortlistedError) {
-                res.status(StatusCodes.BAD_REQUEST).json({
-                    error: err.message
-                })
-            } else {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    error: err.message || "Shortlist failed"
-                })
-            }
+        if (opSuccess) {
+            res.status(StatusCodes.OK).json(true)
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
         }
     }
 )
@@ -62,34 +54,22 @@ homeownerRouter.get(
     '/shortlist',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const searchParam = req.query.search
+        const homeownerID = (req.session.user as UserAccountData).id
+        const searchParam = req.query.search
 
-            if (searchParam && String(searchParam).length > 0) { //===== US-27 ======
-                const searchedShortlistedCleaners =
-                    await new SearchShortlistController()
-                        .searchShortlist(homeownerID, String(searchParam))
+        //===== US-27 ======
+        if (searchParam && String(searchParam).length > 0) {
+            const searchedShortlistedCleaners =
+                await new SearchShortlistController()
+                    .searchShortlist(homeownerID, String(searchParam))
 
-                res.status(StatusCodes.OK).json({
-                    message: "Shortlist retrieved successfully",
-                    data: searchedShortlistedCleaners
-                })
-            } else { //====== US-28 =======
-                const shortlistedCleaners =
-                    await new ViewShortlistController()
-                        .viewShortlist(homeownerID)
+            res.status(StatusCodes.OK).json(searchedShortlistedCleaners)
+        } else { //====== US-28 =======
+            const shortlistedCleaners =
+                await new ViewShortlistController()
+                    .viewShortlist(homeownerID)
 
-                res.status(StatusCodes.OK).json({
-                    message: "Shortlist retrieved successfully",
-                    data: shortlistedCleaners
-                })
-            }
-
-        } catch (error: any) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                error: error.message || "Failed to retrieve shortlist"
-            })
+            res.status(StatusCodes.OK).json(shortlistedCleaners)
         }
     }
 )
@@ -107,35 +87,26 @@ homeownerRouter.post(
     '/servicehistory',
     requireAuthMiddleware,
     async (req, res): Promise<void> => {
-        try {
-            const homeownerID = (req.session.user as UserAccountData).id
-            const { cleanerName, service, fromDate, toDate } = req.body
+        const homeownerID = (req.session.user as UserAccountData).id
+        const { cleanerName, service, fromDate, toDate } = req.body
 
-            if (cleanerName && String(cleanerName).length > 0) { //===== US-31 ======
-                const serviceHistory =
-                    await new SearchHomeownerServiceHistoryController()
-                        .searchHomeownerServiceHistory(
-                            homeownerID, cleanerName, service, fromDate, toDate
-                        )
-                res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully",
-                    data: serviceHistory
-                })
-            } else { //========== US-32 ==========
-                const serviceHistory =
-                    await new ViewHomeownerServiceHistoryController()
-                        .viewHomeownerServiceHistory(
-                            homeownerID, service, fromDate, toDate
-                        )
-                res.status(StatusCodes.OK).json({
-                    message: "Service history retrieved successfully",
-                    data: serviceHistory
-                })
-            }
-        } catch (error: any) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                error: error.message || "Failed to retrieve service history"
-            })
+        //===== US-31 ======
+        if (cleanerName && String(cleanerName).length > 0) {
+            const serviceHistory =
+                await new SearchHomeownerServiceHistoryController()
+                    .searchHomeownerServiceHistory(
+                        homeownerID,
+                        cleanerName,
+                        service,
+                        fromDate,
+                        toDate
+                    )
+            res.status(StatusCodes.OK).json(serviceHistory)
+        } else { //========== US-32 ==========
+            const serviceHistory =
+                await new ViewHomeownerServiceHistoryController()
+                    .viewHomeownerServiceHistory(homeownerID, service, fromDate, toDate)
+            res.status(StatusCodes.OK).json(serviceHistory)
         }
     }
 )
@@ -164,6 +135,30 @@ homeownerRouter.get(
             res.status(StatusCodes.BAD_REQUEST).json({
                 error: error.message || "Failed to retrieve service history"
             })
+        }
+    }
+)
+
+/**
+ * US-443: As a homeowner, I want to book for cleaners so that cleaners can clean my home
+ */
+homeownerRouter.post(
+    '/createbooking',
+    requireAuthMiddleware,
+    async (req, res): Promise<void> => {
+
+        const homeownerID = req.session.user?.id as number
+        const { serviceProvidedID, startTimestamp } = req.body
+        const startDate = new Date(startTimestamp)
+
+        const createSuccess =
+            await new CreateServiceBookingController()
+                .createServiceBooking(homeownerID, serviceProvidedID, startDate)
+
+        if (createSuccess) {
+            res.status(StatusCodes.OK).json(true)
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
         }
     }
 )

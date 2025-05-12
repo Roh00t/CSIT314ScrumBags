@@ -1,8 +1,8 @@
-import { integer, pgTable, timestamp, index, serial } from 'drizzle-orm/pg-core'
-import { bookingStatusEnum } from './bookingStatusEnum'
+import { integer, pgTable, timestamp, index, serial, varchar } from 'drizzle-orm/pg-core'
+import { servicesProvidedTable } from './servicesProvided'
+// import { bookingStatusEnum } from './bookingStatusEnum'
 import { userAccountsTable } from './userAccounts'
 import { relations } from 'drizzle-orm'
-import { servicesProvidedTable } from './servicesProvided'
 
 export const serviceBookingsTable = pgTable(
     'service_bookings',
@@ -20,7 +20,8 @@ export const serviceBookingsTable = pgTable(
             mode: 'date',
             withTimezone: true
         }).notNull(),
-        status: bookingStatusEnum().notNull()
+        status: varchar().notNull().default("Confirmed")
+        // status: bookingStatusEnum().notNull()
     },
     table => [
         index().on(table.status) // Want to be able to filter bookings that are "completed"
