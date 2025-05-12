@@ -1,8 +1,7 @@
+import { AllServices, ServiceProvidedData } from "../shared/dataClasses"
 import { serviceCategoriesTable } from "../db/schema/serviceCategories"
 import { servicesProvidedTable } from "../db/schema/servicesProvided"
-import { ServiceCategoryNotFoundError } from "../shared/exceptions"
 import { userAccountsTable } from "../db/schema/userAccounts"
-import { AllServices, ServiceProvidedData } from "../shared/dataClasses"
 import { drizzle } from "drizzle-orm/node-postgres"
 import { DrizzleClient } from "../shared/constants"
 import { and, eq } from "drizzle-orm"
@@ -24,23 +23,45 @@ export class ServiceProvided {
         serviceCategory: string,
         description: string,
         price: number
-    ): Promise<void> {
-        const [serviceCategoryEntry] = await this.db
-            .select()
-            .from(serviceCategoriesTable)
-            .where(eq(serviceCategoriesTable.label, serviceCategory))
+    ): Promise<boolean> {
+        try {
+            const [serviceCategoryEntry] = await this.db
+                .select()
+                .from(serviceCategoriesTable)
+                .where(eq(serviceCategoriesTable.label, serviceCategory))
 
-        if (!serviceCategoryEntry) {
-            throw new ServiceCategoryNotFoundError(serviceCategory)
+            if (!serviceCategoryEntry) { // Service category doesn't exist
+                return false
+            }
+
+            const result = await this.db
+                .select({ cleaner: userAccountsTable.username })
+                .from(servicesProvidedTable)
+                .leftJoin(userAccountsTable, eq(
+                    servicesProvidedTable.cleanerID,
+                    userAccountsTable.id
+                ))
+                .where(and(
+                    eq(servicesProvidedTable.cleanerID, cleanerID),
+                    eq(servicesProvidedTable.serviceName, serviceName),
+                    eq(servicesProvidedTable.serviceCategoryID, serviceCategoryEntry.id)
+                ))
+
+            if (result.length > 0) { // Service already provided
+                return false
+            }
+
+            await this.db.insert(servicesProvidedTable).values({
+                cleanerID: cleanerID,
+                serviceCategoryID: serviceCategoryEntry.id,
+                serviceName: serviceName,
+                description: description,
+                price: price.toString()
+            })
+            return true
+        } catch (err) {
+            return false
         }
-
-        await this.db.insert(servicesProvidedTable).values({
-            cleanerID: cleanerID,
-            serviceCategoryID: serviceCategoryEntry.id,
-            serviceName: serviceName,
-            description: description,
-            price: price.toString()
-        })
     }
 
     /**
@@ -50,26 +71,75 @@ export class ServiceProvided {
      * Gets all the service 'types' provided by a cleaner (by their userID)
      */
     public async viewServicesProvided(userID: number): Promise<ServiceProvidedData[]> {
-        const servicesProvidedByCleaner = await this.db
-            .select({
-                serviceName: servicesProvidedTable.serviceName,
-                description: servicesProvidedTable.description,
-                price: servicesProvidedTable.price
-            })
-            .from(servicesProvidedTable)
-            .leftJoin(userAccountsTable, eq(
-                servicesProvidedTable.cleanerID,
-                userAccountsTable.id
-            ))
-            .where(eq(userAccountsTable.id, userID))
+        try {
+            const servicesProvidedByCleaner = await this.db
+                .select({
+                    serviceProvidedID: servicesProvidedTable.id,
+                    serviceName: servicesProvidedTable.serviceName,
+                    description: servicesProvidedTable.description,
+                    price: servicesProvidedTable.price
+                })
+                .from(servicesProvidedTable)
+                .leftJoin(userAccountsTable, eq(
+                    servicesProvidedTable.cleanerID,
+                    userAccountsTable.id
+                ))
+                .where(eq(userAccountsTable.id, userID))
 
-        return servicesProvidedByCleaner.map(sp => {
-            return {
-                serviceName: sp.serviceName,
-                description: sp.description,
-                price: Number(sp.price)
-            } as ServiceProvidedData
-        })
+            return servicesProvidedByCleaner.map(sp => {
+                return {
+                    serviceProvidedID: sp.serviceProvidedID,
+                    serviceName: sp.serviceName,
+                    description: sp.description,
+                    price: Number(sp.price)
+                } as ServiceProvidedData
+            })
+        } catch (err) {
+            return []
+        }
+    }
+
+    /**
+     * US-15: As a cleaner, I want to update my service so  
+     *        that I can make changes to my service provided.
+     */
+    public async updateServiceProvided(
+        serviceID: number,
+        newserviceName: string,
+        newdescription: string,
+        newprice: number
+    ): Promise<boolean> {
+        try {
+            if (newserviceName.trim().length === 0 || newprice <= 0) {
+                return false
+            }
+
+            await this.db
+                .update(servicesProvidedTable)
+                .set({
+                    serviceName: newserviceName,
+                    description: newdescription,
+                    price: String(newprice)
+                }).where(eq(servicesProvidedTable.id, serviceID))
+            return true
+        } catch (err) {
+            return false
+        }
+    }
+
+    /**
+     * US-16: As a cleaner, I want to delete my service 
+     *        so that I can remove my service provided
+     */
+    public async deleteServiceProvided(serviceID: number): Promise<boolean> {
+        try {
+            await this.db
+                .delete(servicesProvidedTable)
+                .where(eq(servicesProvidedTable.id, serviceID))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**
@@ -80,32 +150,36 @@ export class ServiceProvided {
         userID: number,
         serviceName: string
     ): Promise<ServiceProvidedData[]> {
-        const conditions = [eq(userAccountsTable.id, userID)]
+        try {
+            const conditions = [eq(userAccountsTable.id, userID)]
+            if (serviceName) {
+                conditions.push(eq(servicesProvidedTable.serviceName, serviceName))
+            }
+            const servicesProvidedByCleaner = await this.db
+                .select({
+                    serviceProvidedID: servicesProvidedTable.id,
+                    serviceName: servicesProvidedTable.serviceName,
+                    description: servicesProvidedTable.description,
+                    price: servicesProvidedTable.price
+                })
+                .from(servicesProvidedTable)
+                .leftJoin(userAccountsTable, eq(
+                    servicesProvidedTable.cleanerID,
+                    userAccountsTable.id
+                ))
+                .where(and(...conditions))
 
-        if (serviceName) {
-            conditions.push(eq(servicesProvidedTable.serviceName, serviceName))
-        }
-
-        const servicesProvidedByCleaner = await this.db
-            .select({
-                serviceName: servicesProvidedTable.serviceName,
-                description: servicesProvidedTable.description,
-                price: servicesProvidedTable.price
+            return servicesProvidedByCleaner.map(sp => {
+                return {
+                    serviceProvidedID: sp.serviceProvidedID,
+                    serviceName: sp.serviceName,
+                    description: sp.description,
+                    price: Number(sp.price)
+                } as ServiceProvidedData
             })
-            .from(servicesProvidedTable)
-            .leftJoin(userAccountsTable, eq(
-                servicesProvidedTable.cleanerID,
-                userAccountsTable.id
-            ))
-            .where(and(...conditions))
-
-        return servicesProvidedByCleaner.map(sp => {
-            return {
-                serviceName: sp.serviceName,
-                description: sp.description,
-                price: Number(sp.price)
-            } as ServiceProvidedData
-        })
+        } catch (err) {
+            return []
+        }
     }
 
     public async viewAllServicesProvided(): Promise<AllServices[]> {

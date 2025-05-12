@@ -4,12 +4,16 @@ import { Link } from 'react-router-dom'
 import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/LogoutModal';
 
-
+interface UserProfile {
+  id: number
+  label: string
+  isSuspended: boolean
+}
 
 const CreateAccountPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-  const [role, setRole] = useState('')
-  const [roles, setRoles] = useState<string[]>([]); // Correct for array of strings
+  const [role, setRole] = useState<string>('')
+  const [roles, setRoles] = useState<UserProfile[]>([]); // Correct for array of strings
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -100,16 +104,22 @@ const CreateAccountPage: React.FC = () => {
   };
 
   return (
-    <div className="page_container">
-      <div className="header_container">
-        <img src={logo} alt="Logo" height={40} />
-        <h2><Link to="/admin-dashboard">Home</Link></h2>
-        <h2><Link to="/user-account-management">User Account</Link></h2>
-        <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
-        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
-        </h2>
+    <div className="page-container">
+      <div className="header-container">
+        <div>
+          <img src={logo} alt="Logo" height={40} />
+          <h2><Link to="/admin-dashboard">Home</Link></h2>
+          <h2><Link to="/user-account-management">User Account</Link></h2>
+          <h2><Link to="/ViewUserProfile">User Profile</Link></h2>
+        </div>
+
+        <div>
+          <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+            <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
+          </h2>
+        </div>
       </div>
+      
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
@@ -141,8 +151,8 @@ const CreateAccountPage: React.FC = () => {
                 <option disabled>Loading roles...</option>
               ) : (
                 roles.map(r => (
-                  <option key={r} value={r}>
-                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                  <option key={r.id} value={r.label}>
+                    {r.label.charAt(0).toUpperCase() + r.label.slice(1)}
                   </option>
                 ))
               )}
@@ -196,13 +206,13 @@ const CreateAccountPage: React.FC = () => {
                 setSuccess('')
               }}
             >
-              <Link to="/admin-dashboard">Cancel</Link>
+              <Link to="/user-account-management">Cancel</Link>
             </button>
           </form>
         </div>
       </div>
 
-      <div className="footer_container">
+      <div className="footer-container">
         <p>© Copyright 2025 Easy & Breezy - All Rights Reserved</p>
       </div>
     </div>

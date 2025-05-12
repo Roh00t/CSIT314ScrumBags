@@ -1,68 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import LogoutModal from '../../components/LogoutModal';
-import logo from '../../assets/logo.png';
-import '../../css/PlatformManager/PlatformManagerViewServiceCategories.css'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { Link } from 'react-router-dom'
+import LogoutModal from '../../components/LogoutModal'
+import logo from '../../assets/logo.png'
 
 const ViewServiceCategories: React.FC = () => {
-  const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
-  const [services, setServices] = useState<string[]>([]);
-  const [error, setError] = useState<string>('');
-  const [search, setSearch] = useState<string>('');
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);  // Added for update modal
-  const [selectedService, setSelectedService] = useState<string | null>(null);
+  const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
+  const [services, setServices] = useState<string[]>([])
+  const [search, setSearch] = useState<string>('')
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [showPopup, setShowPopup] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showUpdateModal, setShowUpdateModal] = useState(false)  // Added for update modal
+  const [selectedService, setSelectedService] = useState<string | null>(null)
   const [newServiceCategory, setNewServiceCategory] = useState<{ serviceName: string }>({
     serviceName: ''
-  });
+  })
   const [updateServiceCategory, setUpdateServiceCategory] = useState<{ serviceName: string }>({
     serviceName: ''
-  }); // Added for update category
+  }) // Added for update category
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         const response = await axios.get('http://localhost:3000/api/Services/categories', {
           withCredentials: true,
-        });
+        })
 
-        const data: string[] = response.data;
-        console.log("Fetched services:", data);
+        const data: string[] = response.data
+        console.log("Fetched services:", data)
 
         if (Array.isArray(data)) {
-          setServices(data);
+          setServices(data)
         } else {
-          console.error('Unexpected server response:', data);
-          setError('Unexpected server response.');
+          console.error('Unexpected server response:', data)
         }
       } catch (err) {
-        console.error('Failed to fetch services:', err);
-        setError('Could not load services. Please try again later.');
+        console.error('Failed to fetch services:', err)
       }
-    };
+    }
 
-    fetchServices();
-  }, []);
+    fetchServices()
+  }, [])
 
   const handleDelete = async () => {
-    if (!selectedService) return;
+    if (!selectedService) return
     try {
-      console.log(selectedService);
+      console.log(selectedService)
       await axios.delete(`http://localhost:3000/api/services/categories`, {
         withCredentials: true,
         data: { category: selectedService },
-      });
-      alert(`Service category '${selectedService}' deleted successfully.`);
-      setServices(services.filter(service => service !== selectedService));
-      setShowDeleteModal(false);
+      })
+      alert(`Service category '${selectedService}' deleted successfully.`)
+      setServices(services.filter(service => service !== selectedService))
+      setShowDeleteModal(false)
     } catch (err) {
-      console.error('Failed to delete service category:', err);
-      alert('Failed to delete service category. See console for details.');
+      console.error('Failed to delete service category:', err)
+      alert('Failed to delete service category. See console for details.')
     }
-  };
+  }
 
   const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -70,42 +66,43 @@ const ViewServiceCategories: React.FC = () => {
         try {
           const response = await axios.get('http://localhost:3000/api/services/categories', {
             withCredentials: true,
-          });
-          setServices(response.data);
-          setError('');
+          })
+          setServices(response.data)
         } catch (err) {
-          console.error('Failed to reload categories:', err);
-          setError('Could not reload service categories.');
+          console.error('Failed to reload categories:', err)
         }
-        return;
+        return
       }
 
       try {
         const response = await axios.get(`http://localhost:3000/api/services/categories/search?search=${search}`, {
           withCredentials: true,
-        });
+        })
 
-        setServices([response.data]);
-        setError('');
+        setServices([response.data])
       } catch (err) {
-        console.error('Search failed:', err);
-        setServices([]);
-        setError('Search failed. Try again.');
+        console.error('Search failed:', err)
+        setServices([])
       }
     }
-  };
+  }
 
   return (
-    <div className="user-account-page">
+    <div className="page-container">
       {/* Navbar */}
-      <div className="header_container">
-        <img src={logo} alt="Logo" height={40} />
-        <h2><Link to="/platformManager-dashboard">Home</Link></h2>
-        <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
-        <h2><Link to="/platformManager-view-report">Report</Link></h2>
-        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
-        </h2>
+      <div className="header-container">
+        <div>
+          <img src={logo} alt="Logo" height={40} />
+          <h2><Link to="/platformManager-dashboard">Home</Link></h2>
+          <h2><Link to="/ViewServiceCategories">Service Categories</Link></h2>
+          <h2><Link to="/platformManager-view-report">Report</Link></h2>
+        </div>
+
+        <div>
+          <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+            <span style={{ marginRight: '8px' }}>👤</span>{sessionUser}/Logout
+          </h2>
+        </div>
       </div>
 
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
@@ -132,19 +129,19 @@ const ViewServiceCategories: React.FC = () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ category: newServiceCategory.serviceName }),
                     credentials: 'include',
-                  });
+                  })
 
                   if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Failed to create service category');
+                    const errorData = await response.json()
+                    throw new Error(errorData.message || 'Failed to create service category')
                   }
 
-                  setShowPopup(false);
-                  setNewServiceCategory({ serviceName: '' });
-                  window.location.reload();
+                  setShowPopup(false)
+                  setNewServiceCategory({ serviceName: '' })
+                  window.location.reload()
                 } catch (error) {
-                  console.error('Error creating service category:', error);
-                  alert('Failed to create service category.');
+                  console.error('Error creating service category:', error)
+                  alert('Failed to create service category.')
                 }
               }}>
                 Add
@@ -174,18 +171,18 @@ const ViewServiceCategories: React.FC = () => {
                   const response = await axios.put('http://localhost:3000/api/services/categories', {
                     category: selectedService,
                     newCategory: updateServiceCategory.serviceName
-                  }, { withCredentials: true });
+                  }, { withCredentials: true })
 
                   if (response.status === 200) {
-                    alert(`Service category '${selectedService}' updated successfully.`);
+                    alert(`Service category '${selectedService}' updated successfully.`)
                     setServices(services.map(service => 
                       service === selectedService ? updateServiceCategory.serviceName : service
-                    ));
-                    setShowUpdateModal(false);
+                    ))
+                    setShowUpdateModal(false)
                   }
                 } catch (error) {
-                  console.error('Error updating service category:', error);
-                  alert('Failed to update service category.');
+                  console.error('Error updating service category:', error)
+                  alert('Failed to update service category.')
                 }
               }}>
                 Update
@@ -209,67 +206,67 @@ const ViewServiceCategories: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="account-container">
-        <h2>List of Service Categories</h2>
-        <div className="top-row">
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search by category name"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={handleSearch}
-          />
-          <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Category</button>
-        </div>
+      <div className="body-container">
+        <div className="card">
+          <h2>List of Service Categories</h2>
+          <div className="top-bar">
+            <input
+              type="text"
+              className="search-bar"
+              placeholder="Search by category name"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
+            />
+            <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Category</button>
+          </div>
 
-        {error && <div className="error-message">{error}</div>}
-
-        <table className="user-table">
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.length > 0 ? (
-              services.map((service, index) => (
-                <tr key={index}>
-                  <td>{service}</td>
-                  <td>
-                    <div className="action-buttons">
-                      <button
-                        className="edit-btn"
-                        onClick={() => {
-                          setSelectedService(service);
-                          setUpdateServiceCategory({ serviceName: '' });  // Empty the input field
-                          setShowUpdateModal(true);
-                        }}
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        className="delete-btn"
-                        onClick={() => {
-                          setSelectedService(service);
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
+          <table>
+            <thead>
               <tr>
-                <td colSpan={2}>No services available.</td>
+                <th >Category</th>
+                <th id="actionCol">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {services.length > 0 ? (
+                services.map((service, index) => (
+                  <tr key={index}>
+                    <td>{service}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="edit-btn"
+                          onClick={() => {
+                            setSelectedService(service)
+                            setUpdateServiceCategory({ serviceName: '' })  // Empty the input field
+                            setShowUpdateModal(true)
+                          }}
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="delete-btn"
+                          onClick={() => {
+                            setSelectedService(service)
+                            setShowDeleteModal(true)
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+                ) : (
+                <tr>
+                  <td colSpan={2}>No services available.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Footer */}
@@ -277,7 +274,7 @@ const ViewServiceCategories: React.FC = () => {
         <b>© Copyright 2025 Easy & Breezy - All Rights Reserved</b>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ViewServiceCategories;
+export default ViewServiceCategories

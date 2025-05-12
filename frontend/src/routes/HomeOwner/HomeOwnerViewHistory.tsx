@@ -1,57 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import '../../css/HomeOwner/HomeOwnerViewHistory.css';
-import { Link } from 'react-router-dom';
-import LogoutModal from '../../components/LogoutModal';
-import logo from '../../assets/logo.png';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import LogoutModal from '../../components/LogoutModal'
+import logo from '../../assets/logo.png'
+import axios from 'axios'
 
 interface UserAccountResponse {
-  id: number;
-  username: string;
-  userProfile: string;
+  id: number
+  username: string
+  userProfile: string
 }
 
 interface History {
-  cleanerName: string | null;
-  typeOfService: string | null;
-  price: string | null;
-  date: Date;
-  status: string;
+  cleanerName: string | null
+  typeOfService: string | null
+  price: string | null
+  date: Date
+  status: string
 }
 
 const HomeOwnerViewHistory: React.FC = () => {
-  const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}');
+  const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}')
 
-  const [services, setServices] = useState<{ serviceName: string }[]>([]);
-  const [serviceName, setServiceName] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  const [services, setServices] = useState<{ serviceName: string }[]>([])
+  const [serviceName, setServiceName] = useState('')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
 
-  const [history, setHistory] = useState<History[]>([]);
-  const [search, setSearch] = useState('');
+  const [history, setHistory] = useState<History[]>([])
+  const [search, setSearch] = useState('')
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return null;
-    const [year, month, day] = dateString.split('-'); // ["2024", "04", "27"]
-    return `${month}/${day}/${year}`; // "04/27/2024" => MM/DD/YYYY ✅
-  };
+    if (!dateString) return null
+    const [year, month, day] = dateString.split('-') // ["2024", "04", "27"]
+    return `${month}/${day}/${year}` // "04/27/2024" => MM/DD/YYYY ✅
+  }
 
   // Logout Modal State
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
   // Fetch unique services from the backend
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/services/');
-        setServices(response.data);
-        console.log(response.data);
+        const response = await axios.get('http://localhost:3000/api/services/')
+        setServices(response.data)
+        console.log(response.data)
       } catch (error) {
-        console.error('Error fetching services:', error);
+        console.error('Error fetching services:', error)
       }
-    };
-    fetchServices();
-  }, []);
+    }
+    fetchServices()
+  }, [])
 
   const fetchServiceHist = async () => {
     try {
@@ -67,56 +66,62 @@ const HomeOwnerViewHistory: React.FC = () => {
           fromDate: fromDate ? formatDate(fromDate) : null,
           toDate: toDate ? formatDate(toDate) : null,
         }),
-      });
+      })
 
       if (!response.ok) {
         setHistory([])
-        throw new Error('Failed to fetch service history');
+        throw new Error('Failed to fetch service history')
       }
 
-      const json = await response.json();
-
-      const formatted: History[] = json.data.map((item: any) => ({
+      const serviceHistoryData = await response.json()
+      const formatted: History[] = serviceHistoryData.map((item: any) => ({
         cleanerName: item.cleanerName,
         typeOfService: item.serviceName,
         price: item.price,
         date: item.date,
         status: item.status,
-      }));
+      }))
 
-      setHistory(formatted);
+      setHistory(formatted)
     } catch (error) {
-      console.error('Error fetching services:', error);
+      console.error('Error fetching services:', error)
     }
-  };
+  }
 
 
   // Fetch service history on page load
   useEffect(() => {
-    fetchServiceHist();
-  }, []);
+    fetchServiceHist()
+  }, [])
 
   return (
-    <div className="view-history-container">
-      <div className="header_container">
-        <img src={logo} alt="Logo" height={40} />
-        <h2><Link to="/homeowner-dashboard">Home</Link></h2>
-        <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
-        <h2><Link to="/">My Bookings</Link></h2>
-        <h2><Link to="/ViewServiceHistory">My History</Link></h2>
-        <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
-        <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
-          <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
-        </h2>
+    <div className="page-container">
+      <div className="header-container">
+        <div>
+          <img src={logo} alt="Logo" height={40} />
+          <h2><Link to="/homeowner-dashboard">Home</Link></h2>
+          <h2><Link to="/ViewCleanerService">View All Cleaners</Link></h2>
+          <h2><Link to="/ViewServiceHistory">My History</Link></h2>
+          <h2><Link to="/ViewShortlist">My Shortlist</Link></h2>
+        </div>
+
+        <div>
+          <h2 id="logout_button" onClick={() => setShowLogoutModal(true)} style={{ cursor: 'pointer' }}>
+            <span style={{ marginRight: '8px' }}>👤</span>{sessionUser.username}/Logout
+          </h2>
+        </div>
       </div>
+
+
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
-      <div className="content-center">
+
+      <div className="body-container">
         <div className="card">
           <h1>View History</h1>
 
-          <div className="top-bar">
-          <select
+          <div className="top-bar2">
+            <select
               value={serviceName}
               onChange={(e) => setServiceName(e.target.value)}
             >
@@ -127,7 +132,6 @@ const HomeOwnerViewHistory: React.FC = () => {
                 </option>
               ))}
             </select>
-
 
             <div className="date-range">
               <label>From:</label>
@@ -182,11 +186,11 @@ const HomeOwnerViewHistory: React.FC = () => {
         </div>
       </div>
 
-      <footer className="footer">
+      <footer className="footer-container">
         © Copyright 2025 Easy & Breezy - All Rights Reserved
       </footer>
     </div>
-  );
-};
+  )
+}
 
-export default HomeOwnerViewHistory;
+export default HomeOwnerViewHistory

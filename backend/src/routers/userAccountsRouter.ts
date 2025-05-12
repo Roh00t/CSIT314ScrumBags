@@ -121,14 +121,8 @@ userAccountsRouter.post('/create', async (req, res): Promise<void> => {
  * US-2: As a user admin, I want to view user accounts so that I can see user information
  */
 userAccountsRouter.get('/', async (_, res): Promise<void> => {
-    try {
-        const userAccountData = await new ViewUserAccountsController().viewUserAccounts()
-        res.status(StatusCodes.OK).json(userAccountData)
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: ReasonPhrases.INTERNAL_SERVER_ERROR
-        })
-    }
+    const userAccountData = await new ViewUserAccountsController().viewUserAccounts()
+    res.status(StatusCodes.OK).json(userAccountData)
 })
 
 /**
@@ -139,22 +133,17 @@ userAccountsRouter.get('/', async (_, res): Promise<void> => {
  *        so that I can see their services provided
  */
 userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
-    try {
-        const { cleanerName } = req.body
+    const { cleanerName } = req.body
 
-        if (cleanerName && String(cleanerName).length > 0) { //==== US-24 ====
-            const searchedCleaners =
-                await new SearchCleanersController()
-                    .searchCleaners(cleanerName)
-            res.status(StatusCodes.OK).json(searchedCleaners)
-        } else { //======= US-25 ========
-            const allCleaners = await new ViewCleanersController().viewCleaners()
-            res.status(StatusCodes.OK).json(allCleaners)
-        }
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    //==== US-24 ====
+    if (cleanerName && String(cleanerName).length > 0) {
+        const searchedCleaners =
+            await new SearchCleanersController()
+                .searchCleaners(cleanerName)
+        res.status(StatusCodes.OK).json(searchedCleaners)
+    } else { //======= US-25 ========
+        const allCleaners = await new ViewCleanersController().viewCleaners()
+        res.status(StatusCodes.OK).json(allCleaners)
     }
 })
 
@@ -163,19 +152,17 @@ userAccountsRouter.post('/cleaners', async (req, res): Promise<void> => {
  *       so that I can keep user information accurate
  */
 userAccountsRouter.post('/update', async (req, res): Promise<void> => {
-    try {
-        const { userId, updatedAs, updatedUsername, updatedPassword } = req.body
-        await new UpdateUserAccountController().updateUserAccount(
-            userId,
-            updatedAs,
-            updatedUsername,
-            updatedPassword
-        )
-        res.status(StatusCodes.OK).json({ message: 'Update Success' })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { userId, updatedAs, updatedUsername, updatedPassword } = req.body
+    const updateSuccess = await new UpdateUserAccountController().updateUserAccount(
+        userId,
+        updatedAs,
+        updatedUsername,
+        updatedPassword
+    )
+    if (updateSuccess) {
+        res.status(StatusCodes.OK).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 
@@ -184,16 +171,14 @@ userAccountsRouter.post('/update', async (req, res): Promise<void> => {
  *       so that I can restrict access when needed
  */
 userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
-    try {
-        const { id } = req.body
-        await new SuspendUserAccountController().suspendUserAccount(id)
-        res.status(StatusCodes.OK).json({
-            message: "User account of ID '" + id + "' has been suspended"
-        })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { id } = req.body
+    const suspensionSuccess =
+        await new SuspendUserAccountController()
+            .suspendUserAccount(id)
+    if (suspensionSuccess) {
+        res.status(StatusCodes.OK).json(true)
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
     }
 })
 
@@ -219,26 +204,16 @@ userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
  *       accounts so that I can locate specific users
  */
 userAccountsRouter.get('/search', async (req, res): Promise<void> => {
-    try {
-        const search = req.query.search as string | undefined
-        if (!search) {
-            res.status(StatusCodes.BAD_REQUEST)
-                .json({ message: 'Search query is required' })
-            return
-        }
-        const foundUserAccounts =
-            await new SearchUserAccountController().searchUserAccount(search)
+    const search = req.query.search as string
+
+    const foundUserAccounts: (UserAccountData | null) =
+        await new SearchUserAccountController()
+            .searchUserAccount(search)
+
+    if (foundUserAccounts !== null) {
         res.status(StatusCodes.OK).json(foundUserAccounts)
-    } catch (err) {
-        if (err instanceof SearchUserAccountNoResultError) {
-            res.status(StatusCodes.NO_CONTENT).json({
-                message: (err as Error).message
-            })
-        } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send()
     }
 })
 

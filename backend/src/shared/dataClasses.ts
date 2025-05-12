@@ -1,4 +1,4 @@
-import { BookingStatus } from "../db/schema/bookingStatusEnum"
+import { userProfilesTable } from "../db/schema/userProfiles"
 
 export type UserAccountData = {
     id: number
@@ -7,7 +7,10 @@ export type UserAccountData = {
     isSuspended: boolean
 }
 
+export type UserProfileData = typeof userProfilesTable.$inferSelect
+
 export type ServiceProvidedData = {
+    serviceProvidedID: number
     serviceName: string
     description: string
     price: number
@@ -42,12 +45,18 @@ export type CleanerServicesData = {
     cleaner: string
     service: string
     price: number
+    description: string
+    serviceProvidedID: number
 }
 
-export type ServiceHistory = {
+export type ServiceHistoryData = {
     cleanerName: string | null;
     serviceName: string | null;
     date: Date;
     price: string | null;
-    status: BookingStatus;
-};
+}
+
+export type ShortlistData = {
+    cleanerName: string
+    serviceName: string
+}

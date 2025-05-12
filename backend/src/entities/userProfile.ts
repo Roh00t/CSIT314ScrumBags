@@ -1,5 +1,5 @@
-import { UserProfilesSelect, userProfilesTable } from '../db/schema/userProfiles'
-import { SearchUserProfileNoResultError } from '../shared/exceptions'
+import { userProfilesTable } from '../db/schema/userProfiles'
+import { UserProfileData } from '../shared/dataClasses'
 import { DrizzleClient } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { ilike } from 'drizzle-orm'
@@ -31,12 +31,12 @@ export class UserProfile {
      * US-9: As a user admin, I want to view user profiles 
      *       so that I can access profile information
      */
-    public async viewUserProfiles(): Promise<UserProfilesSelect[]> {
-        const result = await this.db
-            .select()
-            .from(userProfilesTable)
-
-        return result
+    public async viewUserProfiles(): Promise<UserProfileData[]> {
+        try {
+            return await this.db.select().from(userProfilesTable)
+        } catch (err) {
+            return []
+        }
     }
 
     /**
@@ -46,22 +46,36 @@ export class UserProfile {
     public async updateUserProfile(
         oldProfileName: string,
         newProfileName: string
-    ): Promise<void> {
-        await this.db
-            .update(userProfilesTable)
-            .set({ label: newProfileName })
-            .where(eq(userProfilesTable.label, oldProfileName))
+    ): Promise<boolean> {
+        try {
+            if (newProfileName.length === 0) {
+                return false
+            }
+
+            await this.db
+                .update(userProfilesTable)
+                .set({ label: newProfileName })
+                .where(eq(userProfilesTable.label, oldProfileName))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**
      * US-11: As a user admin, I want to suspend user profiles 
      *        so that I can restrict user access if necessary
      */
-    public async suspendUserProfile(profileName: string): Promise<void> {
-        await this.db
-            .update(userProfilesTable)
-            .set({ isSuspended: true })
-            .where(eq(userProfilesTable.label, profileName))
+    public async suspendUserProfile(profileName: string): Promise<boolean> {
+        try {
+            await this.db
+                .update(userProfilesTable)
+                .set({ isSuspended: true })
+                .where(eq(userProfilesTable.label, profileName))
+            return true
+        } catch (err) {
+            return false
+        }
     }
 
     /**
@@ -79,16 +93,20 @@ export class UserProfile {
      * US-12: As a user admin, I want to search for user profiles 
      *        so that I can find specific user profiles
      */
-    public async searchUserProfile(search: string): Promise<UserProfilesSelect> {
-        const [profile] = await this.db
-            .select()
-            .from(userProfilesTable)
-            .where(ilike(userProfilesTable.label, `%${search}%`)) // partial + case-insensitive
-            .limit(1)
+    public async searchUserProfile(search: string): Promise<UserProfileData | null> {
+        try {
+            const [userProfile] = await this.db
+                .select()
+                .from(userProfilesTable)
+                .where(ilike(userProfilesTable.label, `%${search}%`))
+                .limit(1)
 
-        if (!profile) {
-            throw new SearchUserProfileNoResultError(search)
+            if (!userProfile) {
+                return null
+            }
+            return userProfile
+        } catch (err) {
+            return null
         }
-        return profile
     }
 }
