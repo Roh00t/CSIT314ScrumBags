@@ -13,7 +13,10 @@ const ViewCleanerService: React.FC = () => {
   // Popup modals
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [showShortlistModal, setShowShortlistModal] = useState(false)
-  const [showViewCleanerModal, setShowViewCleanerModal] = useState(false)
+
+  // Alex: Commented out for now, to ensure build/tests pass ----
+  //       Unused variables prevent the project from building ._.
+  // const [showViewCleanerModal, setShowViewCleanerModal] = useState(false)
 
   const handleShortlist = async () => {
     try {
