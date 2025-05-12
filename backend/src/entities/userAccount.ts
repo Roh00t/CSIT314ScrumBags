@@ -160,7 +160,7 @@ export default class UserAccount {
                 .select({
                     cleanerID: userAccountsTable.id,
                     cleaner: userAccountsTable.username,
-                    serviceCategory: serviceCategoriesTable.label,
+                    serviceName: servicesProvidedTable.serviceName,
                     price: servicesProvidedTable.price,
                     description: servicesProvidedTable.description,
                     serviceID: servicesProvidedTable.id
@@ -184,7 +184,7 @@ export default class UserAccount {
                 return {
                     cleanerID: query.cleanerID,
                     cleaner: query.cleaner,
-                    service: query.serviceCategory,
+                    service: query.serviceName,
                     price: Number(query.price),
                     description: query.description,
                     serviceProvidedID: query.serviceID

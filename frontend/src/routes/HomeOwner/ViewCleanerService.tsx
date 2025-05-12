@@ -99,7 +99,7 @@ const ViewCleanerService: React.FC = () => {
         </div>
       )}
 
-      {showViewCleanerModal && (
+      {/* {showViewCleanerModal && (
         <div className='modal-overlay'>
           <div className='modal'>
             <p>This is empty for now, our user story is to view cleaner service, we already have a bce to view each service provided but its under cleaner should we do it?</p>
@@ -109,7 +109,7 @@ const ViewCleanerService: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="body-container">
         <div className="card">
@@ -151,14 +151,14 @@ const ViewCleanerService: React.FC = () => {
                     <td>${service.price?.toFixed(2)}</td>
                     <td>
                       <div className="action-buttons">
-                        <button
+                        {/* <button
                           className="view-btn"
                           onClick={() => {
                             setCurrentServiceID(service.serviceProvidedID)
                             setShowViewCleanerModal(true)
                           }}>
                           View
-                        </button>
+                        </button> */}
                         <button
                           className="shortlist-btn"
                           onClick={() => {
