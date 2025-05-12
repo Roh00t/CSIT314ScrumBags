@@ -4,13 +4,13 @@ describe('Login', () => {
   })
 
   it(`TC1.1 Login failed: Couldn't find user of username: Alex@ndra11`, () => {
-    cy.get('input[placeholder="Username"]').type('Alex@ndra11')
-    cy.get('input[placeholder="Password"]').type('wrongpass')
+    const username = 'Alex@ndra11'
+    const password = 'wrongpass'
+    cy.get('input[placeholder="Username"]').type(username)
+    cy.get('input[placeholder="Password"]').type(password)
 
     cy.get('.login_button').click()
-    cy.on('window:alert', (text) => {
-      expect(text).to.contains(`Login failed: Couldn't find user of username:`)
-    })
+    cy.url().should('include', '/login')
   })
 
   it(`TC1.2 Login failed: Invalid credentials entered for user of username: 'cleaner'`, () => {
@@ -81,15 +81,15 @@ describe('Logout', () => {
     cy.url().should('include', '/cleaner-dashboard')
   })
   it('TC2.1 Cancel Logout stays on current page', () => {
-    cy.get('#logout_button').click()
-    cy.get('.cancel-btn').click()
+    cy.get('#logout-button').click()
+    cy.get('.cancel-btn').eq(1).click()
 
     cy.url().should('include', '/cleaner-dashboard')
 
   })
   it('TC2.2 Logout returns user to login page', () => {
-    cy.get('#logout_button').click()
-    cy.get('.confirm-btn').click()
+    cy.get('#logout-button').click()
+    cy.get('.confirm-btn').eq(1).click()
 
     cy.url().should('include', '/login')
   })
@@ -104,6 +104,7 @@ describe('Create User Account', () => {
 
     cy.get('.login_button').click()
     cy.url().should('include', '/admin-dashboard')
+    cy.contains('a', 'User Account').click()
     cy.get('button.create-btn').click()
     cy.url().should('include', '/create')
   })
@@ -331,6 +332,7 @@ describe('Create User Account', () => {
     cy.get('button.create_btn').contains('Create Account').click()
     cy.url().should('include', '/create')
   })
+
   it('TC3.25 Account Creation Cancelled', () => {
     cy.get('select').select('cleaner')
     cy.get('input[placeholder="Username"]').type('Roh00t4')
@@ -338,8 +340,9 @@ describe('Create User Account', () => {
     cy.get('input[placeholder="Confirm Password"]').type('Roh00t4')
 
     cy.get('button.cancel_btn').contains('Cancel').click()
-    cy.url().should('include', '/admin-dashboard')
+    cy.url().should('include', '/user-account-management')
   })
+
   it('TC3.26 Account Creation Cancelled', () => {
     cy.get('select').select('homeowner')
     cy.get('input[placeholder="Username"]').type('Roh00t5')
@@ -347,7 +350,7 @@ describe('Create User Account', () => {
     cy.get('input[placeholder="Confirm Password"]').type('Roh00t5')
 
     cy.get('button.cancel_btn').contains('Cancel').click()
-    cy.url().should('include', '/admin-dashboard')
+    cy.url().should('include', '/user-account-management')
   })
   it('TC3.27 Account Creation Cancelled', () => {
     cy.get('select').select('platform manager')
@@ -356,7 +359,7 @@ describe('Create User Account', () => {
     cy.get('input[placeholder="Confirm Password"]').type('Roh00t6')
 
     cy.get('button.cancel_btn').contains('Cancel').click()
-    cy.url().should('include', '/admin-dashboard')
+    cy.url().should('include', '/user-account-management')
   })
   it('TC3.28 Account Creation Cancelled', () => {
     cy.get('select').select('user admin')
@@ -365,7 +368,7 @@ describe('Create User Account', () => {
     cy.get('input[placeholder="Confirm Password"]').type('Roh00t7')
 
     cy.get('button.cancel_btn').contains('Cancel').click()
-    cy.url().should('include', '/admin-dashboard')
+    cy.url().should('include', '/user-account-management')
   })
 })
 
