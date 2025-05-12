@@ -1,4 +1,5 @@
 import { ServicesProvidedSelect, servicesProvidedTable } from "../schema/servicesProvided"
+import { ServiceViewsInsert, serviceViewsTable } from "../schema/serviceViews"
 import { UserAccountsSelect, userAccountsTable } from "../schema/userAccounts"
 import { serviceCategoriesTable } from "../schema/serviceCategories"
 import { serviceBookingsTable } from "../schema/serviceBookings"
@@ -55,4 +56,45 @@ export const initShortlistEntries = async (
         .insert(shortlistedServicesTable)
         .values(shortlistEntriesToInsert)
         .onConflictDoNothing()
+}
+
+export const initServiceViews = async (
+    db: DrizzleClient,
+    allHomeowners: UserAccountsSelect[],
+    allServicesProvided: ServicesProvidedSelect[]
+): Promise<void> => {
+    const viewsToAdd: ServiceViewsInsert[] = []
+
+    // For later - the 'viewedAt' timestamp to only go back 2 years (change as necessary)
+    const twoYearsAgo = new Date()
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2)
+
+    allHomeowners.forEach(ho => {
+
+        // Each home owner must view at least ONE service
+        const servicesSubset = faker.helpers.arrayElements(
+            allServicesProvided,
+            { min: 1, max: allServicesProvided.length }
+        )
+
+        servicesSubset.forEach(svc => {
+            // Each service viewed must be viewed at least ONCE
+            const noOfViews = faker.number.int({ min: 1, max: 5 })
+
+            for (let i = 0; i < noOfViews; i++) {
+                viewsToAdd.push({
+                    homeownerID: ho.id,
+                    serviceProvidedID: svc.id,
+                    viewedAt: faker.date.between({
+                        from: twoYearsAgo,
+                        to: new Date()
+                    })
+                })
+            }
+        })
+    })
+
+    await db
+        .insert(serviceViewsTable)
+        .values(viewsToAdd)
 }

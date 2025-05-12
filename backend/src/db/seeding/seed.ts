@@ -10,7 +10,7 @@ const CLEANER_SUSPENSION_CHANCE = 0.1
 //==================================================================================
 import { presetServiceCategories, presetServiceNames } from './sensibleDefaults'
 import { createUserAccount, generateUserAccounts } from './userAccountHelpers'
-import { clearTheDatabase, initShortlistEntries } from './shared'
+import { clearTheDatabase, initServiceViews, initShortlistEntries } from './shared'
 import { userProfilesTable } from '../schema/userProfiles'
 import { DrizzleClient } from '../../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
@@ -68,6 +68,7 @@ const driver = async (db: DrizzleClient): Promise<void> => {
     )
     await initServiceBookings(db, allHomeowners, allServicesProvided)
     await initShortlistEntries(db, allHomeowners, allServicesProvided)
+    await initServiceViews(db, allHomeowners, allServicesProvided)
     console.log("Successfully seeded the database!")
 }
 
