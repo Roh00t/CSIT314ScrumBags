@@ -22,7 +22,7 @@ const CreateProfilePage: React.FC = () => {
         { withCredentials: true }
       )
 
-      if (response.data.message === 'Success') {
+      if (response.data === true) {
         console.log('response.data:', response.data);
         setSuccess('Profile created successfully!🥳')
         setProfileName('')
@@ -106,7 +106,7 @@ const CreateProfilePage: React.FC = () => {
           </form>
         </div>
       </div>
-      
+
       <div className="footer-container">
         <p>© Copyright 2025 Easy & Breezy - All Rights Reserved</p>
       </div>

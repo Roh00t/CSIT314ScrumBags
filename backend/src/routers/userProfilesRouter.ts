@@ -15,18 +15,17 @@ const userProfilesRouter = Router()
  *       profiles so that I can map them to user accounts
  */
 userProfilesRouter.post('/', async (req, res): Promise<void> => {
-    try {
-        const { profileName } = req.body
-        const profileCreated =
-            await new CreateNewUserProfileController().createNewUserProfile(profileName)
-        if (!profileCreated) {
-            throw new Error("Unable to create profile '" + profileName + "'")
-        }
-        res.status(StatusCodes.CREATED).json({ message: 'Success' })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
+    const { profileName } = req.body
+
+    const createSuccess =
+        await new CreateNewUserProfileController()
+            .createNewUserProfile(profileName)
+
+    // Return (TRUE | FALSE) depending on whether the profile was created successfully
+    if (createSuccess) {
+        res.status(StatusCodes.CREATED).json(true) // Normal flow
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
     }
 })
 

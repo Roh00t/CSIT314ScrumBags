@@ -397,7 +397,7 @@ export class ServiceBooking {
      *        can easily find past services for reference and rebooking
      */
     public async searchHomeownerServiceHistory(
-        userID: number,
+        homeownerID: number,
         cleanerName: string | null,
         service: string | null,
         fromDate: Date | string | null,
@@ -405,7 +405,7 @@ export class ServiceBooking {
     ): Promise<ServiceHistoryData[]> {
         try {
             const conditions = [
-                eq(serviceBookingsTable.homeownerID, userID),
+                eq(serviceBookingsTable.homeownerID, homeownerID),
             ];
 
             if (service) {

@@ -395,42 +395,48 @@ describe('Create User Profile', () => {
     it('TC4.2 User Profile creation', () => {
         cy.get('input[placeholder="User Profile name"]').type('cleaner')
         cy.get('button.create_btn').click()
+        cy.url().should('include', '/create-profile')
 
     })
     it('TC4.3 User Profile creation', () => {
         cy.get('input[placeholder="User Profile name"]').type('home owner')
         cy.get('button.create_btn').click()
+        cy.url().should('include', '/create-profile')
 
     })
     it('TC4.4 User Profile creation', () => {
         cy.get('input[placeholder="User Profile name"]').type('platform manager')
         cy.get('button.create_btn').click()
+        cy.url().should('include', '/create-profile')
     })
     it('TC4.5 User Profile cancellation', () => {
         cy.get('input[placeholder="User Profile name"]').type('cleaner')
         cy.get('button.cancel_btn').click()
+        cy.url().should('include', '/ViewUserProfile')
     })
     it('TC4.6 User Profile cancellation', () => {
         cy.get('input[placeholder="User Profile name"]').type('home owner')
         cy.get('button.cancel_btn').click()
+        cy.url().should('include', '/ViewUserProfile')
     })
     it('TC4.7 User Profile cancellation', () => {
         cy.get('input[placeholder="User Profile name"]').type('platform manager')
         cy.get('button.cancel_btn').click()
+        cy.url().should('include', '/ViewUserProfile')
     })
     it('TC4.8 User Profile Already Exists', () => {
         cy.get('input[placeholder="User Profile name"]').type('cleaner')
         cy.get('button.create_btn').click()
-        //Enter a check in here
+        cy.url().should('include', '/create-profile')
     })
     it('TC4.9 User Profile Already Exists', () => {
         cy.get('input[placeholder="User Profile name"]').type('home owner')
         cy.get('button.create_btn').click()
-        //Enter a check in here
+        cy.url().should('include', '/create-profile')
     })
     it('TC4.10 User Profile Already Exists', () => {
         cy.get('input[placeholder="User Profile name"]').type('platform manager')
         cy.get('button.create_btn').click()
-        //Enter a check in here
+        cy.url().should('include', '/create-profile')
     })
 })
