@@ -35,34 +35,19 @@ const userAccountsRouter = Router()
  *        system so that I can manage platform operations
  */
 userAccountsRouter.post('/login', async (req, res): Promise<void> => {
-    try {
-        const { username, password } = req.body
-        const controller = new LoginController()
-        const userAccRes = await controller.login(username, password)
+    const { username, password } = req.body
+    const userAccRes = await new LoginController().login(username, password)
+    if (userAccRes !== null) {
         req.session.regenerate(err => {
             if (err) {
-                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                    message: 'Express error: ' + err
-                })
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(null)
                 return
             }
             (req.session as any).user = userAccRes as UserAccountData
             res.status(StatusCodes.OK).json(userAccRes)
         })
-    } catch (err) {
-        if (err instanceof UserAccountNotFoundError) {
-            res.status(StatusCodes.NOT_FOUND).json({ message: err.message })
-        } else if (err instanceof InvalidCredentialsError) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: err.message })
-        } else if (
-            err instanceof UserAccountSuspendedError ||
-            err instanceof UserProfileSuspendedError) {
-            res.status(StatusCodes.LOCKED).json({ message: err.message })
-        } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: (err as Error).message
-            })
-        }
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(null)
     }
 })
 
@@ -77,14 +62,8 @@ userAccountsRouter.post('/login', async (req, res): Promise<void> => {
  *        system so that I can securely end my session
  */
 userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
-    try {
-        await req.session.destroy(_ => { })
-        res.status(StatusCodes.OK).json({ message: 'Logout successful' })
-    } catch (err) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: (err as Error).message
-        })
-    }
+    await req.session.destroy(_ => { })
+    res.status(StatusCodes.OK).send()
 })
 
 /**
@@ -92,28 +71,19 @@ userAccountsRouter.post('/logout', async (req, res): Promise<void> => {
  *       account so that new users can join the platform
  */
 userAccountsRouter.post('/create', async (req, res): Promise<void> => {
-    try {
-        const { createAs, username, password } = req.body
-        const controller = new CreateNewUserAccountController()
-        const isCreatedSuccessfully = await controller.createNewUserAccount(
-            createAs,
-            username,
-            password
-        )
+    const { createAs, username, password } = req.body
+    const controller = new CreateNewUserAccountController()
+    const isCreatedSuccessfully = await controller.createNewUserAccount(
+        createAs,
+        username,
+        password
+    )
 
-        if (isCreatedSuccessfully) {
-            res.status(StatusCodes.CREATED).json({
-                message: 'Account created successfully'
-            })
-        } else {
-            res.status(StatusCodes.CONFLICT).json({
-                message: 'Account creation failed'
-            })
-        }
-    } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: ReasonPhrases.INTERNAL_SERVER_ERROR
-        })
+    // Return (TRUE | FALSE) depending on whether account creation was successful
+    if (isCreatedSuccessfully) {
+        res.status(StatusCodes.CREATED).json(true) // Normal flow
+    } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
     }
 })
 
@@ -159,10 +129,12 @@ userAccountsRouter.post('/update', async (req, res): Promise<void> => {
         updatedUsername,
         updatedPassword
     )
+
+    // Return (TRUE | FALSE) depending on whether account update was successful (or not)
     if (updateSuccess) {
-        res.status(StatusCodes.OK).json(true)
+        res.status(StatusCodes.OK).json(true) // Normal flow
     } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
     }
 })
 
@@ -175,10 +147,12 @@ userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
     const suspensionSuccess =
         await new SuspendUserAccountController()
             .suspendUserAccount(id)
+
+    // Return (TRUE | FALSE) depending on whether account update was successful (or not)   
     if (suspensionSuccess) {
-        res.status(StatusCodes.OK).json(true)
+        res.status(StatusCodes.OK).json(true) // Normal flow
     } else {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false)
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(false) // Alternate flow
     }
 })
 
