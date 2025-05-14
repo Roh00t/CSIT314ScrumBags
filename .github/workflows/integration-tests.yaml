@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
+      cypress_test_db:
         image: postgres:16.8-alpine
         env:
           POSTGRES_DB: scrumbags_db
@@ -27,10 +27,24 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+      backend_test_db:
+        image: postgres:16.8-alpine
+        env:
+          POSTGRES_DB: scrumbags_db
+          POSTGRES_USER: scrumbags_user
+          POSTGRES_PASSWORD: scrumbags_password
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
-      # ======= Set up and start backend ======
+      # =====================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -41,14 +55,25 @@ jobs:
       - name: Install Backend Dependencies
         run: cd ./backend && npm ci
 
-      - name: Push Schema to Database
+      # =====================================================
+      - name: Setup test DB for ExpressJS unit tests
         run: |
           set -e
           cd ./backend
           npm run db:push
+          npm run db:seed:base
         env:
-          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5433/scrumbags_db
+          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_db
 
+      # =====================================
+      - name: Run backend unit tests
+        run: |
+          cd ./backend
+          npm run tests
+        env:
+          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_db
+
+      # ========================================
       - name: Build and Start Backend
         run: |
           cd ./backend
@@ -59,7 +84,17 @@ jobs:
           PORT: 3000
           SESSION_SECRET: 445E6FFEB3624C52C543893E3E8EE
 
-      # ====== Set up and start frontend ======
+      # =========================================
+      - name: Setup test DB for Cypress E2E
+        run: |
+          set -e
+          cd ./backend
+          npm run db:push
+          npm run db:seed:base
+        env:
+          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5433/scrumbags_db
+
+      # =====================================
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -73,7 +108,7 @@ jobs:
       - name: Start the Dev Server
         run: cd ./frontend && npm run dev &
 
-      # ===== Wait for servers to be ready ======
+      # =====================================
       - name: Wait for Servers
         run: |
           echo "Waiting for frontend to start..."
@@ -81,11 +116,7 @@ jobs:
           echo "Waiting for backend to start..."
           npx wait-on http://localhost:3000/health -t 30000
 
-      # ======== Seed the base accounts only ========
-      - name: Seed Database
-        run: cd ./backend && npm run db:seed:base
-
-      # ======== Run tests ========
+      # =========================================
       - name: Run Cypress E2E Tests
         run: cd ./frontend && npx cypress run
 
