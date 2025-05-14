@@ -63,7 +63,7 @@ jobs:
           npm run db:push
           npm run db:seed:base
         env:
-          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_db
+          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_test_db
 
       # =====================================
       - name: Run backend unit tests
@@ -71,7 +71,7 @@ jobs:
           cd ./backend
           npm run tests
         env:
-          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_db
+          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_test_db
 
       # ========================================
       - name: Build and Start Backend
