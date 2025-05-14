@@ -114,30 +114,32 @@ const CleanerViewServicesRoute: React.FC = () => {
     const handleCreateService = async () => {
         try {
             console.log(newService)
+            if(newService.serviceCategory == '' || newService.description == '' || newService.serviceName == '' || newService.price == ''){
+                alert('Failed to create service.')
+            } else {
+                const response = await fetch('http://localhost:3000/api/services/me', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        service: newService.serviceName,
+                        category: newService.serviceCategory,
+                        description: newService.description,
+                        price: Number(newService.price),
+                    }),
+                    credentials: 'include',
+                })
+                if (!response.ok) {
+                    const errorData = await response.json()
+                    throw new Error(errorData.message || 'Failed to create service')
+                }
             
-            const response = await fetch('http://localhost:3000/api/services/me', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    service: newService.serviceName,
-                    category: newService.serviceCategory,
-                    description: newService.description,
-                    price: Number(newService.price),
-                }),
-                credentials: 'include',
-            })
-        
-            if (!response.ok) {
-                const errorData = await response.json()
-                throw new Error(errorData.message || 'Failed to create service')
+                setCreateServiceModal(false)
+                setNewService({ serviceCategory:'', serviceName: '', description: '', price: '' })
+                await fetchServices() // re-fetch without refreshing
             }
-        
-            setCreateServiceModal(false)
-            setNewService({ serviceCategory:'', serviceName: '', description: '', price: '' })
-            await fetchServices() // re-fetch without refreshing
-            } catch (error) {
+        } catch (error) {
                 console.error('Error creating service:', error)
                 alert('Failed to create service.')
             }
@@ -267,6 +269,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                             id="categoryDropdown"
                             value={newService.serviceCategory}
                             onChange={(e) => setNewService({ ...newService, serviceCategory: e.target.value })}
+                            required
                         >
                             <option value=''>Select a service</option>
                             {availableCategories.map((categoryName, index) => (
@@ -282,6 +285,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                             placeholder="e.g Sweep floor"
                             value={newService.serviceName}
                             onChange={(e) => setNewService({ ...newService, serviceName: e.target.value })}    
+                            required
                         />
 
                         <label>Service Description</label>
@@ -290,6 +294,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                             value={newService.description}
                             onChange={(e) => setNewService({ ...newService, description: e.target.value })}
                             rows={4}
+                            required
                         />
 
                         <label>Price</label>
@@ -299,6 +304,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                             min="0"
                             value={newService.price}
                             onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+                            required
                         />
 
                         <div className="modal-buttons">

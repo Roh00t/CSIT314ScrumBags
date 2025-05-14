@@ -9,7 +9,7 @@ const ViewServiceCategories: React.FC = () => {
   const [services, setServices] = useState<string[]>([])
   const [search, setSearch] = useState<string>('')
   const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const [showPopup, setShowPopup] = useState(false)
+  const [createServiceCategoryModal, setCreateServiceCategoryModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showUpdateModal, setShowUpdateModal] = useState(false)  // Added for update modal
   const [selectedService, setSelectedService] = useState<string | null>(null)
@@ -108,7 +108,7 @@ const ViewServiceCategories: React.FC = () => {
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
       {/* Create Category Modal */}
-      {showPopup && (
+      {createServiceCategoryModal && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Create New Service Category</h2>
@@ -121,30 +121,34 @@ const ViewServiceCategories: React.FC = () => {
               onChange={(e) => setNewServiceCategory({ ...newServiceCategory, serviceName: e.target.value })}
             />
             <div className="modal-buttons">
-              <button onClick={() => setShowPopup(false)}>Cancel</button>
+              <button onClick={() => setCreateServiceCategoryModal(false)}>Cancel</button>
               <button onClick={async () => {
                 try {
-                  const response = await fetch('http://localhost:3000/api/services/categories', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ category: newServiceCategory.serviceName }),
-                    credentials: 'include',
-                  })
+                  if (newServiceCategory.serviceName == ''){
+                    alert('Failed to create service category.')
+                  } else {
+                    const response = await fetch('http://localhost:3000/api/services/categories', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ category: newServiceCategory.serviceName }),
+                      credentials: 'include',
+                    })
 
-                  if (!response.ok) {
-                    const errorData = await response.json()
-                    throw new Error(errorData.message || 'Failed to create service category')
+                    if (!response.ok) {
+                      const errorData = await response.json()
+                      throw new Error(errorData.message || 'Failed to create service category')
+                    }
+
+                    setCreateServiceCategoryModal(false)
+                    setNewServiceCategory({ serviceName: '' })
+                    window.location.reload()
                   }
-
-                  setShowPopup(false)
-                  setNewServiceCategory({ serviceName: '' })
-                  window.location.reload()
                 } catch (error) {
                   console.error('Error creating service category:', error)
                   alert('Failed to create service category.')
                 }
               }}>
-                Add
+                Create
               </button>
             </div>
           </div>
@@ -218,7 +222,7 @@ const ViewServiceCategories: React.FC = () => {
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleSearch}
             />
-            <button className="create-btn" onClick={() => setShowPopup(true)}>Create New Category</button>
+            <button className="create-btn" onClick={() => setCreateServiceCategoryModal(true)}>Create New Category</button>
           </div>
 
           <table>
