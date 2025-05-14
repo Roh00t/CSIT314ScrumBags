@@ -17,7 +17,7 @@ interface UserProfile {
   isSuspended: boolean
 }
 
-const UserAdminUserAccountManagement: React.FC = () => {
+const ViewUserAccountPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
   const [confirmSuspendModal, setConfirmSuspendModal] = useState<{ show: boolean; user: UserAccountResponse | null }>({
     show: false,
@@ -300,4 +300,4 @@ const UserAdminUserAccountManagement: React.FC = () => {
   )
 }
 
-export default UserAdminUserAccountManagement
+export default ViewUserAccountPage

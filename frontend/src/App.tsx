@@ -16,7 +16,7 @@ import ViewServiceCategories from "./routes/PlatformManager/ViewServiceCategorie
 import HomeOwnerViewHistory from "./routes/HomeOwner/HomeOwnerViewHistory"
 import PlatformManagerViewReports from "./routes/PlatformManager/platformManagerViewReport"
 import HomeownerDashBoard from "./routes/HomeOwner/HomeownerDashBoard"
-import UserAdminUserAccountManagement from "./routes/UserAdmin/UserAdminUserAccountManagement"
+import ViewUserAccountPage from "./routes/UserAdmin/ViewUserAccountPage"
 import CleanerViewMyBookings from "./routes/Cleaner/CleanerViewMyBookings"
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -31,7 +31,7 @@ const browserRouter = createBrowserRouter([
   { path: "/ViewServiceHistory", element: <HomeOwnerViewHistory /> },
   { path: "/platformManager-view-report", element: <PlatformManagerViewReports /> },
   { path: "/homeowner-dashboard", element: <HomeownerDashBoard /> },
-  { path: "/user-account-management", element: <UserAdminUserAccountManagement /> },
+  { path: "/user-account-management", element: <ViewUserAccountPage /> },
   // Protected Routes (only accessible when logged in)
   {
     path: "/cleaner-view-bookings",
@@ -43,7 +43,7 @@ const browserRouter = createBrowserRouter([
   {
     path: "/user-account-management",
     element: <ProtectedRoute>
-      <UserAdminUserAccountManagement />
+      <ViewUserAccountPage />
     </ProtectedRoute>
   },
   {
