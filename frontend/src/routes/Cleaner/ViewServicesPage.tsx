@@ -58,7 +58,7 @@ const ViewServicesPage: React.FC = () => {
     // Popup modals
     const [showLogoutModal, setShowLogoutModal] = useState(false)
     const [createServiceModal, setCreateServiceModal] = useState(false)
-    const [deleteServiceModal, setDeleteServiceModal] = useState(false)
+    const [deleteServiceProvidedModal, setDeleteServiceProvidedModal] = useState(false)
     const [updateServiceProvidedModal, setUpdateServiceProvidedModal] = useState(false)
     const [viewServiceModal, setViewServiceModal] = useState(false)
 
@@ -161,9 +161,11 @@ const ViewServicesPage: React.FC = () => {
             if (!response.ok) {
                 const errorData = await response.json()
                 throw new Error(errorData.message || 'Failed to delete service')
+            } else {
+                alert("Service deleted successfully")
             }
 
-            setDeleteServiceModal(false)
+            setDeleteServiceProvidedModal(false)
             await fetchServices()
         } catch (error) {
             console.error('Error deleting service: ', error)
@@ -318,12 +320,12 @@ const ViewServicesPage: React.FC = () => {
             )}
 
             {/* Delete Modal */}
-            {deleteServiceModal && (
+            {deleteServiceProvidedModal && (
                 <div className="modal-overlay">
                     <div className="modal">
                         <h2>Are you sure you want to delete "{selectedServiceName}"?</h2>
                         <div className="modal-buttons">
-                            <button onClick={() => setDeleteServiceModal(false)}>Cancel</button>
+                            <button onClick={() => setDeleteServiceProvidedModal(false)}>Cancel</button>
                             <button onClick={handleDelete} className="delete-btn">Delete</button>
                         </div>
                     </div>
@@ -416,56 +418,65 @@ const ViewServicesPage: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {services.map((service, index) => (
-                            <tr key={service.id || index}>
-                                <td>{service.type}</td>
-                                <td>${service.price}</td>
-                                <td>
-                                    <div className="action-buttons">
-                                        <button
-                                        className="view-btn"
-                                        onClick={async () => {
-                                            setSelectedServiceName(service.type)
-                                            setSelectedService(service.id)
-                                            setViewService({
-                                                id: service.id,
-                                                type: service.type,
-                                                description: service.description,
-                                                price: service.price
-                                            })
-                                            await handleView(service.id)
-                                            setViewServiceModal(true)
-                                        }}>
-                                            View
-                                        </button>
-                                        <button
-                                        className="edit-btn"
-                                        onClick={() => {
-                                            setSelectedServiceName(service.type)
-                                            setSelectedService(service.id)
-                                            setEditService({
-                                                serviceName: service.type,
-                                                description: service.description,
-                                                price: service.price.toString(), // Convert number to string to match `editServiceInput`
-                                            })
-                                            setUpdateServiceProvidedModal(true)
-                                        }}>
-                                            Edit
-                                        </button>
-                                        <button
-                                        className="delete-btn"
-                                        onClick={() => {
-                                            setSelectedServiceName(service.type)
-                                            setSelectedService(service.id)
-                                            setDeleteServiceModal(true)
-                                        }}>
-                                            Delete
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            ))}
+                            {services.length === 0 ? (
+                                <tr>
+                                    <td colSpan={3} style={{ textAlign: 'center', padding: '1rem' }}>
+                                        No service found.
+                                    </td>
+                                </tr>
+                            ) : (
+                                services.map((service, index) => (
+                                    <tr key={service.id || index}>
+                                        <td>{service.type}</td>
+                                        <td>${service.price}</td>
+                                        <td>
+                                            <div className="action-buttons">
+                                                <button
+                                                    className="view-btn"
+                                                    onClick={async () => {
+                                                        setSelectedServiceName(service.type)
+                                                        setSelectedService(service.id)
+                                                        setViewService({
+                                                            id: service.id,
+                                                            type: service.type,
+                                                            description: service.description,
+                                                            price: service.price
+                                                        })
+                                                        await handleView(service.id)
+                                                        setViewServiceModal(true)
+                                                    }}>
+                                                    View
+                                                </button>
+                                                <button
+                                                    className="edit-btn"
+                                                    onClick={() => {
+                                                        setSelectedServiceName(service.type)
+                                                        setSelectedService(service.id)
+                                                        setEditService({
+                                                            serviceName: service.type,
+                                                            description: service.description,
+                                                            price: service.price.toString(),
+                                                        })
+                                                        setUpdateServiceProvidedModal(true)
+                                                    }}>
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    className="delete-btn"
+                                                    onClick={() => {
+                                                        setSelectedServiceName(service.type)
+                                                        setSelectedService(service.id)
+                                                        setDeleteServiceProvidedModal(true)
+                                                    }}>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
+
                     </table>
                 </div>
             </div>

@@ -86,7 +86,6 @@ const ViewShortlistPage: React.FC = () => {
                 <th>ID</th>
                 <th>Username</th>
                 <th>Type of Service</th>
-                {/* <th>Actions</th> */}
               </tr>
             </thead>
             <tbody>
@@ -96,13 +95,7 @@ const ViewShortlistPage: React.FC = () => {
                     <td>{index + 1}</td>
                     <td>{user.cleanerName}</td>
                     <td>{user.serviceName}</td>
-                    {/* <td>
-                      <div className="action-buttons">
-                        <button className="view-btn">View</button>
-                        <button className="edit-btn">Edit</button>
-                        <button className="delete-btn">Delete</button>
-                      </div>
-                    </td> */}
+
                   </tr>
                 ))
               ) : (
