@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import logo from '../../assets/logo.png';
 import LogoutModal from '../../components/LogoutModal';
 
-const CreateProfilePage: React.FC = () => {
+const CreateNewUserProfilePage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const [profileName, setProfileName] = useState('')
   const [error, setError] = useState('')
@@ -115,4 +115,4 @@ const CreateProfilePage: React.FC = () => {
   )
 }
 
-export default CreateProfilePage
+export default CreateNewUserProfilePage

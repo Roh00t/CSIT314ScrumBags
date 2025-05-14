@@ -5,7 +5,7 @@ import PlatformManagerDashboard from "./routes/PlatformManager/PlatformManagerDa
 import HomeRoute from "./routes/HomeRoute"
 import Login from "./routes/Login"
 import CreateAccountPage from "./routes/UserAdmin/CreateUserAccount"
-import CreateProfilePage from "./routes/UserAdmin/CreateUserProfile"
+import CreateNewUserProfilePage from "./routes/UserAdmin/CreateNewUserProfilePage"
 import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
@@ -23,7 +23,7 @@ const browserRouter = createBrowserRouter([
   { path: "/", element: <HomeRoute /> },
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateAccountPage /> },
-  { path: "/create-profile", element: <CreateProfilePage /> },
+  { path: "/create-profile", element: <CreateNewUserProfilePage /> },
   { path: "/ViewUserProfile", element: <ViewUserProfile /> },
   { path: "/ViewCleanerService", element: <ViewCleanerService /> },
   { path: "/ViewShortlist", element: <ViewShortlist /> },
@@ -73,7 +73,7 @@ const browserRouter = createBrowserRouter([
     path: "/create-profile",
     element: (
       <ProtectedRoute>
-        <CreateProfilePage />
+        <CreateNewUserProfilePage />
       </ProtectedRoute>
     ),
   },
