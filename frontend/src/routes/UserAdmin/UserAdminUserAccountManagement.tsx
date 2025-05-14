@@ -11,12 +11,19 @@ interface UserAccountResponse {
   isSuspended: boolean
 }
 
+interface UserProfile {
+  id: number
+  label: string
+  isSuspended: boolean
+}
+
 const UserAdminUserAccountManagement: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
   const [confirmSuspendModal, setConfirmSuspendModal] = useState<{ show: boolean; user: UserAccountResponse | null }>({
     show: false,
     user: null
   })
+  const [roles, setRoles] = useState<UserProfile[]>([]); // Correct for array of strings
   const [newStatus, setNewStatus] = useState<'Active' | 'Suspended'>('Active')
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -70,6 +77,30 @@ const UserAdminUserAccountManagement: React.FC = () => {
       setError('Action failed!')
     }
   }
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/user-profiles/', {
+          withCredentials: true,
+        });
+
+        const data = response.data; // ✅ this is already the array of roles
+        if (Array.isArray(data)) {
+          setRoles(data); // ✅ use directly
+        } else {
+          console.error('Expected array of roles but got:', data);
+          setRoles([]);
+          setError('Unexpected server response.');
+        }
+      } catch (err) {
+        console.error('Failed to fetch roles:', err);
+        setError('Could not load roles. Please try again later.');
+      }
+    };
+
+    fetchRoles();
+  }, []); 
 
   return (
     <div className="page-container">
@@ -210,12 +241,22 @@ const UserAdminUserAccountManagement: React.FC = () => {
               <div className="modal">
                 <h2>Update User Account</h2>
                 <label>Update As:</label>
-                <select value={editingUser.role} onChange={e => setEditingUser({ ...editingUser, role: e.target.value })}>
-                  <option value="">Select Role</option>
-                  <option value="cleaner">Cleaner</option>
-                  <option value="homeowner">Homeowner</option>
-                  <option value="platform manager">Platform Manager</option>
-                  <option value="user admin">User Admin</option>
+                <select
+                  value={editingUser.role}
+                  onChange={e => setEditingUser({ ...editingUser, role: e.target.value })}
+                  required
+                >
+                  <option value="" disabled>Select Role</option>
+
+                  {roles.length === 0 ? (
+                    <option disabled>Loading roles...</option>
+                  ) : (
+                    roles.map(r => (
+                      <option key={r.id} value={r.label}>
+                        {r.label.charAt(0).toUpperCase() + r.label.slice(1)}
+                      </option>
+                    ))
+                  )}
                 </select>
                 <label>Username:</label>
                 <input type="text" value={editingUser.username} onChange={e => setEditingUser({ ...editingUser, username: e.target.value })} required />

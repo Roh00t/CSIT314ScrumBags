@@ -47,10 +47,10 @@ const Login: React.FC = () => {
     } catch (error: any) {
       if (error.response) {
         console.error('Login failed:', error.response.data?.message)
-        alert('Login failed: ' + error.response.data?.message)
+        alert('Login failed')
       } else {
         console.error('Network or server error:', error.message)
-        alert('Something went wrong. Please try again.')
+        alert('Login failed')
       }
     }
   }
