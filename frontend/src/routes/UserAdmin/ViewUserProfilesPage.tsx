@@ -10,7 +10,7 @@ interface Role {
   isSuspended: boolean;
 }
 
-const ViewUserRoles: React.FC = () => {
+const ViewUserProfilePage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -108,7 +108,7 @@ const ViewUserRoles: React.FC = () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Profile Name</th>
+                <th>Profile</th>
                 <th>Status</th>
                 <th id="actionCol">Actions</th>
               </tr>
@@ -138,7 +138,7 @@ const ViewUserRoles: React.FC = () => {
                             setNewStatus(role.isSuspended ? 'Active' : 'Suspended');
                             setShowSuspendModal(true);
                           }}
-                        >{role.isSuspended ? 'Unsuspend' : 'Suspend'}</button>
+                        >{role.isSuspended ? '🚫' : '🗑️'}</button>
                       </div>
                     </td>
                   </tr>
@@ -212,4 +212,4 @@ const ViewUserRoles: React.FC = () => {
   );
 };
 
-export default ViewUserRoles;
+export default ViewUserProfilePage;

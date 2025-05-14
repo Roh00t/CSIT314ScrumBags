@@ -9,7 +9,7 @@ import CreateNewUserProfilePage from "./routes/UserAdmin/CreateNewUserProfilePag
 import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
-import ViewUserProfile from "./routes/UserAdmin/ViewUserProfile"
+import ViewUserProfilePage from "./routes/UserAdmin/ViewUserProfilesPage"
 import ViewCleanerService from "./routes/HomeOwner/ViewCleanerService"
 import ViewShortlist from "./routes/HomeOwner/ViewShortlist"
 import ViewServiceCategories from "./routes/PlatformManager/ViewServiceCategories"
@@ -24,7 +24,7 @@ const browserRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/create", element: <CreateNewUserAccountPage /> },
   { path: "/create-profile", element: <CreateNewUserProfilePage /> },
-  { path: "/ViewUserProfile", element: <ViewUserProfile /> },
+  { path: "/ViewUserProfile", element: <ViewUserProfilePage /> },
   { path: "/ViewCleanerService", element: <ViewCleanerService /> },
   { path: "/ViewShortlist", element: <ViewShortlist /> },
   { path: "/ViewServiceCategories", element: <ViewServiceCategories /> },
@@ -57,7 +57,7 @@ const browserRouter = createBrowserRouter([
     path: "/ViewUserProfile",
     element: (
       <ProtectedRoute>
-        <ViewUserProfile />
+        <ViewUserProfilePage />
       </ProtectedRoute>
     ),
   },

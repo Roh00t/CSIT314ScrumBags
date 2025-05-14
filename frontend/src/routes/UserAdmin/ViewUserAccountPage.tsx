@@ -164,7 +164,7 @@ const ViewUserAccountPage: React.FC = () => {
               <tr>
                 <th>ID</th>
                 <th>Username</th>
-                <th>Role</th>
+                <th>Profile</th>
                 <th>Status</th>
                 <th id="actionCol">Actions</th>
               </tr>
