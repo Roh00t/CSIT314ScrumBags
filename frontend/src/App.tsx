@@ -1,8 +1,6 @@
 import React from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
-import HomeownerDashBoard from "./routes/HomeOwner/HomeownerDashBoard"
-import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import LoginPage from "./routes/LoginPage"
 
 // User admin
@@ -17,15 +15,20 @@ import PlatformManagerDashboard from "./routes/PlatformManager/PlatformManagerDa
 import ViewServiceCategoryPage from "./routes/PlatformManager/ViewServiceCategoryPage"
 import ReportPage from "./routes/PlatformManager/ReportPage"
 
+// Homeowner
+import HomeownerDashBoard from "./routes/HomeOwner/HomeownerDashBoard"
+import ViewCleanersPage from "./routes/HomeOwner/ViewCleanersPage"
+import ViewHomeOwnerServiceHistoryPage from "./routes/HomeOwner/ViewHomeownerServiceHistoryPage"
+import ViewShortlistPage from "./routes/HomeOwner/ViewShortlistPage"
+
+// Cleaner
+import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
+import ViewCleanerServiceHistoryPage from "./routes/Cleaner/ViewCleanerServiceHistoryPage"
+import ViewServicesPage from "./routes/Cleaner/ViewServicesPage"
 
 import HomeRoute from "./routes/HomeRoute"
 
-import CleanerViewServicesRoute from "./routes/Cleaner/ViewServicesPage"
 
-import ViewCleanerService from "./routes/HomeOwner/ViewCleanersPage"
-import ViewShortlist from "./routes/HomeOwner/ViewShortlistPage"
-import HomeOwnerViewHistory from "./routes/HomeOwner/ViewHomeownerServiceHistoryPage"
-import CleanerViewMyBookings from "./routes/Cleaner/ViewCleanerServiceHistoryPage"
 const browserRouter = createBrowserRouter([
   // Public Routes
   { path: "/", element: <LoginPage /> },
@@ -88,23 +91,15 @@ const browserRouter = createBrowserRouter([
       </ProtectedRoute>
     )
   },
-
-
-  { path: "/ViewCleanerService", element: <ViewCleanerService /> },
-  { path: "/ViewShortlist", element: <ViewShortlist /> },
-  { path: "/ViewServiceCategories", element: <ViewServiceCategoryPage /> },
-  { path: "/ViewServiceHistory", element: <HomeOwnerViewHistory /> },
-
-  { path: "/homeowner-dashboard", element: <HomeownerDashBoard /> },
-  { path: "/user-account-management", element: <ViewUserAccountPage /> },
-  // Protected Routes (only accessible when logged in)
-  {
-    path: "/cleaner-view-bookings",
-    element: <ProtectedRoute>
-      <CleanerViewMyBookings />
-    </ProtectedRoute>
+  { path: "/ViewServiceCategories", 
+    element: (
+      <ProtectedRoute>
+        <ViewServiceCategoryPage />
+      </ProtectedRoute>
+    ) 
   },
 
+  // Homeowner
   {
     path: "/homeowner-dashboard",
     element:
@@ -112,6 +107,29 @@ const browserRouter = createBrowserRouter([
         <HomeownerDashBoard />
       </ProtectedRoute>
   },
+  { path: "/ViewCleanerService", 
+    element: (
+      <ProtectedRoute>
+        <ViewCleanersPage />
+      </ProtectedRoute>
+    )
+  },
+  { path: "/ViewServiceHistory", 
+    element: (
+      <ProtectedRoute>
+        <ViewHomeOwnerServiceHistoryPage />
+      </ProtectedRoute>
+    )
+  },
+  { path: "/ViewShortlist", 
+    element: (
+      <ProtectedRoute>
+        <ViewShortlistPage />
+      </ProtectedRoute>
+    )
+  },
+
+  // Cleaner
   {
     path: "/cleaner-dashboard",
     element: (
@@ -121,10 +139,16 @@ const browserRouter = createBrowserRouter([
     ),
   },
   {
+    path: "/cleaner-view-bookings",
+    element: <ProtectedRoute>
+      <ViewCleanerServiceHistoryPage />
+    </ProtectedRoute>
+  },
+  {
     path: "/cleaner-view-services",
     element: (
       <ProtectedRoute>
-        <CleanerViewServicesRoute />
+        <ViewServicesPage />
       </ProtectedRoute>
     ),
   },

@@ -281,7 +281,7 @@ const ViewServiceCategoryPage: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <div className="footer">
+      <div className="footer-container">
         <b>© Copyright 2025 Easy & Breezy - All Rights Reserved</b>
       </div>
     </div>

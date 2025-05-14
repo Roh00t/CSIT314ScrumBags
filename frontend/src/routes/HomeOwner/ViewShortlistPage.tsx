@@ -9,7 +9,7 @@ interface shortlistView {
   serviceName: string
 }
 
-const ViewShortlist: React.FC = () => {
+const ViewShortlistPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
 
   const [shortlist, setShortlist] = useState<shortlistView[]>([])
@@ -123,4 +123,4 @@ const ViewShortlist: React.FC = () => {
   )
 }
 
-export default ViewShortlist
+export default ViewShortlistPage

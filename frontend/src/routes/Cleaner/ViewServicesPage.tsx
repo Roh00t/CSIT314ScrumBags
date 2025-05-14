@@ -30,7 +30,7 @@ interface editServiceInput {
     price: string
 }
 
-const CleanerViewServicesRoute: React.FC = () => {
+const ViewServicesPage: React.FC = () => {
     const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}')
 
     // Variables
@@ -59,7 +59,7 @@ const CleanerViewServicesRoute: React.FC = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false)
     const [createServiceModal, setCreateServiceModal] = useState(false)
     const [deleteServiceModal, setDeleteServiceModal] = useState(false)
-    const [editServiceModal, setEditServiceModal] = useState(false)
+    const [updateServiceProvidedModal, setUpdateServiceProvidedModal] = useState(false)
     const [viewServiceModal, setViewServiceModal] = useState(false)
 
     // Fetch current services
@@ -190,9 +190,11 @@ const CleanerViewServicesRoute: React.FC = () => {
             if (!response.ok) {
                 const errorData = await response.json()
                 throw new Error(errorData.message || 'Failed to edit service')
+            } else {
+                alert("Update successful")
             }
 
-            setEditServiceModal(false)
+            setUpdateServiceProvidedModal(false)
             await fetchServices()
         } catch (error) {
             console.error('Error editing service: ', error)
@@ -329,7 +331,7 @@ const CleanerViewServicesRoute: React.FC = () => {
             )}
 
             {/* Edit Service Modal */}
-            {editServiceModal && (
+            {updateServiceProvidedModal && (
                 <div className="modal-overlay">
                     <div className="modal">
                         <h2>Edit "{selectedServiceName}"?</h2>
@@ -360,7 +362,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                         />
 
                         <div className="modal-buttons">
-                            <button onClick={() => setEditServiceModal(false)}>Cancel</button>
+                            <button onClick={() => setUpdateServiceProvidedModal(false)}>Cancel</button>
                             <button onClick={handleEdit} className="edit-btn">Edit</button>
                         </div>
                     </div>
@@ -446,7 +448,7 @@ const CleanerViewServicesRoute: React.FC = () => {
                                                 description: service.description,
                                                 price: service.price.toString(), // Convert number to string to match `editServiceInput`
                                             })
-                                            setEditServiceModal(true)
+                                            setUpdateServiceProvidedModal(true)
                                         }}>
                                             Edit
                                         </button>
@@ -475,4 +477,4 @@ const CleanerViewServicesRoute: React.FC = () => {
     )
 }
 
-export default CleanerViewServicesRoute
+export default ViewServicesPage

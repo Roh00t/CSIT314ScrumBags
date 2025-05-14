@@ -18,7 +18,7 @@ interface History {
   status: string
 }
 
-const HomeOwnerViewHistory: React.FC = () => {
+const ViewHomeOwnerServiceHistoryPage: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}')
 
   const [services, setServices] = useState<{ serviceName: string }[]>([])
@@ -193,4 +193,4 @@ const HomeOwnerViewHistory: React.FC = () => {
   )
 }
 
-export default HomeOwnerViewHistory
+export default ViewHomeOwnerServiceHistoryPage

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import LogoutModal from '../../components/LogoutModal'
 import logo from '../../assets/logo.png'
 
-const ViewCleanerService: React.FC = () => {
+const ViewCleanersPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
   const [cleanerServices, setCleanerServices] = useState<any[]>([])
   const [error, setError] = useState<string>('')
@@ -187,4 +187,4 @@ const ViewCleanerService: React.FC = () => {
   )
 }
 
-export default ViewCleanerService
+export default ViewCleanersPage

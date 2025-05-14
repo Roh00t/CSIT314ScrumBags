@@ -18,7 +18,7 @@ interface History {
   date: Date
 }
 
-const CleanerViewMyBookings: React.FC = () => {
+const ViewCleanerServiceHistoryPage: React.FC = () => {
   const sessionUser: UserAccountResponse = JSON.parse(localStorage.getItem('sessionObject') || '{}')
 
   // Variables
@@ -199,4 +199,4 @@ const CleanerViewMyBookings: React.FC = () => {
   )
 }
 
-export default CleanerViewMyBookings
+export default ViewCleanerServiceHistoryPage
