@@ -72,7 +72,8 @@ export default class UserAccount {
             return {
                 id: retrievedUser.id,
                 username: retrievedUser.username,
-                userProfile: retrievedUser.userProfileLabel
+                userProfile: retrievedUser.userProfileLabel,
+                isSuspended: retrievedUser.isSuspended
             } as UserAccountData
         } catch (err) {
             return null
