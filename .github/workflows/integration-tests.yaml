@@ -55,20 +55,13 @@ jobs:
       - name: Install Backend Dependencies
         run: cd ./backend && npm ci
 
-      # =====================================================
-      - name: Setup test DB for ExpressJS unit tests
+      # =====================================
+      - name: Setup test DB | Run backend unit tests
         run: |
           set -e
           cd ./backend
           npm run db:push
-        env:
-          DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_test_db
-
-      # =====================================
-      - name: Run backend unit tests
-        run: |
-          cd ./backend
-          npm run tests
+          npx jest --detectOpenHandles
         env:
           DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_test_db
 
