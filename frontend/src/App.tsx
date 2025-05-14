@@ -4,7 +4,7 @@ import AdminDashboard from "./routes/UserAdmin/AdminDashboardRoute"
 import PlatformManagerDashboard from "./routes/PlatformManager/PlatformManagerDashboard"
 import HomeRoute from "./routes/HomeRoute"
 import Login from "./routes/LoginPage"
-import CreateAccountPage from "./routes/UserAdmin/CreateUserAccount"
+import CreateNewUserAccountPage from "./routes/UserAdmin/CreateNewUserAccountPage"
 import CreateNewUserProfilePage from "./routes/UserAdmin/CreateNewUserProfilePage"
 import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
@@ -22,7 +22,7 @@ const browserRouter = createBrowserRouter([
   // Public Routes
   { path: "/", element: <HomeRoute /> },
   { path: "/login", element: <Login /> },
-  { path: "/create", element: <CreateAccountPage /> },
+  { path: "/create", element: <CreateNewUserAccountPage /> },
   { path: "/create-profile", element: <CreateNewUserProfilePage /> },
   { path: "/ViewUserProfile", element: <ViewUserProfile /> },
   { path: "/ViewCleanerService", element: <ViewCleanerService /> },
@@ -65,7 +65,7 @@ const browserRouter = createBrowserRouter([
     path: "/create",
     element: (
       <ProtectedRoute>
-        <CreateAccountPage />
+        <CreateNewUserAccountPage />
       </ProtectedRoute>
     ),
   },
