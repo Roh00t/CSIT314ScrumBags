@@ -14,8 +14,8 @@ const ViewUserProfilePage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const [filteredRoles, setFilteredRoles] = useState<Role[]>([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showProfileEditModal, setShowProfileEditModal] = useState(false);
-  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [updateUserProfileModal, setUpdateUserProfileModal] = useState(false);
+  const [suspendUserProfileModal, setSuspendUserProfileModal] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState<Role | null>(null);
   const [newStatus, setNewStatus] = useState<'Active' | 'Suspended'>('Active');
   const [editingProfile, setEditingProfile] = useState({ currentProfile: '', updatedProfile: '' });
@@ -59,7 +59,7 @@ const ViewUserProfilePage: React.FC = () => {
     const url = `http://localhost:3000/api/user-profiles/${newStatus === 'Active' ? 'unsuspend' : 'suspend'}`;
     try {
       await axios.post(url, { profileName: selectedProfile.label }, { withCredentials: true });
-      setShowSuspendModal(false);
+      setSuspendUserProfileModal(false);
       fetchRoles();
     } catch (error) {
       console.error('Failed to update profile status:', error);
@@ -128,7 +128,7 @@ const ViewUserProfilePage: React.FC = () => {
                           className="edit-btn"
                           onClick={() => {
                             setEditingProfile({ currentProfile: role.label, updatedProfile: '' });
-                            setShowProfileEditModal(true);
+                            setUpdateUserProfileModal(true);
                           }}
                         >Edit</button>
                         <button
@@ -136,7 +136,7 @@ const ViewUserProfilePage: React.FC = () => {
                           onClick={() => {
                             setSelectedProfile(role);
                             setNewStatus(role.isSuspended ? 'Active' : 'Suspended');
-                            setShowSuspendModal(true);
+                            setSuspendUserProfileModal(true);
                           }}
                         >{role.isSuspended ? '🚫' : '🗑️'}</button>
                       </div>
@@ -149,7 +149,7 @@ const ViewUserProfilePage: React.FC = () => {
             </tbody>
           </table>
 
-          {showSuspendModal && selectedProfile && (
+          {suspendUserProfileModal && selectedProfile && (
             <div className="modal-overlay">
               <div className="modal">
                 <h2>Are you sure you want to {newStatus === 'Active' ? 'unsuspend' : 'suspend'} user profile"{selectedProfile.label}"?</h2>
@@ -158,14 +158,14 @@ const ViewUserProfilePage: React.FC = () => {
                   <option value="Suspended">Suspended</option>
                 </select>
                 <div className="modal-buttons">
-                  <button onClick={() => setShowSuspendModal(false)}>Cancel</button>
+                  <button onClick={() => setSuspendUserProfileModal(false)}>Cancel</button>
                   <button className="submit-btn" onClick={confirmStatusUpdate}>Update Status</button>
                 </div>
               </div>
             </div>
           )}
 
-          {showProfileEditModal && (
+          {updateUserProfileModal && (
             <div className="modal-overlay">
               <div className="modal">
                 <h2>Update User Profile</h2>
@@ -181,7 +181,7 @@ const ViewUserProfilePage: React.FC = () => {
                   required
                 />
                 <div className="modal-buttons">
-                  <button onClick={() => setShowProfileEditModal(false)}>Cancel</button>
+                  <button onClick={() => setUpdateUserProfileModal(false)}>Cancel</button>
                   <button
                     onClick={async () => {
                       try {
@@ -190,7 +190,7 @@ const ViewUserProfilePage: React.FC = () => {
                           newProfileName: editingProfile.updatedProfile
                         });
                         alert('Profile updated successfully!');
-                        setShowProfileEditModal(false);
+                        setUpdateUserProfileModal(false);
                         fetchRoles();
                       } catch (err) {
                         console.error(err);

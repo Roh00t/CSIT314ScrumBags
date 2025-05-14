@@ -19,14 +19,14 @@ interface UserProfile {
 
 const ViewUserAccountPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
-  const [confirmSuspendModal, setConfirmSuspendModal] = useState<{ show: boolean; user: UserAccountResponse | null }>({
+  const [suspendUserAccountModal, setSuspendUserAccountModal] = useState<{ show: boolean; user: UserAccountResponse | null }>({
     show: false,
     user: null
   })
   const [roles, setRoles] = useState<UserProfile[]>([]); // Correct for array of strings
   const [newStatus, setNewStatus] = useState<'Active' | 'Suspended'>('Active')
   const [showLogoutModal, setShowLogoutModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
+  const [updateUserAccountModal, setUpdateUserAccountModal] = useState(false)
   const [editingUser, setEditingUser] = useState<{
     id: number | null
     username: string
@@ -62,15 +62,15 @@ const ViewUserAccountPage: React.FC = () => {
   }, [])
 
   const confirmSuspendAction = async () => {
-    if (!confirmSuspendModal.user?.id) return
+    if (!suspendUserAccountModal.user?.id) return
 
     try {
       await axios.post(
         `http://localhost:3000/api/user-accounts/${newStatus === 'Active' ? 'unsuspend' : 'suspend'}`,
-        { id: confirmSuspendModal.user.id },
+        { id: suspendUserAccountModal.user.id },
         { withCredentials: true }
       )
-      setConfirmSuspendModal({ show: false, user: null })
+      setSuspendUserAccountModal({ show: false, user: null })
       await fetchUsers()
     } catch (error) {
       console.error('Failed to toggle suspension:', error)
@@ -190,13 +190,13 @@ const ViewUserAccountPage: React.FC = () => {
                             password: '',
                             confirmPassword: ''
                           })
-                          setShowEditModal(true)
+                          setUpdateUserAccountModal(true)
                         }}
                       >Edit</button>
                       <button
                         className={user.isSuspended ? "unsuspend-btn" : "suspend-btn"}
                         onClick={() => {
-                          setConfirmSuspendModal({ show: true, user })
+                          setSuspendUserAccountModal({ show: true, user })
                           setNewStatus(user.isSuspended ? 'Active' : 'Suspended')
                         }}
                       >
@@ -210,12 +210,12 @@ const ViewUserAccountPage: React.FC = () => {
           </table>
 
           {/* Suspend Modal */}
-          {confirmSuspendModal.show && confirmSuspendModal.user && (
+          {suspendUserAccountModal.show && suspendUserAccountModal.user && (
             <div className="modal-overlay">
               <div className="modal">
                 <h2>
                   Are you sure you want to {newStatus === 'Active' ? 'unsuspend' : 'suspend'} user account
-                  "<b>{confirmSuspendModal.user.username}</b>"?
+                  "<b>{suspendUserAccountModal.user.username}</b>"?
                 </h2>
 
                 <select
@@ -228,7 +228,7 @@ const ViewUserAccountPage: React.FC = () => {
                 </select>
 
                 <div className="modal-buttons" style={{ marginTop: '1.5rem' }}>
-                  <button onClick={() => setConfirmSuspendModal({ show: false, user: null })}>Cancel</button>
+                  <button onClick={() => setSuspendUserAccountModal({ show: false, user: null })}>Cancel</button>
                   <button onClick={confirmSuspendAction} className="submit-btn">Update Status</button>
                 </div>
               </div>
@@ -236,7 +236,7 @@ const ViewUserAccountPage: React.FC = () => {
           )}
 
           {/* Edit Modal remains unchanged */}
-          {showEditModal && (
+          {updateUserAccountModal && (
             <div className="modal-overlay">
               <div className="modal">
                 <h2>Update User Account</h2>
@@ -266,7 +266,7 @@ const ViewUserAccountPage: React.FC = () => {
                 <input type="password" value={editingUser.confirmPassword} onChange={e => setEditingUser({ ...editingUser, confirmPassword: e.target.value })} required />
 
                 <div className="modal-buttons">
-                  <button className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
+                  <button className="cancel-btn" onClick={() => setUpdateUserAccountModal(false)}>Cancel</button>
                   <button className="submit-btn" onClick={async () => {
                     if (editingUser.password !== editingUser.confirmPassword) {
                       return alert("Passwords do not match!")
@@ -280,7 +280,7 @@ const ViewUserAccountPage: React.FC = () => {
                       }, { withCredentials: true })
                       alert('User updated successfully')
                       await fetchUsers()
-                      setShowEditModal(false)
+                      setUpdateUserAccountModal(false)
                     } catch (error) {
                       console.error('Failed to update user:', error)
                       alert('Failed to update user. Please try again.')

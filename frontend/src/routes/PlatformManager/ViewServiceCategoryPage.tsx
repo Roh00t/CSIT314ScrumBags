@@ -10,8 +10,8 @@ const ViewServiceCategories: React.FC = () => {
   const [search, setSearch] = useState<string>('')
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [createServiceCategoryModal, setCreateServiceCategoryModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showUpdateModal, setShowUpdateModal] = useState(false)  // Added for update modal
+  const [deleteServiceCategoryModal, setDeleteServiceCategoryModal] = useState(false)
+  const [updateServiceCategoryModal, setUpdateServiceCategoryModal] = useState(false)  // Added for update modal
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [newServiceCategory, setNewServiceCategory] = useState<{ serviceName: string }>({
     serviceName: ''
@@ -53,7 +53,7 @@ const ViewServiceCategories: React.FC = () => {
       })
       alert(`Service category '${selectedService}' deleted successfully.`)
       setServices(services.filter(service => service !== selectedService))
-      setShowDeleteModal(false)
+      setDeleteServiceCategoryModal(false)
     } catch (err) {
       console.error('Failed to delete service category:', err)
       alert('Failed to delete service category. See console for details.')
@@ -156,7 +156,7 @@ const ViewServiceCategories: React.FC = () => {
       )}
 
       {/* Update Category Modal */}
-      {showUpdateModal && selectedService && (
+      {updateServiceCategoryModal && selectedService && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Update Service Category</h2>
@@ -169,7 +169,7 @@ const ViewServiceCategories: React.FC = () => {
               placeholder="Enter new category name"
             />
             <div className="modal-buttons">
-              <button onClick={() => setShowUpdateModal(false)}>Cancel</button>
+              <button onClick={() => setUpdateServiceCategoryModal(false)}>Cancel</button>
               <button onClick={async () => {
                 try {
                   const response = await axios.put('http://localhost:3000/api/services/categories', {
@@ -182,7 +182,7 @@ const ViewServiceCategories: React.FC = () => {
                     setServices(services.map(service => 
                       service === selectedService ? updateServiceCategory.serviceName : service
                     ))
-                    setShowUpdateModal(false)
+                    setUpdateServiceCategoryModal(false)
                   }
                 } catch (error) {
                   console.error('Error updating service category:', error)
@@ -197,12 +197,12 @@ const ViewServiceCategories: React.FC = () => {
       )}
 
       {/* Delete Modal */}
-      {showDeleteModal && selectedService && (
+      {deleteServiceCategoryModal && selectedService && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Are you sure you want to delete "{selectedService}"?</h2>
             <div className="modal-buttons">
-              <button onClick={() => setShowDeleteModal(false)}>Cancel</button>
+              <button onClick={() => setDeleteServiceCategoryModal(false)}>Cancel</button>
               <button onClick={handleDelete} className="delete-btn">Delete</button>
             </div>
           </div>
@@ -244,7 +244,7 @@ const ViewServiceCategories: React.FC = () => {
                           onClick={() => {
                             setSelectedService(service)
                             setUpdateServiceCategory({ serviceName: '' })  // Empty the input field
-                            setShowUpdateModal(true)
+                            setUpdateServiceCategoryModal(true)
                           }}
                         >
                           Edit
@@ -254,7 +254,7 @@ const ViewServiceCategories: React.FC = () => {
                           className="delete-btn"
                           onClick={() => {
                             setSelectedService(service)
-                            setShowDeleteModal(true)
+                            setDeleteServiceCategoryModal(true)
                           }}
                         >
                           Delete
