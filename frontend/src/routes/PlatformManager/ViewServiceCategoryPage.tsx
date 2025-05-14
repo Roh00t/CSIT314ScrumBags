@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import LogoutModal from '../../components/LogoutModal'
 import logo from '../../assets/logo.png'
 
-const ViewServiceCategories: React.FC = () => {
+const ViewServiceCategoryPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser'
   const [services, setServices] = useState<string[]>([])
   const [search, setSearch] = useState<string>('')
@@ -172,18 +172,25 @@ const ViewServiceCategories: React.FC = () => {
               <button onClick={() => setUpdateServiceCategoryModal(false)}>Cancel</button>
               <button onClick={async () => {
                 try {
-                  const response = await axios.put('http://localhost:3000/api/services/categories', {
-                    category: selectedService,
-                    newCategory: updateServiceCategory.serviceName
-                  }, { withCredentials: true })
+                  if (updateServiceCategory.serviceName == "") {
+                    alert("Please fill in this field")
+                  } else {
+                    const response = await axios.put('http://localhost:3000/api/services/categories', {
+                      category: selectedService,
+                      newCategory: updateServiceCategory.serviceName
+                    }, { withCredentials: true })
 
-                  if (response.status === 200) {
-                    alert(`Service category '${selectedService}' updated successfully.`)
-                    setServices(services.map(service => 
-                      service === selectedService ? updateServiceCategory.serviceName : service
-                    ))
-                    setUpdateServiceCategoryModal(false)
+                    if (response.status === 200) {
+                      alert(`Service category '${selectedService}' updated successfully.`)
+                      setServices(services.map(service => 
+                        service === selectedService ? updateServiceCategory.serviceName : service
+                      ))
+                      setUpdateServiceCategoryModal(false)
+                    }
+                    setUpdateServiceCategory({ serviceName: "" })
                   }
+
+
                 } catch (error) {
                   console.error('Error updating service category:', error)
                   alert('Failed to update service category.')
@@ -281,4 +288,4 @@ const ViewServiceCategories: React.FC = () => {
   )
 }
 
-export default ViewServiceCategories
+export default ViewServiceCategoryPage

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-const Login: React.FC = () => {
+const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -98,4 +98,4 @@ const Login: React.FC = () => {
   )
 }
 
-export default Login
+export default LoginPage
