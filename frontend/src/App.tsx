@@ -10,7 +10,7 @@ import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import CleanerViewServicesRoute from "./routes/Cleaner/CleanerViewServices"
 import ProtectedRoute from "./routes/ProtectedRoutes" // Auth guard
 import ViewUserProfilePage from "./routes/UserAdmin/ViewUserProfilesPage"
-import ViewCleanerService from "./routes/HomeOwner/ViewCleanerService"
+import ViewCleanerService from "./routes/HomeOwner/ViewCleanersPage"
 import ViewShortlist from "./routes/HomeOwner/ViewShortlist"
 import ViewServiceCategories from "./routes/PlatformManager/ViewServiceCategories"
 import HomeOwnerViewHistory from "./routes/HomeOwner/HomeOwnerViewHistory"
