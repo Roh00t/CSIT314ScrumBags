@@ -61,7 +61,6 @@ jobs:
           set -e
           cd ./backend
           npm run db:push
-          npm run db:seed:base
         env:
           DATABASE_URL: postgresql://scrumbags_user:scrumbags_password@localhost:5434/scrumbags_test_db
 

@@ -52,7 +52,7 @@ export class UserProfile {
         newProfileName: string
     ): Promise<boolean> {
         try {
-            if (newProfileName.length === 0) {
+            if (newProfileName.trim().length === 0) {
                 return false
             }
 
