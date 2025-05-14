@@ -21,7 +21,8 @@ const CreateProfilePage: React.FC = () => {
       },
         { withCredentials: true }
       )
-
+      setSuccess('')
+      setError('')
       if (response.data === true) {
         console.log('response.data:', response.data);
         setSuccess('Profile created successfully!🥳')

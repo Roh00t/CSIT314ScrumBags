@@ -180,7 +180,7 @@ const CleanerViewMyBookings: React.FC = () => {
               ) : (
                 history.map((service, index) => (
                   <tr key={index}>
-                    <td>{service.bookingId}</td>
+                    <td>{index + 1}</td>
                     <td>{service.typeOfService}</td>
                     <td>{new Date(service.date).toLocaleDateString('en-GB')}</td>
                     <td>{service.homeowner}</td>
