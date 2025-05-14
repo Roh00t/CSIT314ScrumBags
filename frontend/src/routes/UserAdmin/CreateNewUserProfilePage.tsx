@@ -25,15 +25,15 @@ const CreateNewUserProfilePage: React.FC = () => {
       setError('')
       if (response.data === true) {
         console.log('response.data:', response.data);
-        setSuccess('Profile created successfully!🥳')
+        setSuccess('Profile created successfully!')
         setProfileName('')
       } else {
         console.log('response.data:', response.data);
-        setError('Failed to create account. Please try again.😢')
+        setError('Failed to create account. Please try again.')
         setSuccess('')
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Something went wrong.😡')
+      setError(err.response?.data?.message || 'Something went wrong.')
       console.log({ profileName });
       setSuccess('')
     }
