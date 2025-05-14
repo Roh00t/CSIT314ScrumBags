@@ -78,8 +78,11 @@ const ViewServiceCategoryPage: React.FC = () => {
         const response = await axios.get(`http://localhost:3000/api/services/categories/search?search=${search}`, {
           withCredentials: true,
         })
-
-        setServices([response.data])
+        if (response.data.length > 0) {
+          setServices([response.data])
+        } else {
+          setServices([])
+        }
       } catch (err) {
         console.error('Search failed:', err)
         setServices([])
@@ -124,7 +127,7 @@ const ViewServiceCategoryPage: React.FC = () => {
               <button onClick={() => setCreateServiceCategoryModal(false)}>Cancel</button>
               <button onClick={async () => {
                 try {
-                  if (newServiceCategory.serviceName == ''){
+                  if (newServiceCategory.serviceName == '') {
                     alert('Failed to create service category.')
                   } else {
                     const response = await fetch('http://localhost:3000/api/services/categories', {
@@ -182,7 +185,7 @@ const ViewServiceCategoryPage: React.FC = () => {
 
                     if (response.status === 200) {
                       alert(`Service category '${selectedService}' updated successfully.`)
-                      setServices(services.map(service => 
+                      setServices(services.map(service =>
                         service === selectedService ? updateServiceCategory.serviceName : service
                       ))
                       setUpdateServiceCategoryModal(false)
@@ -270,7 +273,7 @@ const ViewServiceCategoryPage: React.FC = () => {
                     </td>
                   </tr>
                 ))
-                ) : (
+              ) : (
                 <tr>
                   <td colSpan={2}>No services available.</td>
                 </tr>
