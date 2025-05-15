@@ -26,8 +26,7 @@ import CleanerDashboardRoute from "./routes/Cleaner/CleanerDashboard"
 import ViewCleanerServiceHistoryPage from "./routes/Cleaner/ViewCleanerServiceHistoryPage"
 import ViewServicesPage from "./routes/Cleaner/ViewServicesPage"
 
-import HomeRoute from "./routes/HomeRoute"
-
+// import HomeRoute from "./routes/HomeRoute"
 
 const browserRouter = createBrowserRouter([
   // Public Routes
@@ -69,7 +68,7 @@ const browserRouter = createBrowserRouter([
   },
   {
     path: "/user-account-management",
-    element: 
+    element:
       <ProtectedRoute>
         <ViewUserAccountPage />
       </ProtectedRoute>
@@ -84,19 +83,21 @@ const browserRouter = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  { path: "/platformManager-view-report", 
+  {
+    path: "/platformManager-view-report",
     element: (
       <ProtectedRoute>
         <ReportPage />
       </ProtectedRoute>
     )
   },
-  { path: "/ViewServiceCategories", 
+  {
+    path: "/ViewServiceCategories",
     element: (
       <ProtectedRoute>
         <ViewServiceCategoryPage />
       </ProtectedRoute>
-    ) 
+    )
   },
 
   // Homeowner
@@ -107,21 +108,24 @@ const browserRouter = createBrowserRouter([
         <HomeownerDashBoard />
       </ProtectedRoute>
   },
-  { path: "/ViewCleanerService", 
+  {
+    path: "/ViewCleanerService",
     element: (
       <ProtectedRoute>
         <ViewCleanersPage />
       </ProtectedRoute>
     )
   },
-  { path: "/ViewServiceHistory", 
+  {
+    path: "/ViewServiceHistory",
     element: (
       <ProtectedRoute>
         <ViewHomeOwnerServiceHistoryPage />
       </ProtectedRoute>
     )
   },
-  { path: "/ViewShortlist", 
+  {
+    path: "/ViewShortlist",
     element: (
       <ProtectedRoute>
         <ViewShortlistPage />
