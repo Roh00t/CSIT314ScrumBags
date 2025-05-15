@@ -96,14 +96,14 @@ export class SearchHomeownerServiceHistoryController {
     }
 
     public async searchHomeownerServiceHistory(
-        userID: number,
+        homeownerID: number,
         cleanerName: string,
         service: string | null,
         fromDate: Date | string | null,
         toDate: Date | string | null
     ): Promise<ServiceHistoryData[]> {
         return await this.serviceBooking.searchHomeownerServiceHistory(
-            userID, cleanerName, service, fromDate, toDate
+            homeownerID, cleanerName, service, fromDate, toDate
         )
     }
 }

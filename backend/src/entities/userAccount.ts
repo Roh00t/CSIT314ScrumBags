@@ -3,11 +3,10 @@ import { serviceCategoriesTable } from '../db/schema/serviceCategories'
 import { servicesProvidedTable } from '../db/schema/servicesProvided'
 import { userProfilesTable } from '../db/schema/userProfiles'
 import { userAccountsTable } from '../db/schema/userAccounts'
-import { DrizzleClient } from '../shared/constants'
+import { DrizzleClient, GLOBALS } from '../shared/constants'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { and, eq, ilike } from 'drizzle-orm'
 import {
-    SearchUserAccountNoResultError,
     UserProfileSuspendedError,
     UserAccountSuspendedError,
     UserAccountNotFoundError,
@@ -37,77 +36,86 @@ export default class UserAccount {
     public async login(
         username: string,
         password: string
-    ): Promise<UserAccountData> {
-        const [retrievedUser] = await this.db
-            .select({
-                id: userAccountsTable.id,
-                username: userAccountsTable.username,
-                password: userAccountsTable.password,
-                isSuspended: userAccountsTable.isSuspended,
-                userProfileLabel: userProfilesTable.label,
-                profileIsSuspended: userProfilesTable.isSuspended
-            })
-            .from(userAccountsTable)
-            .leftJoin(
-                userProfilesTable,
-                eq(userAccountsTable.userProfileId, userProfilesTable.id)
+    ): Promise<UserAccountData | null> {
+        try {
+            const [retrievedUser] = await this.db
+                .select({
+                    id: userAccountsTable.id,
+                    username: userAccountsTable.username,
+                    password: userAccountsTable.password,
+                    isSuspended: userAccountsTable.isSuspended,
+                    userProfileLabel: userProfilesTable.label,
+                    profileIsSuspended: userProfilesTable.isSuspended
+                })
+                .from(userAccountsTable)
+                .leftJoin(
+                    userProfilesTable,
+                    eq(userAccountsTable.userProfileId, userProfilesTable.id)
+                )
+                .where(eq(userAccountsTable.username, username))
+                .limit(1)
+
+            if (!retrievedUser) { // User account not found
+                return null
+            }
+
+            const areCredentialsVerified = await bcrypt.compare(
+                password, retrievedUser.password
             )
-            .where(eq(userAccountsTable.username, username))
-            .limit(1)
+            if (!areCredentialsVerified) {
+                return null
+            }
+            if (retrievedUser.isSuspended || retrievedUser.profileIsSuspended) {
+                return null
+            }
 
-        if (!retrievedUser) {
-            throw new UserAccountNotFoundError(username)
+            return {
+                id: retrievedUser.id,
+                username: retrievedUser.username,
+                userProfile: retrievedUser.userProfileLabel,
+                isSuspended: retrievedUser.isSuspended
+            } as UserAccountData
+        } catch (err) {
+            return null
         }
-
-        const areCredentialsVerified = await bcrypt.compare(
-            password,
-            retrievedUser.password
-        )
-        if (!areCredentialsVerified) {
-            throw new InvalidCredentialsError(username)
-        }
-
-        if (retrievedUser.isSuspended) {
-            throw new UserAccountSuspendedError(retrievedUser.username)
-        }
-
-        if (retrievedUser.profileIsSuspended && retrievedUser.userProfileLabel) {
-            throw new UserProfileSuspendedError(retrievedUser.userProfileLabel)
-        }
-
-        return {
-            id: retrievedUser.id,
-            username: retrievedUser.username,
-            userProfile: retrievedUser.userProfileLabel
-        } as UserAccountData
     }
 
     /**
      * US-1: As a user admin, I want to create a user 
      *       account so that new users can join the platform
      * 
-     * @param password The ENCODED password
+     * @param password The PLAINTEXT password
      */
     public async createNewUserAccount(
         createAs: string,
         username: string,
         password: string
     ): Promise<boolean> {
-        const [userAcc] = await this.db
-            .select()
-            .from(userProfilesTable)
-            .where(eq(userProfilesTable.label, createAs))
+        try {
+            if (username.trim().length === 0 ||
+                password.trim().length === 0) {
+                return false
+            }
 
-        if (!userAcc) {
+            const [profile] = await this.db
+                .select()
+                .from(userProfilesTable)
+                .where(eq(userProfilesTable.label, createAs))
+
+            if (!profile) {
+                return false
+            }
+
+            const hashedPassword = await bcrypt.hash(password, GLOBALS.SALT_ROUNDS)
+            await this.db.insert(userAccountsTable).values({
+                username: username,
+                password: hashedPassword,
+                userProfileId: profile.id
+            })
+            return true
+        } catch (err) {
             return false
         }
-
-        await this.db.insert(userAccountsTable).values({
-            username: username,
-            password: password,
-            userProfileId: userAcc.id
-        })
-        return true
     }
 
     /**
@@ -258,7 +266,8 @@ export default class UserAccount {
         updatedPassword: string
     ): Promise<boolean> {
         try {
-            if (updatedUsername.length === 0 || updatedPassword.length === 0) {
+            if (updatedUsername.trim().length === 0 ||
+                updatedPassword.trim().length === 0) {
                 return false
             }
 

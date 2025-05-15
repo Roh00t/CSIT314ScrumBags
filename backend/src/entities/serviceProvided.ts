@@ -70,7 +70,7 @@ export class ServiceProvided {
      * 
      * Gets all the service 'types' provided by a cleaner (by their userID)
      */
-    public async viewServicesProvided(userID: number): Promise<ServiceProvidedData[]> {
+    public async viewServicesProvided(cleanerID: number): Promise<ServiceProvidedData[]> {
         try {
             const servicesProvidedByCleaner = await this.db
                 .select({
@@ -84,7 +84,7 @@ export class ServiceProvided {
                     servicesProvidedTable.cleanerID,
                     userAccountsTable.id
                 ))
-                .where(eq(userAccountsTable.id, userID))
+                .where(eq(userAccountsTable.id, cleanerID))
 
             return servicesProvidedByCleaner.map(sp => {
                 return {
@@ -147,11 +147,11 @@ export class ServiceProvided {
      *        that I can look up a specific service I provide
      */
     public async searchServicesProvided(
-        userID: number,
+        id: number,
         serviceName: string
     ): Promise<ServiceProvidedData[]> {
         try {
-            const conditions = [eq(userAccountsTable.id, userID)]
+            const conditions = [eq(userAccountsTable.id, id)]
             if (serviceName) {
                 conditions.push(eq(servicesProvidedTable.serviceName, serviceName))
             }

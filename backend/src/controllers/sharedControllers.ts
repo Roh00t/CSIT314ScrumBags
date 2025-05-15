@@ -24,7 +24,7 @@ export class LoginController {
     public async login(
         username: string,
         password: string
-    ): Promise<UserAccountData> {
+    ): Promise<UserAccountData | null> {
         return await this.userAccount.login(username, password)
     }
 }

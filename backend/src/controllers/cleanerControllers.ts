@@ -121,10 +121,10 @@ export class SearchServicesProvidedController {
     }
 
     public async searchServicesProvided(
-        cleanerID: number,
+        id: number,
         serviceName: string
     ): Promise<ServiceProvidedData[]> {
-        return await this.serviceProvided.searchServicesProvided(cleanerID, serviceName)
+        return await this.serviceProvided.searchServicesProvided(id, serviceName)
     }
 }
 

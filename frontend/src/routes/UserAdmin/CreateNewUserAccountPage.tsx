@@ -10,7 +10,7 @@ interface UserProfile {
   isSuspended: boolean
 }
 
-const CreateAccountPage: React.FC = () => {
+const CreateNewUserAccountPage: React.FC = () => {
   const sessionUser = localStorage.getItem('sessionUser') || 'defaultUser';
   const [role, setRole] = useState<string>('')
   const [roles, setRoles] = useState<UserProfile[]>([]); // Correct for array of strings
@@ -85,7 +85,7 @@ const CreateAccountPage: React.FC = () => {
         password,
       }, { withCredentials: true });
 
-      if (response.data.message === 'Account created successfully') {
+      if (response.data === true) {
         setSuccess('Account created successfully!');
         setError('');
         setRole('');
@@ -119,7 +119,7 @@ const CreateAccountPage: React.FC = () => {
           </h2>
         </div>
       </div>
-      
+
       {/* Logout Modal */}
       <LogoutModal isOpen={showLogoutModal} onClose={() => setShowLogoutModal(false)} />
 
@@ -219,4 +219,4 @@ const CreateAccountPage: React.FC = () => {
   )
 }
 
-export default CreateAccountPage
+export default CreateNewUserAccountPage

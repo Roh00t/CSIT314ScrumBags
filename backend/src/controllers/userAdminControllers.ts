@@ -1,8 +1,6 @@
 import { UserAccountData, UserProfileData } from '../shared/dataClasses'
 import { UserProfile } from '../entities/userProfile'
 import UserAccount from '../entities/userAccount'
-import { GLOBALS } from '../shared/constants'
-import bcrypt from 'bcrypt'
 
 /**
  * US-1: As a user admin, I want to create a user account 
@@ -23,11 +21,10 @@ export class CreateNewUserAccountController {
         username: string,
         password: string
     ): Promise<boolean> {
-        const hashedPassword = await bcrypt.hash(password, GLOBALS.SALT_ROUNDS)
         return await this.userAccount.createNewUserAccount(
             createAs,
             username,
-            hashedPassword
+            password
         )
     }
 }
