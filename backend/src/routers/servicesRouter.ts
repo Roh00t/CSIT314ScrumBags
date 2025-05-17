@@ -111,11 +111,6 @@ servicesRouter.get('/categories/search', async (req, res): Promise<void> => {
     res.status(StatusCodes.OK).json(searchedcategory)
 })
 
-/**
- * TODO: What user story is this??
- * 
- * Gets all the services
- */
 servicesRouter.get('/', async (_, res): Promise<void> => {
     try {
         const allServices =

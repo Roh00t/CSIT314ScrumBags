@@ -156,9 +156,6 @@ userAccountsRouter.post('/suspend', async (req, res): Promise<void> => {
     }
 })
 
-/**
- * TODO: Remove for final submission (??)
- */
 userAccountsRouter.post('/unsuspend', async (req, res): Promise<void> => {
     try {
         const { id } = req.body

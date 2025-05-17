@@ -76,9 +76,6 @@ userProfilesRouter.post('/suspend', async (req, res): Promise<void> => {
     }
 })
 
-/**
- * TODO: Remove for final submission (??)
- */
 userProfilesRouter.post('/unsuspend', async (req, res): Promise<void> => {
     try {
         const { profileName } = req.body;

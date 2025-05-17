@@ -73,9 +73,6 @@ const driver = async (db: DrizzleClient): Promise<void> => {
     console.log("Successfully seeded the database!")
 }
 
-const driverTests = async (db: DrizzleClient): Promise<void> => {
-}
-
 const main = async (): Promise<void> => {
     const pool = new Pool({ connectionString: process.env.DATABASE_URL! })
     try {

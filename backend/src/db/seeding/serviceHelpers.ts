@@ -1,5 +1,4 @@
 import { ServiceBookingsInsert, serviceBookingsTable } from '../schema/serviceBookings'
-// import { BookingStatus } from '../schema/bookingStatusEnum'
 import { UserAccountsSelect } from '../schema/userAccounts'
 import { DrizzleClient } from '../../shared/constants'
 import { faker } from '@faker-js/faker'
@@ -37,7 +36,8 @@ export const initServicesProvided = async (
 
     for (const cleaner of allCleaners) {
         const randServiceCats = faker.helpers.arrayElements(allServiceCategories, {
-            min: 1, max: allServiceCategories.length
+            min: 1,
+            max: Math.min(5, allServiceCategories.length)
         })
         const randServices = faker.helpers.shuffle(
             faker.helpers.arrayElements(
@@ -94,11 +94,6 @@ export const initServiceBookings = async (
                     from: twoYearsAgo,
                     to: new Date()
                 })
-                // status: faker.helpers.arrayElement([
-                //     BookingStatus.Pending,
-                //     BookingStatus.Cancelled,
-                //     BookingStatus.Confirmed
-                // ])
             })
         })
     })

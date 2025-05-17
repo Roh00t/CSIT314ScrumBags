@@ -111,11 +111,6 @@ homeownerRouter.post(
     }
 )
 
-/**
- * TODO
- * 
- * Alex | 2025-04-30: "This doesn't seem to be used, can we remove this + controller?"
- */
 homeownerRouter.get(
     '/allservicehistory',
     requireAuthMiddleware,
