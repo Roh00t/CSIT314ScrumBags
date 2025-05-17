@@ -280,15 +280,17 @@ export default class UserAccount {
                 return false
             }
 
+            const hashedPassword = await bcrypt.hash(updatedPassword, GLOBALS.SALT_ROUNDS)
+
             await this.db
                 .update(userAccountsTable)
                 .set({
                     username: updatedUsername,
-                    password: updatedPassword,
+                    password: hashedPassword,
                     userProfileId: userProfile.id
                 })
                 .where(eq(userAccountsTable.id, userID))
-
+    
             return true
         } catch (err) {
             return false
