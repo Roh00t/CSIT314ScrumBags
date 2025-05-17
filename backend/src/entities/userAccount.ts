@@ -261,39 +261,72 @@ export default class UserAccount {
      */
     public async updateUserAccount(
         userID: number,
-        updateAs: string,
-        updatedUsername: string,
-        updatedPassword: string
+        updateAs: string | null,
+        updatedUsername: string | null,
+        updatedPassword: string | null
     ): Promise<boolean> {
         try {
-            if (updatedUsername.trim().length === 0 ||
-                updatedPassword.trim().length === 0) {
-                return false
-            }
-
-            const [userProfile] = await this.db
+            
+            const [currentUser] = await this.db
                 .select()
-                .from(userProfilesTable)
-                .where(eq(userProfilesTable.label, updateAs))
-
-            if (!userProfile) {
-                return false
+                .from(userAccountsTable)
+                .where(eq(userAccountsTable.id, userID))
+    
+            if (!currentUser) {
+                return false 
             }
-
+    
+            const updateData: Partial<{
+                username: string
+                password: string
+                userProfileId: number
+            }> = {}
+    
+            
+            if (updatedUsername !== null && updatedUsername !== undefined) {
+                const trimmedUsername = updatedUsername.trim()
+                if (trimmedUsername.length > 0 && trimmedUsername !== currentUser.username) {
+                    updateData.username = trimmedUsername
+                }
+            }
+    
+           
+            if (updatedPassword !== null && updatedPassword !== undefined) {
+                const trimmedPassword = updatedPassword.trim()
+                if (trimmedPassword.length > 0) {
+                    const hashedPassword = await bcrypt.hash(trimmedPassword, GLOBALS.SALT_ROUNDS)
+                    updateData.password = hashedPassword
+                }
+            }
+    
+           
+            if (updateAs !== null && updateAs !== undefined && updateAs.trim().length > 0) {
+                const [userProfile] = await this.db
+                    .select()
+                    .from(userProfilesTable)
+                    .where(eq(userProfilesTable.label, updateAs.trim()))
+    
+                if (userProfile && userProfile.id !== currentUser.userProfileId) {
+                    updateData.userProfileId = userProfile.id
+                }
+            }
+    
+            
+            if (Object.keys(updateData).length === 0) {
+                return true
+            }
+    
             await this.db
                 .update(userAccountsTable)
-                .set({
-                    username: updatedUsername,
-                    password: updatedPassword,
-                    userProfileId: userProfile.id
-                })
+                .set(updateData)
                 .where(eq(userAccountsTable.id, userID))
-
+    
             return true
         } catch (err) {
             return false
         }
     }
+    
 
     /**
      * US-4: As a user admin, I want to suspend user accounts 
