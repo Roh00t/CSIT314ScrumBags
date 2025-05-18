@@ -60,7 +60,6 @@ export class ShortlistedServices {
                 .limit(1)
 
             if (result.length > 0) {
-                console.log("Already shortlisted service")
                 return false
             }
 
