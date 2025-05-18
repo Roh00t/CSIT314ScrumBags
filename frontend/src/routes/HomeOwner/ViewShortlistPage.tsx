@@ -73,7 +73,7 @@ const ViewShortlistPage: React.FC = () => {
             <input
               type="text"
               className="search-bar"
-              placeholder="Search by cleaner name"
+              placeholder="Search by service type name"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
