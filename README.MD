@@ -22,7 +22,7 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
 ---
 
 ### 💻 Source Code
-- [GitHub Repository](https://github.com/rohitpanda/CSIT314ScrumBags)
+- [GitHub Repository](https://github.com/Roh00t/CSIT314ScrumBags)
 
 
 
@@ -30,7 +30,7 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/rohitpanda/CSIT314ScrumBags.git
+   git clone https://github.com/Roh00t/CSIT314ScrumBags.git
    cd CSIT314ScrumBags
 
 # CSIT314 Scrumbags - Backend
