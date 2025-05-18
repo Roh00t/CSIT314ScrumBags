@@ -82,10 +82,6 @@ export class UserProfile {
         }
     }
 
-    /**
-     * TODO: Remove this from submission (??)
-     * Unsuspend user profile 
-     */
     public async unsuspendUserProfile(profileName: string): Promise<void> {
         await this.db
             .update(userProfilesTable)

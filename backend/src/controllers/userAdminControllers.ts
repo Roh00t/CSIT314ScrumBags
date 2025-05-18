@@ -85,7 +85,6 @@ export class SuspendUserAccountController {
         return await this.userAccount.suspendUserAccount(userID)
     }
 
-    // TODO: Remove this for submission (??)
     public async unsuspendUserAccount(userID: number) {
         await this.userAccount.unsuspendUserAccount(userID);
     }

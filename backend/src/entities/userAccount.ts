@@ -344,9 +344,6 @@ export default class UserAccount {
         }
     }
 
-    /**
-     * TODO: Remove this for submission (??) 
-     */
     public async unsuspendUserAccount(userID: number): Promise<void> {
         await this.db
             .update(userAccountsTable)
