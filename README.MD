@@ -1,6 +1,15 @@
 # CSIT314 Scrumbags
 
 This is a GitHub monorepo containing the code for our CSIT314 Group Project.
+## 📂 Project Contributors
+- 🧑‍💻 [Rohit Panda](https://www.linkedin.com/in/rohit-panda/) 
+- 🧑‍💻 [Alexander Neo](https://www.linkedin.com/in/alexanderneo427/) 
+- 🧑‍💻 [Ryan Hong Yang Tan](https://www.linkedin.com/in/ryantan012/) 
+- 🧑‍💻 [Aloysius Lee Cheng Long](https://www.linkedin.com/in/your-linkedin-username/)
+- 🧑‍💻 [Rong Xiang Ng](https://www.linkedin.com/in/your-linkedin-username/) 
+- 🧑‍💻 [Asher Tan Jing Kai](https://www.linkedin.com/in/your-linkedin-username/) 
+- 🧑‍💻 [Muhammad Zafiq bin Abdul](https://www.linkedin.com/in/your-linkedin-username/) 
+
 
 ## 📂 Project Resources
 
@@ -20,6 +29,10 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
 - 📋 [Taiga Backlog & Sprint Board](https://tree.taiga.io/project/roh00t-scrumbags/backlog)
 
 ---
+
+### 💻 Source Code
+- [GitHub Repository](https://github.com/Roh00t/CSIT314ScrumBags)
+
 
 
 ## Setting Up
