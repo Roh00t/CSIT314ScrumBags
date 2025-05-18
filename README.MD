@@ -22,8 +22,6 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
 ---
 
 ### 💻 Source Code
-_Include a link to your GitHub repository or zip file here if available:_
-
 - [GitHub Repository](https://github.com/rohitpanda/CSIT314ScrumBags)
 
 
