@@ -40,11 +40,12 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
 ```
 - NodeJS
 - Docker Desktop
+- pgAdmin Desktop
 ```
 
 ### Running the development environment
 
-1. Start Docker Desktop and pgMyAdmin application
+1. Start Docker Desktop and pgAdmin application
 2. `npm i` to install necessary dependencies
 3. `npm run dev:setup` to start the dev server
 4. `npm run dev` to start the dev server again
