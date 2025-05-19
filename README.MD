@@ -68,7 +68,6 @@ Before processing with the following steps, ensure that
 ### Running the development environment or tests
 
 `npm run dev` to run the start the development server
-`npx jest --detectOpenHandles --verbose` to run our unit tests
 
 ### Trouble starting the dev server? Try the following
 
@@ -78,7 +77,7 @@ Before processing with the following steps, ensure that
 
 # CSIT314 Scrumbags | Frontend
 
-## DISCLAIMER - READ CAREFULLY BEFORE PROCEEDING
+### Pre-requisites:
 
 ```
 Before processing with the following steps, ensure that
