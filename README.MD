@@ -1,39 +1,43 @@
 # CSIT314 Scrumbags
 
 This is a GitHub monorepo containing the code for our CSIT314 Group Project.
-## 📂 Project Contributors
-- 🧑‍💻 [Rohit Panda](https://www.linkedin.com/in/rohit-panda/) 
-- 🧑‍💻 [Alexander Neo](https://www.linkedin.com/in/alexanderneo427/) 
-- 🧑‍💻 [Ryan Hong Yang Tan](https://www.linkedin.com/in/ryantan012/) 
-- 🧑‍💻 [Aloysius Lee Cheng Long](https://www.linkedin.com/in/your-linkedin-username/)
-- 🧑‍💻 [Rong Xiang Ng](https://www.linkedin.com/in/your-linkedin-username/) 
-- 🧑‍💻 [Asher Tan Jing Kai](https://www.linkedin.com/in/your-linkedin-username/) 
-- 🧑‍💻 [Muhammad Zafiq bin Abdul](https://www.linkedin.com/in/your-linkedin-username/) 
 
+## 📂 Project Contributors
+
+- 🧑‍💻 [Rohit Panda](https://www.linkedin.com/in/rohit-panda/)
+- 🧑‍💻 [Alexander Neo](https://www.linkedin.com/in/alexanderneo427/)
+- 🧑‍💻 [Ryan Hong Yang Tan](https://www.linkedin.com/in/ryantan012/)
+- 🧑‍💻 [Aloysius Lee Cheng Long](https://www.linkedin.com/in/your-linkedin-username/)
+- 🧑‍💻 [Rong Xiang Ng](https://www.linkedin.com/in/your-linkedin-username/)
+- 🧑‍💻 [Asher Tan Jing Kai](https://www.linkedin.com/in/your-linkedin-username/)
+- 🧑‍💻 [Muhammad Zafiq bin Abdul](https://www.linkedin.com/in/your-linkedin-username/)
 
 ## 📂 Project Resources
 
 ### 📹 Video Demo
+
 [![Watch the Video Demo](https://img.youtube.com/vi/Xr3Xc3_fczg/0.jpg)](https://youtu.be/Xr3Xc3_fczg)
+
 > 🔗 [Click to watch on YouTube](https://youtu.be/Xr3Xc3_fczg) (14:53)
 
 ---
 
 ### 📝 Documentation
+
 - 📄 [Final Report (View Only)](https://uowmailedu-my.sharepoint.com/:w:/g/personal/rp863_uowmail_edu_au/EdY5kNCVEQ1FtZA6aJTfvo4B3Ubx6rt6mFJBU8SGydW3Aw?e=dDEViz)
 
 ---
 
 ### 📊 Project Planning
+
 - 📅 [Gantt Chart (Google Sheets)](https://docs.google.com/spreadsheets/d/1SJM-ADDR-Ly5h_FfYFsgKHPNKgxdTiRJYzL-ZkaZfgg/edit?usp=sharing)
 - 📋 [Taiga Backlog & Sprint Board](https://tree.taiga.io/project/roh00t-scrumbags/backlog)
 
 ---
 
 ### 💻 Source Code
+
 - [GitHub Repository](https://github.com/Roh00t/CSIT314ScrumBags)
-
-
 
 ## Setting Up
 
@@ -41,45 +45,50 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
    ```sh
    git clone https://github.com/Roh00t/CSIT314ScrumBags.git
    cd CSIT314ScrumBags
+   ```
 
-# CSIT314 Scrumbags - Backend
+# CSIT314 Scrumbags | Backend
 
 ### Pre-requisites:
 
 ```
-- NodeJS
-- Docker Desktop
-- pgAdmin Desktop
-```
-
-### Running the development environment
-
-1. Start Docker Desktop and pgAdmin application
-2. `npm i` to install necessary dependencies
-3. `npm run dev:setup` to start the dev server
-4. `npm run dev` to start the dev server again
-5. `npm run db:seed` to seed and database
-### Getting errors with the above? Try the following
-
-1. Delete the running 'scrumbag' containers in Docker Desktop
-
-# CSIT314 Scrumbags - Frontend
-
-## DISCLAIMER - READ CAREFULLY BEFORE PROCEEDING
-```
-Before processing with the following steps, ensure that 
-you have 'cd' into the 'frontend' directory.
-
-Also ensure that have "nodeJS" installed and added to your path
+Before processing with the following steps, ensure that
+* You have 'cd' into the 'backend' directory
+* You have 'nodeJS' installed and added to your path
+* You have Docker installed and running
 ```
 
 ### Downloaded the repo for the first time?
-Make sure to run ```npm i``` to install the necessary dependencies
+
+1. `npm i` to install necessary dependencies for the backend
+2. `docker compose up -d` to start the Dockerized PostgreSQL instance (Docker must be running!)
+3. `npm run db:push` to update the schema
+4. `npm run db:seed` to populate the database with test data
+
+### Running the development environment or tests
+
+`npm run dev` to run the start the development server
+
+### Trouble starting the dev server? Try the following
+
+1. `docker compose down -v` delete the old running Dockerized PostgreSQL instance
+2. `docker compose up -d` start a fresh Dockerized PostgreSQL instance
+3. `npm run dev` To try starting the dev server again
+
+# CSIT314 Scrumbags | Frontend
+
+### Pre-requisites:
+
+```
+Before processing with the following steps, ensure that
+* You have 'cd' into the 'frontend' directory.
+* You have 'nodeJS' installed and added to your path
+```
+
+### Downloaded the repo for the first time?
+
+`npm i` to install the necessary dependencies
 
 ### Running the development environment
-Start the dev server: ```npm run dev```
 
-### Building the application
-```npm run build```
-The build can be found in the './dist' folder
-
+`npm run dev` to start the dev server
