@@ -23,6 +23,7 @@ This is a GitHub monorepo containing the code for our CSIT314 Group Project.
 ---
 
 ### 📝 Documentation
+- 📄 Project Specification (PDF)](./Project%20Specification.pdf)
 
 - 📄 [Final Report (View Only)](https://uowmailedu-my.sharepoint.com/:w:/g/personal/rp863_uowmail_edu_au/EdY5kNCVEQ1FtZA6aJTfvo4B3Ubx6rt6mFJBU8SGydW3Aw?e=dDEViz)
 
